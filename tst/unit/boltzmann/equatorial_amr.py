@@ -5,6 +5,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import tempfile
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -24,7 +25,7 @@ def run(exe, root, name, half, restart=None, coupled=False, scale=1):
                 "--kill-on-bad-exit=1", sys.executable,
                 str(ROOT / "tst/unit/boltzmann/stellar_photon_rank.py"), "--rank-bound", str(exe)]
     else:
-        args = ["mpiexec", "-n", str(ranks), str(exe)]
+        args = [os.environ.get("EQUATOR_MPIEXEC", "mpiexec"), "-n", str(ranks), str(exe)]
     if restart:
         args += ["-r", str(restart)]
     else:
@@ -124,12 +125,7 @@ def coupled_comparison(exe, work):
         np.testing.assert_allclose(resumed_field,direct_field,rtol=3e-12,atol=5e-16)
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("exe", type=Path)
-    parser.add_argument("work", type=Path)
-    args = parser.parse_args()
-    exe, work = args.exe.resolve(), args.work.resolve()
+def check(exe, work):
     full = run(exe, work, "full", False)
     half = run(exe, work, "half", True)
     for name, changes in [("full", 6), ("half", 3)]:
@@ -157,4 +153,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("exe", type=Path)
+    parser.add_argument("work", type=Path, nargs="?")
+    args = parser.parse_args()
+    if args.work:
+        check(args.exe.resolve(), args.work.resolve())
+    else:
+        with tempfile.TemporaryDirectory(prefix="equatorial-amr-") as folder:
+            check(args.exe.resolve(), Path(folder))

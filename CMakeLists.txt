@@ -355,6 +355,16 @@ if (Athena_BUILD_UNIT_TESTS)
         ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
     target_link_libraries(athena_boltzmann_operators PRIVATE Kokkos::kokkos)
     add_test(NAME boltzmann_operators COMMAND athena_boltzmann_operators)
+    if (Athena_ENABLE_MPI)
+      execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c "import numpy"
+          RESULT_VARIABLE equatorial_numpy_status ERROR_QUIET)
+      if (equatorial_numpy_status EQUAL 0)
+        add_test(NAME boltzmann_equatorial_amr COMMAND "${PYTHON_EXECUTABLE}"
+            ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/boltzmann/equatorial_amr.py $<TARGET_FILE:athena>)
+        set_tests_properties(boltzmann_equatorial_amr PROPERTIES PROCESSORS 2
+            ENVIRONMENT "EQUATOR_MPIEXEC=${MPIEXEC_EXECUTABLE}")
+      endif()
+    endif()
   endif()
   # Low-frequency qualification only: each order has its own translation unit to
   # bound compiler memory. The explicit target covers the complete manufactured

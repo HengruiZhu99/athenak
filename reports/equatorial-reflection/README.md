@@ -1,12 +1,12 @@
 # Equatorial photon-ring validation
 
-The opt-in boundary is `mesh/ix2_bc=reflect` with `mesh/x2min=0` and the existing Cartoon axis at `x1min=0`. The refined family uses 24 bins in the prograde azimuthal direction cosine, 48 meridional sectors, fourth-order transport and source projection, and SSPRK(10,4). The full-domain reference deck is `inputs/boltzmann/refined_ring.athinput`. Use the identical elliptic initial-data file for each half/full pair.
+The opt-in boundary is `mesh/ix2_bc=reflect` with `mesh/x2min=0` and the existing Cartoon axis at `x1min=0`. The refined family uses 24 bins in the prograde azimuthal direction cosine, 48 meridional sectors, fourth-order transport and source projection, and SSPRK(10,4). The baseline full-domain solver revision is `e430bbe7`. The full-domain reference deck is `inputs/boltzmann/refined_ring.athinput`. Use the identical elliptic initial-data file for each half/full pair.
 
 ## Reflection and diagnostics
 
 In the evolved component order \( (\rho,z,\phi) \), the reflection matrix is `diag(1,-1,1)`. A Cartesian tensor component acquires one minus sign per axial index. The odd Z4c fields are gXY, gYZ, AXY, AYZ, GammaY, betaY and BY. Lapse, chi, trace variables and the other components are even. The odd radiation moments are Sxy, Syz and Sy. Syy, the vertical normal stress, is even.
 
-The angular grid uses `mu = n_phi` and meridional angle psi, with `n_z = sqrt(1-mu²) sin(psi)`. Reflection keeps the cosine bin and reverses the sector index. Cell averages mirror about the intervening face. Geometry ghosts mirror about the equatorial vertex, where odd fields vanish. The axis half-turn sends psi to pi minus psi. The two permutations commute, including at the axis-equator corner. Reflection is applied to the restricted parent cache before interpolation and to fine ghosts afterward. The normal flux of each opposite-direction pair sums to zero, including when the positivity limiter acts.
+The azimuthal tetrad leg is aligned with the axial Killing vector. Its tangential components and the meridional radial component keep their signs under reflection, while the vertical tetrad component reverses. The angular grid uses `mu = n_phi` and meridional angle psi, with `n_z = sqrt(1-mu²) sin(psi)`. Reflection keeps the cosine bin and reverses the sector index. Cell averages mirror about the intervening face. Geometry ghosts mirror about the equatorial vertex, where odd fields vanish. The axis half-turn sends psi to pi minus psi. The two permutations commute, including at the axis-equator corner. Reflection is applied to the restricted parent cache before interpolation and to fine ghosts afterward. The normal flux of each opposite-direction pair sums to zero, including when the positivity limiter acts.
 
 The full-volume normalization is twice the represented hemisphere for radiation energy, axial J, escaped charges, metric work and integrated constraint squares. Nodal quadrature retains its endpoint weights. Unique equatorial nodes count once in the axis diagnostics. Centroids are ratios, and their numerator and denominator have the same reflection multiplicity. For the snapshot comparison the weight is Eulerian E times proper volume and the radius is `rho sqrt(g_phi_phi_cartesian)`. Vertical stress is the integrated covariant axial stress divided locally by the axial metric coefficient. The initial ADM charges come directly from the elliptic solution on the full spacetime. The SHA-256 hashes of the two files are recorded below.
 
@@ -79,7 +79,9 @@ The first two-GPU pilot used two B200s on StellarAI node `sai-n02g3`, with SHA-2
 
 The measured symmetry saving was 50.73% through 0.2 M. Wall time includes initialization, evolution, diagnostics and the final checkpoint. Memory is the largest one-second device sample. Both layouts preallocate storage for 80 blocks per rank.
 
-Across all six saved times, the maximum difference in the circumferential centroid was 4.45e-16 M and the integrated vertical stress differed by at most 6.94e-18. On the common spatial lattice, the largest absolute field differences in the ADM, radiation and constraint output groups were 5.96e-8, 4.29e-18 and 2.95e-7 respectively. At the endpoint the full-domain centroid was 2.39940 M. Changing the diagnostic integration to two-cell bins shifted this value by 0.00187 M, and the last saved interval changed it by 0.03476 M. Diagnostic quadrature and temporal sampling errors are distinct from the evolution errors measured in the smooth refinement test.
+Across all six saved times, the maximum difference in the circumferential centroid was 4.45e-16 M and the integrated vertical stress differed by at most 6.94e-18. On the common spatial lattice, the largest absolute field differences in the ADM, radiation and constraint output groups were 5.96e-8, 4.29e-18 and 2.95e-7 respectively. At the endpoint the full-domain centroid was 2.39940 M. Changing the diagnostic integration to two-cell bins shifted this value by 0.00187 M, and the last saved interval changed it by 0.03476 M. Diagnostic quadrature and temporal sampling errors are distinct from the evolution errors measured in the smooth refinement test. Over the same interval the full/half energy-budget residuals were 2.24e-15 / 2.35e-15. Both axial angular-momentum budgets drifted by 9.09e-5 relative to the initial matter J. The largest full/half difference in the integrated Hamiltonian constraint squared was 2.50e-12.
+
+The eight-GPU selection job compares elapsed GPU-hours at fixed outer distances, rank count, node and evolution interval. A candidate that wins that comparison is queued against the full original-spacing square mesh at both physical endpoints. The two original-boundary endpoint pairs independently test the effect of symmetry. Promotion requires the long-interval field, charge, outgoing-shell and horizon comparisons.
 
 ## Reproduction
 
@@ -88,7 +90,7 @@ Run these commands from the solver root with Kokkos and MPI available.
 ```sh
 cmake -S . -B build -DAthena_ENABLE_MPI=ON -DAthena_BUILD_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Release
 cmake --build build --target athena athena_boltzmann_fourth_amr athena_z4c_cartoon_m0_fastflow_unit_test
-ctest --test-dir build -R '^(boltzmann_fourth_amr|athena.z4c_cartoon_m0_fastflow)$' --output-on-failure
+ctest --test-dir build -R '^(boltzmann_fourth_amr|boltzmann_equatorial_amr|athena.z4c_cartoon_m0_fastflow)$' --output-on-failure
 python tst/unit/boltzmann/equatorial_amr.py build/src/athena /tmp/new-equator-amr-test
 python tst/unit/boltzmann/equator/layout.py /tmp/input --square --half --coarse --check build/src/athena
 ```
