@@ -68,6 +68,10 @@ Two distinct conditions are reported. The marginal-surface fit targets zero outg
 | 0.9508 | 14.33926 | 14.40700 | −1.56e-4 | 39.92 |
 | 1.0054 | 33.0521 | 33.13747 | −4.83e-4 | 67.17 |
 
+![Outgoing and ingoing expansions over the full meridian of the two verified archived witnesses](witness-expansions.png)
+
+The lines show the cubic-spline reconstruction and shading spans the three interpolants. The polar angle runs from the north pole to the south pole, with the equator at 90 degrees. Here h is the coordinate radius of the trial surface at that angle. Both expansions stay negative across the meridian on each witness.
+
 At the earlier 0.9508 witness on cycle 33480, an independent enclosing marginal fit gave area 655.03660, mass 4.9351511 and spin 0.99753989 on the full archived slice. Using only its northern data gave 655.03378, 4.9351503 and 0.99754019. Sampling the same saved geometry at twice the grid spacing changed area by 0.01462, mass by 4.27e-6 and spin by 1.55e-6. Over the next 0.06799 M of actual evolution the enclosing area, mass and spin changed by 8.16, 0.00289 and −0.000921. Use the measured geometric-sampling scale for same-frame charge comparisons and the one-frame changes when comparing independently detected onsets. The enclosing curve lies at least 0.137 code units outside the verified interior in every tested direction. The largest absolute marginal residual across interpolation methods was 1.31e-4 in units of h Θ+. These are same-slice reconstruction differences.
 
 The 0.9508 result used a shallower target of −0.0005 and degree 48. The archived monitor had accepted an origin marginal surface by cycle 33600, while its fixed −0.006 target missed a trapped interior even at cycle 33720. A successful witness on cycle **33480** moves the detection two saved frames earlier than the previous verified frame 33720. The interval is a cadence-dependent detection bracket. The 1.0054 monitor also missed the strictly trapped interior on cycle 60360 while accepting an origin marginal fit. The reference files alongside this report contain coefficients, charge measurements, interpolation checks, and the unsuccessful neighboring trials.
@@ -138,6 +142,7 @@ To replay the archived first-trapping tests, extract `horizon-replay-inputs.tar.
 ```sh
 cmake --build build --target athena_m0_replay
 tar xf reports/equatorial-reflection/horizon-replay-inputs.tar.xz -C /tmp
+python tst/unit/boltzmann/equator/plot_witnesses.py /tmp /tmp/witness-expansions.png
 python tst/unit/boltzmann/equator/native_replay.py build/athena_m0_replay /tmp/j09508/seed.json /tmp/j09508/torus.adm.00279.bin --degree 48
 ```
 
