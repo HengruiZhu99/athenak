@@ -158,7 +158,7 @@ void RefineChiMinimum(MeshBlockPack *pmbp,const DvceArray5D<Real> &u0,
                       int I_Z4C_CHI,int offset,Real chi_thresh) {
   Mesh *pmesh       = pmbp->pmesh;
   int nmb           = pmbp->nmb_thispack;
-  int mbs           = pmesh->gids_eachrank[global_variable::my_rank];
+  const auto gids   = pmbp->pmb->mb_gid.d_view;
   auto &refine_flag = pmesh->pmr->refine_flag;
   auto &indcs       = pmesh->mb_indcs;
   int is = indcs.is+offset, nx1 = indcs.nx1;
@@ -183,12 +183,13 @@ void RefineChiMinimum(MeshBlockPack *pmbp,const DvceArray5D<Real> &u0,
         },
         Kokkos::Min<Real>(team_dmin));
 
-      if (team_dmin < chi_thresh) {
-        refine_flag.d_view(m + mbs) = 1;
-      }
-      if (team_dmin > 1.25 * chi_thresh) {
-        refine_flag.d_view(m + mbs) = -1;
-      }
+      Kokkos::single(Kokkos::PerTeam(tmember), [&]() {
+        if (team_dmin < chi_thresh) {
+          refine_flag.d_view(gids(m)) = 1;
+        } else if (team_dmin > 1.25 * chi_thresh) {
+          refine_flag.d_view(gids(m)) = -1;
+        }
+      });
     });
 
   // sync host and device

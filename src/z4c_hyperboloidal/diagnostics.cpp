@@ -323,6 +323,13 @@ const FastFlow::Result &Diagnostics::FindHorizon() {
   }
   horizon_=horizons_.front();surface_=surfaces_.front();
   RequireAll(complete,"Hyperboloidal exterior requires every component horizon; failed, skipped or missing surface");
+  if (components == 2 && pack_->pmesh->adaptive &&
+      pin_->GetOrAddReal("z4c_amr", "horizon_padding_cells", -1) >= 0) {
+    for (int h = 0; h < components; ++h) {
+      pin_->SetRealExact("fastflow", "amr_radius_" + std::to_string(h),
+                         surfaces_[h].upper);
+    }
+  }
   auto mask=Kokkos::create_mirror_view(exterior_);
   for (int q=0;q<module_->npoints;++q) {
     const Real x[3]={positions_(q,0),positions_(q,1),positions_(q,2)};

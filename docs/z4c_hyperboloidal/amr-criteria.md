@@ -35,3 +35,25 @@ behavior, the surface neighbor with poisoned exterior padding, and collective
 registration shape/schema validation and buffer reuse. The test does not evolve
 or perform a regrid. Coupled AMR admission requires the separate lifecycle and
 transfer gates in `amr-transfer-contract.md`.
+
+## Binary Cartesian chi refinement
+
+For a hyperboloidal binary, set `mesh_refinement/refinement = adaptive` and
+`amr_criterion0/method = user`. The callback tests the minimum physical chi on
+each eligible Cartesian block inside the regular core. A block requests
+refinement below `z4c_amr/chi_min` (default 0.2) and coarsening above 1.25
+times that threshold. Set `z4c_amr/max_ref_lev` relative to the Cartesian
+root. Sibling and neighbor checks still apply to coarsening.
+
+Set `z4c_amr/horizon_padding_cells` to a nonnegative value to protect both
+horizons at the finest allowed level. The code centers the last accepted
+FastFlow radius bound on each current puncture position and adds the specified
+number of finest Cartesian cells. Before the first accepted search it uses the
+configured initial radius. Restart files retain the accepted radius bounds.
+The default value of -1 disables this option.
+
+With `z4c_amr/allow_coarsening = true`, the first scheduled check can trim the
+seed grid. Subsequent coarsening requires a check whose coarse cycle is a
+multiple of `z4c_amr/coarsen_interval` (default 1). Use a multiple of
+`mesh_refinement/ncycle_check` for a predictable cadence. Refinement requests
+are evaluated at every scheduled check.
