@@ -15,6 +15,8 @@ All four 0.9508 runs used the same final executable, the same eight physical GPU
 
 The half domain with a coarse exterior used the fewest GPU-hours. Across the six saved comparisons with the full original-spacing mesh its largest centroid difference was 8.89e-16 M. The largest metric difference on the common spatial lattice was 2.63e-4 in the axial metric component, versus 6.22e-3 from sampling the reference output at twice its native spacing on the same slice. These measurements cover initial infall. The original-boundary full/half pairs and the winning square layout are undergoing separate long-interval qualification at both spins. The production bisection retains its existing setup.
 
+On the original (36,18) boundary the independent 0.9508 full and half evolutions have passed the first minimum in the radiation centroid. Across eight sampled snapshots through 2.05614 M, their circumferential centroids differed by at most 1.36e-9 M and integrated vertical stresses by at most 1.56e-10. The reference centroid was 1.49989 M at 1.88710 M and 1.50306 M at 2.05614 M. At the latter time the largest matched-time metric difference was 4.77e-7, compared with 4.63e-2 upon two-cell sampling of the reference field. The independent evolutions have yet to reach the archived trapping window.
+
 ## Reflection and diagnostics
 
 In the evolved component order \( (\rho,z,\phi) \), the reflection matrix is `diag(1,-1,1)`. A Cartesian tensor component acquires one minus sign per axial index. The odd Z4c fields are gXY, gYZ, AXY, AYZ, GammaY, betaY and BY. Lapse, chi, trace variables and the other components are even. The odd radiation moments are Sxy, Syz and Sy. Syy, the vertical normal stress, is even.
