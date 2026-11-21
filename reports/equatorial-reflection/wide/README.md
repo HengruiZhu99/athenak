@@ -29,7 +29,7 @@ Job 58078 ran the 1.0600 case on four physical B200s on StellarAI node sai-n02g3
 | 36 | 33.02 | 42,790 | 294.70 | 0.32744 | 28,856 |
 | 288 | 62.03 | 80,396 | 372.65 | 0.41406 | 28,858 |
 
-Moving both outer faces eight times farther increased GPU-hours by 26.45% over this interval. Both runs finished with a mean circumferential radius of 2.536991 initial ADM masses, differing by 4.45e-16. The block-size trials compare 72 × 36 and 72 × 72 on the same enlarged domain. The timing data file records the completed comparisons. This early interval checks the enlarged grid during initial infall.
+Moving both outer faces eight times farther increased GPU-hours by 26.45% over this interval. Both runs finished with a mean circumferential radius of 2.536991 initial ADM masses, differing by 4.45e-16. The 72 × 36 wide layout completed the same interval in 377.93 seconds (0.41992 GPU-hours). It averaged the same 80,396 active cells as 36 × 36. The 72 × 72 layout took 489.03 seconds. The timing data file records all four completed comparisons. This early interval checks the enlarged grid during initial infall.
 
 ## Reproduction
 
@@ -42,3 +42,12 @@ sbatch --ntasks-per-node=4 --gres=gpu:4 --mem=150G -t 00:25:00 tst/unit/boltzman
 ```
 
 Use `--root-blocks 1 --block-cells 72 --axial-block-cells 36` for the radially paired alternative. All new wide-layout inputs require at least 36 cells along each block edge. The historical decks have their original block size.
+
+
+## 1.0600 continuation to 60 ADM masses
+
+The independent large-domain campaign uses the shortest measured GPU time among completed 288-unit pilots in allocation 58078. The launcher verifies common hardware, executable, initial data and physical benchmark duration. It continues the last pilot checkpoint, which includes the initial 0.09954345 M of evolution. Each subsequent segment follows the previous checkpoint on one StellarAI node with eight B200s. The three endpoints in code units are 100.45864399412136, 200.91728798824272 and 301.3759319823641.
+
+The endpoint analysis follows the saved restart paths back to the initial slice, joins the proper-volume energy-weighted circumferential centroids by cycle, audits the three-branch horizon searches, and checks candidate interiors on the full meridian. A verified future-trapped surface establishes collapse. Operational dispersal requires the completed 60 M slice with mean radius above 2.5 M and no trapping found. A marginal candidate without an independently verified interior is flagged for review. This run has its own classification, separate from the original-boundary threshold ledger.
+
+For this campaign, the 20 M and 40 M segments have Slurm IDs 58150 and 58151. Handoff 58173 submits the 60 M GPU segment after 58151 completes and frees its queue slot. The final segment schedules the CPU endpoint analysis. The selected 36 × 36 parent is `measure-58078/wide288-b36/rst/torus.00001.rst`.
