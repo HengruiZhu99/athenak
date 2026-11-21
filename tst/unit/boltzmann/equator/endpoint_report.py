@@ -44,7 +44,9 @@ def write_report(result, reference, trial, output):
         lines.append(f"The largest {group[:-1]} field difference on the common spatial lattice was "
                      f"{float(worst['Linf']):.5g} in {worst['field']} at "
                      f"{float(worst['t_full_M']):.6g} M. The paired times differed by "
-                     f"{abs(float(worst['delta_t_M'])):.3g} M.")
+                     f"{abs(float(worst['delta_t_M'])):.3g} M. On this snapshot the reference "
+                     f"two-cell sampling change was {float(worst['reference_sampling_Linf']):.5g} "
+                     f"and the matched-time difference was {float(worst['matched_time_Linf']):.5g}.")
     dcon = np.array(result["half"]["final_constraint_sums"])-result["full"]["final_constraint_sums"]
     lines.append("Terminal trial-minus-reference squared constraint integrals (C, H, M, Z) were "
                  + ", ".join(f"{x:.5g}" for x in dcon) + ".")

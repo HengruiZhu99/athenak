@@ -2,6 +2,19 @@
 
 The opt-in boundary is `mesh/ix2_bc=reflect` with `mesh/x2min=0` and the existing Cartoon axis at `x1min=0`. The refined family uses 24 bins in the prograde azimuthal direction cosine, 48 meridional sectors, fourth-order transport and source projection, and SSPRK(10,4). The baseline full-domain solver revision is `e430bbe7`. The full-domain reference deck is `inputs/boltzmann/refined_ring.athinput`. Use the identical elliptic initial-data file for each half/full pair.
 
+## Eight-B200 comparison
+
+All four 0.9508 runs used the same final executable, the same eight physical GPUs on `sai-n02g2`, outer faces at distance 36, and 569 timesteps through 0.2 M. Time-mean blocks are weighted by physical timestep. Wall time includes startup, output and the final checkpoint. The memory column gives the largest one-second device sample.
+
+| Layout | Mean active blocks | Wall seconds | GPU-hours | Saving | Peak MiB/GPU |
+|---|---:|---:|---:|---:|---:|
+| Full, original exterior | 114.95 | 169.77 | 0.37727 | — | 15,932 |
+| Half, original exterior | 57.47 | 115.81 | 0.25736 | 31.78% | 15,928 |
+| Full, coarse exterior | 80.53 | 139.58 | 0.31018 | 17.78% | 15,932 |
+| Half, coarse exterior | 40.26 | 100.53 | 0.22340 | 40.78% | 15,928 |
+
+The half domain with a coarse exterior used the fewest GPU-hours. Across the six saved comparisons with the full original-spacing mesh its largest centroid difference was 8.89e-16 M. The largest metric difference on the common spatial lattice was 2.63e-4 in the axial metric component, versus 6.22e-3 from sampling the reference output at twice its native spacing on the same slice. These measurements cover initial infall. The original-boundary full/half pairs and the winning square layout are undergoing separate long-interval qualification at both spins. The production bisection retains its existing setup.
+
 ## Reflection and diagnostics
 
 In the evolved component order \( (\rho,z,\phi) \), the reflection matrix is `diag(1,-1,1)`. A Cartesian tensor component acquires one minus sign per axial index. The odd Z4c fields are gXY, gYZ, AXY, AYZ, GammaY, betaY and BY. Lapse, chi, trace variables and the other components are even. The odd radiation moments are Sxy, Syz and Sy. Syy, the vertical normal stress, is even.

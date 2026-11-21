@@ -12,7 +12,7 @@ ODD = {"tmunu_Sxy", "tmunu_Syz", "tmunu_Sy", "adm_gxy", "adm_gyz", "adm_Kxy",
        "adm_Kyz", "adm_betay", "con_My"}
 
 
-def raster(frame, key, h):
+def raster(frame, key, h, stride=1):
     # Sample the native data on common cell centers. Use piecewise constants
     # for finite-volume fields and bilinear interpolation for nodal outputs.
     bounds = np.array(frame["mb_geometry"])
@@ -23,6 +23,12 @@ def raster(frame, key, h):
         r0,r1,y0,y1 = block[:4]
         a = a[0]
         cell = key.startswith("tmunu_")
+        if stride > 1:
+            if cell:
+                nz, nr = a.shape
+                a = a.reshape(nz//stride,stride,nr//stride,stride).mean(axis=(1,3))
+            else:
+                a = a[::stride,::stride]
         nx, ny = a.shape[1]-(not cell), a.shape[0]-(not cell)
         ix = round(r0/h)
         iy = round((y0-z0)/h)
@@ -63,7 +69,13 @@ def compare(full, half, mass, prefix):
         t, _ = stamp(p)
         if t < reference_times[0]-1.e-12 or t > reference_times[-1]+1.e-12:
             continue
-        q = frames[np.argmin(abs(reference_times-t))]
+        nearest = int(np.argmin(abs(reference_times-t)))
+        q = frames[nearest]
+        other = nearest
+        if abs(reference_times[nearest]-t) > 1.e-12:
+            other = min(max(nearest+(1 if reference_times[nearest]<t else -1),0),len(frames)-1)
+        fraction = ((t-reference_times[nearest])/(reference_times[other]-reference_times[nearest])
+                    if other != nearest else 0.)
         a,b = profile(q,mass),profile(p,mass)
         row = dict(cycle_full=a["cycle"],cycle_half=b["cycle"],t_full_M=a["t_M"],
                    delta_t_M=b["t_M"]-a["t_M"])
@@ -71,6 +83,10 @@ def compare(full, half, mass, prefix):
         for kind in ("tmunu","adm","con"):
             ff = read_binary(q.with_name(q.name.replace(".tmunu.",f".{kind}.")))
             hf = read_binary(p.with_name(p.name.replace(".tmunu.",f".{kind}.")))
+            next_frame = None
+            if other != nearest:
+                neighbor = frames[other]
+                next_frame = read_binary(neighbor.with_name(neighbor.name.replace(".tmunu.",f".{kind}.")))
             fb,hb = np.array(ff["mb_geometry"]),np.array(hf["mb_geometry"])
             np.testing.assert_allclose(fb[:,[1,3]].max(axis=0), hb[:,[1,3]].max(axis=0))
             fold = fb[:,2].min() < 0 and hb[:,2].min() == 0
@@ -90,8 +106,16 @@ def compare(full, half, mass, prefix):
                 error = upper-value
                 rho = (np.arange(value.shape[1])+.5)*h
                 weights = np.broadcast_to(rho,value.shape)
+                spatial = raster(ff,key,h,stride=2)-value
+                shift = fraction*(raster(next_frame,key,h)-value) if next_frame is not None else 0.
+                aligned = error-shift
                 field_rows.append(dict(row, field=key, Linf=np.max(abs(error)),
-                                       rms=np.sqrt(np.average(error**2, weights=weights))))
+                                       rms=np.sqrt(np.average(error**2, weights=weights)),
+                                       matched_time_Linf=np.max(abs(aligned)),
+                                       matched_time_rms=np.sqrt(np.average(aligned**2,weights=weights)),
+                                       reference_sampling_Linf=np.max(abs(spatial)),
+                                       reference_sampling_rms=np.sqrt(np.average(spatial**2,weights=weights)),
+                                       reference_time_shift_Linf=np.max(abs(shift))))
     for suffix, rows in [("profiles",scalar_rows),("fields",field_rows)]:
         if not rows:
             raise ValueError("no comparable outputs")
