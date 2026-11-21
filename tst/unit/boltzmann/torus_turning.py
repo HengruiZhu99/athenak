@@ -12,6 +12,7 @@ import matplotlib
 matplotlib.use("Agg")
 from matplotlib import pyplot as plt
 from evolution import read_binary, cells
+from ring_reflection import reflected_equator
 
 
 def profiles(directory, rays, metrics, band):
@@ -25,6 +26,7 @@ def profiles(directory, rays, metrics, band):
                 key, val = line.split("=", 1)
                 inputs[key.strip()] = val.strip()
         columns = {}
+        copies = 2 if reflected_equator(frame) else 1
         height_second = 0.0
         for name in ["E", "Sx"]:
             field = "tmunu_" + name
@@ -34,11 +36,11 @@ def profiles(directory, rays, metrics, band):
             mid = {}
             for r, z, v, dr, dz in cells(frame, field):
                 if name == "E":
-                    height_second += 2 * np.pi * dr * dz * np.sum(r * z * z * v, dtype=np.float64)
+                    height_second += copies * 2 * np.pi * dr * dz * np.sum(r * z * z * v, dtype=np.float64)
                 for k, rho in enumerate(r[0]):
                     idx = round(rho / dr - 0.5)
-                    bins[idx] = bins.get(idx, 0) + np.sum(v[:, k]) * dz
-                    mid[idx] = mid.get(idx, 0) + 0.5 * np.sum(v[abs(z[:, k]) < 0.51 * dz, k])
+                    bins[idx] = bins.get(idx, 0) + copies * np.sum(v[:, k]) * dz
+                    mid[idx] = mid.get(idx, 0) + copies * 0.5 * np.sum(v[abs(z[:, k]) < 0.51 * dz, k])
             columns[name] = np.array([bins[k] for k in sorted(bins)])
             columns["mid" + name] = np.array([mid[k] for k in sorted(mid)])
         e, f = columns["E"], columns["Sx"]

@@ -2,7 +2,6 @@
 
 import argparse
 import json
-import re
 from pathlib import Path
 import sys
 
@@ -13,6 +12,7 @@ from scipy.optimize import least_squares
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "vis/python"))
 from bin_convert import read_binary
+from ring_reflection import reflected_equator
 
 
 class NativePatch:
@@ -49,8 +49,7 @@ class NativePatch:
             grid[:, j:j+nodes.shape[1], i:i+nodes.shape[2]] = nodes
         # Mirror only a declared equatorial boundary. A finest patch wholly
         # north of the plane in a full-domain file is a different situation.
-        mesh = re.search(r"(?ms)^<mesh>\n(.*?)(?=^<|\Z)", "\n".join(frame["header"]))
-        if mesh and re.search(r"(?m)^ix2_bc\s*=\s*reflect\s*$", mesh[1]):
+        if reflected_equator(frame):
             if low_z != 0:
                 raise ValueError("the finest equatorial patch must touch z=0")
             parity = np.array([1, -1, 1, 1, -1, 1] * 2)
@@ -77,7 +76,7 @@ class NativePatch:
         return six[:, [[0, 1, 2], [1, 3, 4], [2, 4, 5]]]
 
 
-def measure(patch, coeff, theta):
+def measure(patch, coeff, theta, center_z=0.):
     """Compute D_i s^i through the cylindrical divergence of the unit normal."""
     poles = (theta == 0) | (theta == np.pi)
     u, sn = np.cos(theta), np.where(poles, 0., np.sin(theta))
@@ -85,7 +84,7 @@ def measure(patch, coeff, theta):
     dh = -sn * leg.legval(u, leg.legder(coeff))
     rho, z = h*sn, h*u
     step = 1e-3 * patch.dx
-    if h.min() <= 0 or max(abs(rho).max(), abs(z).max()) + step >= patch.bound:
+    if h.min() <= 0 or max(abs(rho).max(), abs(z+center_z).max()) + step >= patch.bound:
         raise ValueError("trial surface outside native patch")
 
     def normal(r, y):
@@ -94,7 +93,7 @@ def measure(patch, coeff, theta):
         derivative = -sine * leg.legval(cosine, leg.legder(coeff))
         dF = np.stack((sine - derivative*cosine/radius,
                        cosine + derivative*sine/radius, np.zeros_like(r)), axis=-1)
-        g = patch.tensor(r, y, 0)
+        g = patch.tensor(r, y+center_z, 0)
         determinant = np.linalg.det(g)
         minor = g[:, 0, 0] * g[:, 1, 1] - g[:, 0, 1]**2
         if not np.all((g[:, 0, 0] > 0) & (minor > 0) & (determinant > 0)):
@@ -120,7 +119,7 @@ def measure(patch, coeff, theta):
         dr = (densitized(zero+step,zp,0) - densitized(zero-step,zp,0))/(2*step)
         dz = (densitized(zero,zp+step,1) - densitized(zero,zp-step,1))/(2*step)
         div[poles] = (2*dr+dz)/np.sqrt(np.linalg.det(g[poles]))
-    k = patch.tensor(rho, z, 6)
+    k = patch.tensor(rho, z+center_z, 6)
     projected = np.einsum("ni,nij,nj->n", n, k, n) - np.einsum("nij,nij->n", inv, k)
     tangent = np.stack((dh*sn+h*u, dh*u-h*sn, np.zeros_like(h)), axis=-1)
     t2 = np.einsum("ni,nij,nj->n", tangent, g, tangent)

@@ -9,6 +9,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "vis/python"))
 from bin_convert import read_binary
+from ring_reflection import reflected_equator
 
 
 def profile(path, mass=1.0):
@@ -20,6 +21,7 @@ def profile(path, mass=1.0):
     if adm is not None:
         np.testing.assert_array_equal(geometry, adm["mb_geometry"])
         assert frame["cycle"] == adm["cycle"]
+    copies = 2 if reflected_equator(frame) else 1
     weights, distances, circumferential = [], [], []
     flow, peak = 0.0, 0.0
     for block, bounds in enumerate(geometry):
@@ -31,7 +33,7 @@ def profile(path, mass=1.0):
         rho, z = np.meshgrid(bounds[0] + (np.arange(nr) + 0.5) * dr,
                              bounds[2] + (np.arange(nz) + 0.5) * dz)
         rad = np.hypot(rho, z)
-        vol = 2 * np.pi * rho * dr * dz
+        vol = copies * 2 * np.pi * rho * dr * dz
         if adm is not None:
             g = [adm["mb_data"]["adm_g" + k][block][0].astype(float)
                  for k in ("xx", "xy", "xz", "yy", "yz", "zz")]

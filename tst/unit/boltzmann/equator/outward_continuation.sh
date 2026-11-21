@@ -23,7 +23,7 @@ v=json.loads((p/"summary.json").read_text())
 last=list(csv.DictReader((p/"timed-profiles.csv").open()))[-1]
 trial=float(last["mean_Rcirc_M"])
 reference=trial-float(last["delta_mean_Rcirc_M"])
-if float(last["t_M"])<30-1e-7 or min(reference,trial)<=2.5 or any("first_verified_in_window" in r for r in v.values()):
+if float(last["t_M"])<30-1e-7 or min(reference,trial)<=2.5 or any(r["first_online_marginal_cycle"] is not None or r["reported_interiors"] or "first_verified_in_window" in r for r in v.values()):
     raise SystemExit("30 M outward conditions not met; retain the endpoint evidence for review")
 PY
 family=j10600_refined

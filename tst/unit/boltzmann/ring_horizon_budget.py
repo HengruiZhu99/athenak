@@ -7,6 +7,7 @@ import numpy as np
 from numpy.polynomial import legendre as leg
 
 from ring_surface import NativePatch, measure, read_binary
+from ring_reflection import reflected_equator
 
 
 def native_values(frame, rho, z, key):
@@ -39,6 +40,8 @@ def budget(snapshot, fit, mass, initial_j):
     if adm["cycle"] != field["cycle"] or not np.isclose(adm["time"],fit["time"]):
         raise ValueError("snapshot and candidate times differ")
     coeff = np.array(fit["coeff"])
+    signs = (1., -1.) if reflected_equator(field) else (1.,)
+    center_z = fit.get("center_z", 0.)
     full, exterior = 0., 0.
     q, w = leg.leggauss(4)
     for block, domain in enumerate(field["mb_geometry"]):
@@ -57,12 +60,14 @@ def budget(snapshot, fit, mass, initial_j):
         if np.any(det<=0):
             raise ValueError("nonpositive metric determinant in volume integral")
         dj = 2*np.pi*dr*dz*np.sqrt(det)*rho**2*sphi
-        full += dj.sum()
+        full += len(signs)*dj.sum()
         fraction = np.zeros_like(rho)
         for u,wu in zip(q,w):
             for v,wv in zip(q,w):
-                r = np.hypot(rho+.5*dr*u, z+.5*dz*v)
-                fraction += .25*wu*wv*(r > leg.legval((z+.5*dz*v)/r,coeff))
+                for sign in signs:
+                    local_z = sign*(z+.5*dz*v)-center_z
+                    r = np.hypot(rho+.5*dr*u, local_z)
+                    fraction += .25*wu*wv*(r > leg.legval(local_z/r, coeff))
         exterior += (fraction*dj).sum()
     j = fit.get("surface_J",fit.get("JH"))
     result=dict(time=fit["time"],cycle=int(adm["cycle"]),surface_J=j,matter_J=full,
@@ -75,11 +80,12 @@ def budget(snapshot, fit, mass, initial_j):
             raise ValueError("constraint and surface times differ")
         x,w = leg.leggauss(160)
         theta=np.arccos(x)
-        h,_,_,da,_=measure(NativePatch(adm),coeff,theta)
+        h,_,_,da,_=measure(NativePatch(adm),coeff,theta,center_z)
         darea=w*da/np.sin(theta)
-        rho,z=h*np.sin(theta),h*x
+        rho,z=h*np.sin(theta),h*x+center_z
         for key,label in [("con_H","H"),("con_M","M")]:
-            value = native_values(frame,rho,z,key)
+            sample_z = abs(z) if reflected_equator(frame) else z
+            value = native_values(frame,rho,sample_z,key)
             if label=="M":
                 value=np.sqrt(np.maximum(value,0))
             result[label+"_rms_M2"]=mass**2*np.sqrt(darea @ (value*value)/darea.sum())

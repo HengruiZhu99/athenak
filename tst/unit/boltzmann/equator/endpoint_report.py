@@ -77,10 +77,15 @@ def write_report(result, reference, trial, output):
             lines.append(f"At coordinate radius 17 the finite-sphere mass changed from "
                          f"{initial['M_sphere']:.8g} to {last['M_sphere']:.8g}, and axial J "
                          f"from {initial['J_sphere']:.8g} to {last['J_sphere']:.8g}.")
+        for branch in v.get("reported_interiors", []):
+            if branch["verified"]:
+                lines.append(f"The online {branch['branch']} interior centered at "
+                             f"z={branch['center_z']:.6g} first passed the independent "
+                             f"whole-surface check at {branch['t_M']:.7f} M.")
         surface = v.get("first_verified_in_window")
         if surface:
             outer = surface["enclosing_fit"]
-            lines.append(f"The first strictly trapped witness in the searched window occurred at "
+            lines.append(f"The first independently fitted centered trapped witness in the searched window occurred at "
                          f"{surface['t_M']:.7f} M and spanned {surface['zones']:.2f} radial cells.")
             if outer["accepted"]:
                 lines.append(f"The independently fitted enclosing marginal surface had area "

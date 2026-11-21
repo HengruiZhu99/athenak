@@ -8,6 +8,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[4]/"vis/python"))
 from bin_convert import read_binary
+from ring_reflection import reflected_equator
 
 
 def profile(path, mass, *, stride=1, minimum_spacing=0.):
@@ -19,14 +20,7 @@ def profile(path, mass, *, stride=1, minimum_spacing=0.):
 def profile_frames(f, adm, mass, *, stride=1, minimum_spacing=0.):
     np.testing.assert_array_equal(adm["mb_geometry"], f["mb_geometry"])
     assert adm["cycle"] == f["cycle"]
-    # Require the declared equatorial boundary, not just an output covering z>=0.
-    block = ""
-    copies = 1
-    for line in f["header"]:
-        if line.startswith("<"):
-            block = line
-        elif block == "<mesh>" and line.partition("=")[0].strip() == "ix2_bc":
-            copies = 2 if line.partition("=")[2].strip() == "reflect" else 1
+    copies = 2 if reflected_equator(f) else 1
     weights, radii, sizes = [], [], []
     angular = vertical = 0.
     for b, bounds in enumerate(f["mb_geometry"]):

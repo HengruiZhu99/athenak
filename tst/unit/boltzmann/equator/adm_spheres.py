@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from diagnostics import read_binary
+from diagnostics import read_binary, reflected_equator
 
 
 def interpolation(q, count):
@@ -23,8 +23,7 @@ def interpolation(q, count):
 def charges(frame, radius, ntheta=128):
     bounds = np.asarray(frame["mb_geometry"])
     half = bounds[:,2].min() == 0
-    if half and not any(v.split("=")[-1].strip()=="reflect" for v in frame["header"]
-                        if v.partition("=")[0].strip()=="ix2_bc"):
+    if half and not reflected_equator(frame):
         raise ValueError("northern coverage requires equatorial reflection")
     if radius >= min(bounds[:,1].max(), bounds[:,3].max(), np.inf if half else -bounds[:,2].min()):
         raise ValueError("extraction sphere crosses the outer boundary")

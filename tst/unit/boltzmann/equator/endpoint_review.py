@@ -48,6 +48,42 @@ def summarize_run(folder):
                 history_rows=len(history), final_constraint_sums=constraints[-1,2:6].tolist())
 
 
+def check_online_interiors(folder, frames, mass):
+    """Verify the first reported interior on each signed branch with native geometry."""
+    path = folder/"torus.cartoon_m0_inner_0.txt"
+    if not path.exists():
+        return []
+    by_cycle = {stamp(f)[1]:f for f in frames}
+    theta = np.r_[0., np.linspace(1.e-5,np.pi-1.e-5,4097), np.pi]
+    verified, trials = set(), []
+    for line in path.read_text().splitlines():
+        row = line.split()
+        if not row or row[0].startswith("#") or row[4] != "1" or row[2] in verified:
+            continue
+        cycle, branch, center = int(row[0]), row[2], float(row[5])
+        record = dict(cycle=cycle, branch=branch, center_z=center, t_M=float(row[1])/mass,
+                      verified=False)
+        trials.append(record)
+        if cycle not in by_cycle:
+            record["failure"] = "no matching native geometry"
+            continue
+        coeff = np.array(row[10:], dtype=float)
+        coeff *= np.sqrt((2*np.arange(coeff.size)+1)/(4*np.pi))
+        try:
+            patch = NativePatch(read_binary(by_cycle[cycle]))
+            checks = []
+            for metric in (patch, LocalPolynomial(patch,3), LocalPolynomial(patch,5)):
+                h, plus, minus, _, _ = measure(metric, coeff, theta, center)
+                checks.append([float(max(h*plus)), float(max(h*minus))])
+            record["max_expansions"] = checks
+            record["verified"] = all(max(pair)<0 for pair in checks)
+            if record["verified"]:
+                verified.add(branch)
+        except (ValueError, np.linalg.LinAlgError) as error:
+            record["failure"] = str(error)
+    return trials
+
+
 def window(folder):
     log=folder/"torus.cartoon_m0_horizon_0.txt"
     rows=[line.split() for line in log.read_text().splitlines() if line and not line.startswith("#")]
@@ -83,6 +119,7 @@ if __name__ == "__main__":
         result[side]=summarize_run(folder)
         frames=sorted((folder/"bin").glob("*.adm.*.bin"))
         result[side]["R17_charges"] = [charges(read_binary(f),17) for f in (frames[0],frames[-1])]
+        result[side]["reported_interiors"] = check_online_interiors(folder, frames, mass)
         first, selected=window(folder)
         result[side]["first_online_marginal_cycle"]=first
         if first is None and seed.is_file():

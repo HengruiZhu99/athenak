@@ -10,8 +10,9 @@ class KerrSchild:
     dx = 0.02
     bound = 8.0
 
-    def __init__(self, a):
+    def __init__(self, a, center_z=0.):
         self.a = a
+        self.center_z = center_z
 
     def fields(self, points):
         x, y, z = points.T
@@ -24,7 +25,7 @@ class KerrSchild:
                 twice_h[:, None]*l, 1/np.sqrt(1+twice_h))
 
     def tensor(self, rho, z, start):
-        points = np.column_stack((rho, np.zeros_like(rho), z))
+        points = np.column_stack((rho, np.zeros_like(rho), z-self.center_z))
         g, shift, lapse = self.fields(points)
         if start:
             # Stationarity gives 2 alpha K_ij = D_i beta_j + D_j beta_i.
@@ -68,4 +69,10 @@ if __name__ == "__main__":
             coefficients = leg.legfit(x, radius, 40)
             h, plus, minus, _, _ = measure(KerrSchild(a), coefficients, dense)
             assert min(sign*h*plus) > 0 and max(h*minus) < 0
+            if a == .995:
+                for center in (-1.25, 1.25):
+                    _, shifted_plus, shifted_minus, _, _ = measure(
+                        KerrSchild(a, center), coefficients, dense, center)
+                    np.testing.assert_allclose(shifted_plus, plus, atol=1.e-8, rtol=0)
+                    np.testing.assert_allclose(shifted_minus, minus, atol=1.e-8, rtol=0)
             print("neighbor", a, sign, min(h*plus), max(h*plus), max(h*minus))
