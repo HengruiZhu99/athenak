@@ -238,12 +238,19 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     // Native restriction/prolongation uses an ordered, contiguous old layout.
     // Stage that layout only for a potential topology change, after all ranks
     // have agreed on the flags and while the old tree is still intact.
-    int refine = 0, derefine = 0;
-    for (int gid=0; gid<pmy_mesh->nmb_total; ++gid) {
-      refine += refine_flag.h_view(gid)>0;
-      derefine += refine_flag.h_view(gid)<0;
+    const int *flags = refine_flag.h_view.data();
+    bool change = std::any_of(flags, flags + pmy_mesh->nmb_total,
+                              [](int flag) { return flag > 0; });
+    for (int gid = 0; !change && gid < pmy_mesh->nmb_total; ++gid) {
+      const auto &loc = pmy_mesh->lloc_eachmb[gid];
+      // Only the first child of a complete, flagged sibling group can propose a merge.
+      if (flags[gid] >= 0 || loc.level <= pmy_mesh->root_level ||
+          ((loc.lx1 | loc.lx2 | loc.lx3) & 1)) continue;
+      const LogicalLocation parent{loc.lx1/2, loc.lx2/2, loc.lx3/2,
+                                   loc.level-1, loc.chart_id};
+      change = pmy_mesh->ptree->FindMeshBlock(parent)->CanDerefine(flags);
     }
-    if (refine || derefine>=8) {
+    if (change) {
       const int total=pmy_mesh->nmb_total, ranks=global_variable::nranks;
       std::vector<float> costs(total,1);
       std::vector<int> owners(total), first(ranks), counts(ranks);

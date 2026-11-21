@@ -87,6 +87,7 @@ class MeshBlockTree {
   void AddNode(LogicalLocation rloc, int &nnew);
   void AddNodeWithoutRefinement(LogicalLocation rloc);
   void Refine(int &nnew);
+  bool CanDerefine(const int *flags = nullptr);
   void Derefine(int &ndel);
   MeshBlockTree* FindMeshBlock(LogicalLocation tloc);
   void CountMeshBlocks(int& count);

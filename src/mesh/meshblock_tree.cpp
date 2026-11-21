@@ -455,15 +455,15 @@ void MeshBlockTree::Refine(int &nnew) {
 }
 
 //----------------------------------------------------------------------------------------
-//! \fn void MeshBlockTree::Derefine(int &ndel)
-//! \brief destroy leaves and make this block a leaf
+//! \brief Check whether all children can merge. Optional flags are indexed by leaf GID.
 
-void MeshBlockTree::Derefine(int &ndel) {
-  if (pleaf_ == nullptr || lloc_.level < root_grid_->root_level) return;
+bool MeshBlockTree::CanDerefine(const int *flags) {
+  if (pleaf_ == nullptr || lloc_.level < root_grid_->root_level) return false;
   for (int n=0; n<nleaf_; ++n) {
-    if (pleaf_[n] == nullptr || !pleaf_[n]->IsLeaf()) return;
+    if (pleaf_[n] == nullptr || !pleaf_[n]->IsLeaf()) return false;
+    if (flags && flags[pleaf_[n]->gid_] >= 0) return false;
   }
-  if (!CanDerefineAcrossSeams()) return;
+  if (!CanDerefineAcrossSeams()) return false;
   int s2=0, e2=0, s3=0, e3=0;
   if ((root_grid_->ndim > 1)) s2=-1, e2=1;
   if ((root_grid_->ndim > 2)) s3=-1, e3=1;
@@ -495,7 +495,7 @@ void MeshBlockTree::Derefine(int &ndel) {
               for (int lj=ljs; lj<=lje; lj++) {
                 for (int li=lis; li<=lie; li++) {
                   int n = li + (lj<<1) + (lk<<2);
-                  if (bt->pleaf_[n]->pleaf_ != nullptr) return;
+                  if (bt->pleaf_[n]->pleaf_ != nullptr) return false;
                 }
               }
             }
@@ -505,6 +505,11 @@ void MeshBlockTree::Derefine(int &ndel) {
     }
   }
 
+  return true;
+}
+
+void MeshBlockTree::Derefine(int &ndel) {
+  if (!CanDerefine()) return;
   gid_ = pleaf_[0]->gid_; // now this is a leaf; inherit the first leaf's GID
   for (int n=0; n<nleaf_; n++) {
     delete pleaf_[n];
