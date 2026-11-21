@@ -8,6 +8,10 @@
 
 struct HistoryData;
 namespace boltzmann {
+KOKKOS_INLINE_FUNCTION int EquatorialPartner(int bin, int sectors) {
+  return (bin / sectors + 1) * sectors - 1 - bin % sectors;
+}
+
 struct FaceGeometry {
   Real minus_shift, triad[3], killing_norm;
   KOKKOS_INLINE_FUNCTION Real Speed(const Real n[3]) const {
@@ -44,7 +48,7 @@ class Boltzmann {
   // Per-ordinate angle averages of (1, n_a, n_a n_b), in Tmunu order.
   DvceArray2D<Real> weights;
   Real escaped = 0, escaped_j = 0, work = 0;
-  void Ghosts();
+  void Ghosts(bool coarse_only = false);
   void ReflectEquatorialFlux();
 
  private:

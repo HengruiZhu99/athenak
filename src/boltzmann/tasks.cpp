@@ -62,11 +62,11 @@ TaskStatus Boltzmann::Clear(Driver*, int stage) {
   return TaskStatus::complete;
 }
 
-void Boltzmann::Ghosts() {
+void Boltzmann::Ghosts(bool coarse_only) {
   const auto flags = pack->pmb->mb_bcs.d_view;
   const auto b = pack->pmesh->mb_indcs;
   const int sectors = npsi;
-  for (int level = 0; level < 1 + pack->pmesh->multilevel; ++level) {
+  for (int level = coarse_only ? 1 : 0; level < 1 + pack->pmesh->multilevel; ++level) {
     auto state = level == 0 ? u : coarse;
     int is = level == 0 ? b.is : b.cis, ie = level == 0 ? b.ie : b.cie;
     int js = level == 0 ? b.js : b.cjs, je = level == 0 ? b.je : b.cje;
@@ -86,7 +86,7 @@ void Boltzmann::Ghosts() {
           0, nang - 1, 0, js - 1, 0, state.extent_int(4) - 1,
           KOKKOS_LAMBDA(int m, int n, int j, int i) {
             if (flags(m, BoundaryFace::inner_x2) == BoundaryFlag::reflect) {
-              const int partner = n / sectors * sectors + sectors - 1 - n % sectors;
+              const int partner = EquatorialPartner(n, sectors);
               state(m, n, 0, j, i) = state(m, partner, 0, 2 * js - 1 - j, i);
             }
           });
@@ -109,7 +109,7 @@ TaskStatus Boltzmann::RecvState(Driver*, int) {
   if (pack->pmesh->multilevel) {
     boundary->FillCoarseInBndryCC(u, coarse);
     // Restriction can populate a new coarse tangential neighbor at the equator.
-    if (pack->pmesh->mesh_bcs[BoundaryFace::inner_x2] == BoundaryFlag::reflect) Ghosts();
+    if (pack->pmesh->mesh_bcs[BoundaryFace::inner_x2] == BoundaryFlag::reflect) Ghosts(true);
     boundary->ProlongateCC(u, coarse);
     Ghosts();
   }

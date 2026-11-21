@@ -17,7 +17,7 @@ void Boltzmann::ReflectEquatorialFlux() {
           KOKKOS_LAMBDA(int m, int band, int sector, int i) {
             if (flags(m, BoundaryFace::inner_x2) != BoundaryFlag::reflect) return;
             auto &a = face(m, band * sectors + sector, 0, b.js, i);
-            auto &bflux = face(m, (band + 1) * sectors - 1 - sector, 0, b.js, i);
+            auto &bflux = face(m, EquatorialPartner(band * sectors + sector, sectors), 0, b.js, i);
             // Equal and opposite, with no increase in either limited donor flux.
             const Real paired = (a > 0 && bflux < 0) ? fmin(a, -bflux) :
                                 (a < 0 && bflux > 0) ? fmax(a, -bflux) : 0;

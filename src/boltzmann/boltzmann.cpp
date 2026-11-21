@@ -34,11 +34,11 @@ Boltzmann::Boltzmann(MeshBlockPack* pp, ParameterInput* pin)
     if (f == BoundaryFace::inner_x2 && bc == BoundaryFlag::reflect &&
         pp->pmesh->mesh_size.x2min == 0 &&
         pp->pmesh->mesh_bcs[BoundaryFace::inner_x1] == BoundaryFlag::axis &&
-        pp->pmesh->mb_indcs.nx2 >= 2 * pp->pmesh->mb_indcs.ng) continue;
+        pp->pmesh->mb_indcs.nx2 >= (pp->pmesh->multilevel ? 2 : 1) * pp->pmesh->mb_indcs.ng) continue;
     if (bc != BoundaryFlag::outflow && !(f >= 2 && bc == BoundaryFlag::periodic))
       throw std::invalid_argument(
           "Boltzmann transport requires open boundaries, periodic z, or inner_x2 "
-          "reflection at z=0 with an axis and at least 2*ng axial cells per block");
+          "reflection at z=0 with an axis and enough axial cells to mirror each ghost layer");
   }
   const auto rk = pin->GetOrAddString("time", "integrator", "rk2");
   if (rk != "rk1" && rk != "rk2" && rk != "rk3" && rk != "ssprk104")
