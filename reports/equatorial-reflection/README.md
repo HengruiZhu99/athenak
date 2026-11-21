@@ -142,3 +142,24 @@ python tst/unit/boltzmann/equator/native_replay.py build/athena_m0_replay /tmp/j
 ```
 
 The StellarAI launch scripts are in `tst/unit/boltzmann/equator`. Set `EQUATOR_DATA` to the directory containing the two calibrated run folders. `stellar.sh` launches the four layouts in one allocation. `performance.py` reads each completed directory, verifies the block census against the driver's block-cycle total, and reports physical-time-weighted block count, steps, elapsed seconds, allocated GPU-hours and sampled peak device memory. `compare.py` compares every ADM, stress and constraint field on a common meridional lattice, including parity in the reflected lower half, and records the physical time offset of each pair. `endpoint_review.py` combines the profiles, budget checks and trapped-surface review near the first online marginal detection. `witness.py` scans earlier archived slices against known shapes. The offline analysis requires NumPy, SciPy and h5py.
+
+From the StellarAI solver checkout, the following commands reproduce the eight-GPU selection and submit the long comparisons. The source tree should have a writable parent for the run directories. The two original-boundary pairs and their reviews are independent of the square-domain experiment.
+
+```sh
+suite=tst/unit/boltzmann/equator
+sample=$(sbatch --parsable "$suite/stellar.sh")
+sbatch --dependency="afterok:$sample" "$suite/qualify.sh" "$sample"
+for family in j09508 j10600_refined; do
+    end=74
+    limit=08:00:00
+    if [ "$family" = j10600_refined ]; then
+        end=150.68796599118204
+        limit=12:00:00
+    fi
+    full=$(sbatch --parsable -t "$limit" "$suite/stellar.sh" "$family-full" "$family" "$end")
+    half=$(sbatch --parsable -t "$limit" "$suite/stellar.sh" "$family-half" "$family" "$end" --half)
+    sbatch --dependency="afterany:$full:$half" "$suite/review.sh" "$family" "$full" "$half"
+done
+```
+
+The selection verifies the GPU identities, executable and initial-data hashes, and starting and ending times. The 30 M square-domain review gates a separate checkpoint continuation to 60 M if both runs are outward and neither has a verified trapped surface. No step in these scripts changes a bisection input or launches a new bisection point. The original-boundary pairs in this campaign are Slurm jobs 57672–57675. The square comparisons are 57888/57889 and 57891/57892.

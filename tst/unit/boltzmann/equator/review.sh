@@ -20,9 +20,11 @@ trial_tag=${5:-$family-half}
 result_tag=${6:-$family}
 base=$SLURM_SUBMIT_DIR/..
 data=${EQUATOR_DATA:-/scratch/gpfs/FPRETORI/hzhu/photon-boundary-20261120/compact_spin_survey}
-opts=()
-if [[ "$family" = j09508 ]]; then
-    opts=(--seed "$base/j09508-trapped.json")
+seed=${EQUATOR_WITNESS_SEED:-$base/j09508-trapped.json}
+if [[ ! -s "$seed" ]]; then
+    seed=$(mktemp)
+    trap 'rm -f "$seed"' EXIT
+    tar -xJOf reports/equatorial-reflection/horizon-replay-inputs.tar.xz j09508/seed.json > "$seed"
 fi
 python tst/unit/boltzmann/equator/endpoint_review.py "$base/measure-$full/$reference_tag" \
-    "$base/measure-$half/$trial_tag" "$data/$family/ring.adm.json" "$base/review-$result_tag" "${opts[@]}"
+    "$base/measure-$half/$trial_tag" "$data/$family/ring.adm.json" "$base/review-$result_tag" --seed "$seed"
