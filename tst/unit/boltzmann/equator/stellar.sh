@@ -68,6 +68,12 @@ if [[ $# -eq 0 ]]; then
     measure square-half j09508 1 --square --half
     measure coarse-full j09508 1 --square --coarse
     measure coarse-half j09508 1 --square --coarse --half
+elif [[ $1 == --wide ]]; then
+    # Matched B200 comparisons with at least 36 active cells along each block edge.
+    measure small36-b36 j10600_refined 0.5 --half --extent 36 --root-blocks 2 --block-cells 36
+    measure wide288-b36 j10600_refined 0.5 --half --extent 288 --root-blocks 2 --block-cells 36
+    measure wide288-72x36 j10600_refined 0.5 --half --extent 288 --root-blocks 1 --block-cells 72 --axial-block-cells 36
+    measure wide288-b72 j10600_refined 0.5 --half --extent 288 --root-blocks 2 --block-cells 72
 elif [[ $1 == --pair ]]; then
     family=$2
     end=$3

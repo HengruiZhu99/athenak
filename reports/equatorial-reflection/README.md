@@ -92,6 +92,8 @@ On the seven stored slices, at degree 24 the full and folded replays each accept
 
 The fixed-target solve frequently missed strictly trapped surfaces. At 0.9508 on cycle 33480 a degree-48 folded trial failed the constant-expansion tolerance yet its shape passed the independent strictly negative sign test. By cycle 33600 all six degree-48 trial shapes passed the sign test, with no fixed-target convergence. At 1.0054 the shallow target missed the verified interior even with degree 48. The independent target scan and whole-surface sign check remain part of onset determination.
 
+The [extended-grid comparison](wide/README.md) covers outer faces at 288 code units and block edges of at least 36 cells.
+
 ## Mesh experiment
 
 Each layout uses 24-by-24-cell blocks. The production-boundary pair has radial outer face 36 and axial distance 18. The four factorial layouts have both outer faces at distance 36. Only the latter four isolate coarsening and reflection at comparable face distances. Coarsening changes root spacing from 0.25 to 0.5 and moves the inner and ring boxes one refinement level deeper. The mesh builder supplies the required 2:1 transitions. The embedded projected ring box is 5.10–6.90 in rho and ±0.90 axially. A leaf-by-leaf intersection check measured 0.0625 spacing in **both** directions over the whole box in every layout. The complete finest-level footprint also matched leaf for leaf after reflection. Its 16 full-space blocks cover 3 ≤ rho ≤ 9 and −3 ≤ z ≤ 3.
