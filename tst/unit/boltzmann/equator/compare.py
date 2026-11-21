@@ -59,17 +59,22 @@ def compare(full, half, mass, prefix):
             ff = read_binary(q.with_name(q.name.replace(".tmunu.",f".{kind}.")))
             hf = read_binary(p.with_name(p.name.replace(".tmunu.",f".{kind}.")))
             fb,hb = np.array(ff["mb_geometry"]),np.array(hf["mb_geometry"])
-            np.testing.assert_allclose([fb[:,1].max(),fb[:,3].max(),-fb[:,2].min()],
-                                       [hb[:,1].max(),hb[:,3].max(),hb[:,3].max()])
-            assert hb[:,2].min() == 0
+            np.testing.assert_allclose(fb[:,[1,3]].max(axis=0), hb[:,[1,3]].max(axis=0))
+            fold = fb[:,2].min() < 0 and hb[:,2].min() == 0
+            if fold:
+                np.testing.assert_allclose(-fb[:,2].min(), hb[:,3].max())
+            else:
+                np.testing.assert_allclose(fb[:,2].min(), hb[:,2].min())
             key0 = ff["var_names"][0]
             nx = ff["mb_data"][key0][0].shape[-1]-(kind != "tmunu")
             h = min(np.min(fb[:,1]-fb[:,0]),np.min(hb[:,1]-hb[:,0]))/nx
             for key in ff["var_names"]:
                 value = raster(ff,key,h)
                 upper = raster(hf,key,h)
-                lower = upper[::-1] * (-1 if key in ODD else 1)
-                error = np.concatenate((lower,upper))-value
+                if fold:
+                    lower = upper[::-1] * (-1 if key in ODD else 1)
+                    upper = np.concatenate((lower,upper))
+                error = upper-value
                 rho = (np.arange(value.shape[1])+.5)*h
                 weights = np.broadcast_to(rho,value.shape)
                 field_rows.append(dict(row, field=key, Linf=np.max(abs(error)),

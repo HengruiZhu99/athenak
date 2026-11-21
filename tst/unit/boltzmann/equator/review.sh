@@ -15,11 +15,14 @@ export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
 family=$1
 full=$2
 half=$3
+reference_tag=${4:-$family-full}
+trial_tag=${5:-$family-half}
+result_tag=${6:-$family}
 base=$SLURM_SUBMIT_DIR/..
 data=${EQUATOR_DATA:-/scratch/gpfs/FPRETORI/hzhu/photon-boundary-20261120/compact_spin_survey}
 opts=()
 if [[ "$family" = j09508 ]]; then
     opts=(--seed "$base/j09508-trapped.json")
 fi
-python tst/unit/boltzmann/equator/endpoint_review.py "$base/measure-$full/$family-full" \
-    "$base/measure-$half/$family-half" "$data/$family/ring.adm.json" "$base/review-$family" "${opts[@]}"
+python tst/unit/boltzmann/equator/endpoint_review.py "$base/measure-$full/$reference_tag" \
+    "$base/measure-$half/$trial_tag" "$data/$family/ring.adm.json" "$base/review-$result_tag" "${opts[@]}"
