@@ -113,3 +113,18 @@ Job 59311 exercised the adaptive campaign release launcher with its deployed inp
 An experimental Kokkos kernel distributed the ten moment sums over separate threads while preserving the per-angle accumulation order and compensated energy sum. On the 1.0054 checkpoint (cycle 11737), four-B200 job 59308 ran 60-step ABBA replays with lean settings. All saved state and diagnostic digests and all logged timesteps matched. Mean ordinary step time increased from 0.8370 to 0.8511 s (1.7%) in this four-rank configuration. Production continues to use the existing moment kernel. Its eight-rank performance with the experimental layout remains unmeasured.
 
 The adaptive reference created three leaves at cycle 55360 before completing 20 M. Job 59045 resumed that 79-block checkpoint on eight B200s. Its first saved ADM slice (`torus.adm.00465.bin`) records all seven lean runtime selectors and the enabled off-center horizon search. Its executable and ring hashes match the release record. The dependent 40–60 M handoff reads the same release.
+
+## Concurrent order-40 and order-48 surface fits
+
+The two witness fits run as separate single-threaded CPU processes on the eight-B200 SMR allocation. Each order reads every slice in its original reverse-time order, with its original seed, target and passing-fit seed updates. Both processes must succeed before the worker consumes their outputs or publishes a segment. The online finder and the evolution executable are unchanged.
+
+| SMR spin | Segment in initial ADM masses | Slices | Serial fits (s) | Concurrent fits (s) | Seconds saved | GPU-hours saved |
+|---|---|---:|---:|---:|---:|---:|
+| 1.0054 | 13–14 | 22 | 48.72 | 27.66 | 21.05 | 0.0468 |
+| 1.0600 | 3–4 | 32 | 67.14 | 38.11 | 29.03 | 0.0645 |
+
+Jobs 58749 and 59208 performed both schedules at the normal post-evolution diagnostic boundary, with the GPUs allocated and idle. The 1.0054 run timed serial first, and 1.0600 timed parallel first. The complete JSON and stdout from each order matched byte for byte on all 54 slices. CPU check 59374 also replayed three 0.9508 slices with verified trapping. The first passing cycles were 21440 for order 40 and 21000 for order 48 under both schedules. The production criterion takes the earliest verified detection from either order or the online interior checks.
+
+Fit wall time fell by 43.2% in each allocation. GPU-hour savings use eight times the measured time difference. The estimated reductions in whole-segment time were 4.68% and 4.61%, respectively, using the interval between consecutive checkpoint publications minus the extra parallel pass as the serial reference. These estimates apply to segments that execute both fits. The worker already skips them in the post-collapse tail. [Timing data](smr-witness-fit-timings.csv)
+
+The [production worker](../../../tst/unit/boltzmann/equator/smr/worker.py) uses [witness_pair.py](../../../tst/unit/boltzmann/equator/witness_pair.py) and records per-segment wall time in `witness-timing.json`. On StellarAI install the worker as `worker.py` in the SMR campaign directory, with the equator test suite on `PYTHONPATH`. To reproduce the comparison on a saved sequence, set `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1` and run `python compare_witness_pair.py seed.json path/to/bin/*.adm.*.bin` from the suite. Pass `--parallel-first` to reverse the timing order.
