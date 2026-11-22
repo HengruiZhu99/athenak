@@ -1,0 +1,10 @@
+# Production runtime settings for the eight-GPU photon-ring campaign.
+# Set each selector explicitly because a restart stores its previous value.
+<z4c>
+lean_runtime = true
+admissibility_checks = consume_and_accept
+vertex_axis_regularity_audit = false
+vc_single_rank_device_sync = true
+vc_sync_postcondition = false
+timestep_structural_shortcuts = true
+timestep_contract_diagnostic = true

@@ -8,6 +8,7 @@ suite=$SLURM_SUBMIT_DIR/tst/unit/boltzmann/equator
 bench=$SLURM_SUBMIT_DIR/../measure-$1
 export PYTHONPATH="$suite${PYTHONPATH:+:$PYTHONPATH}" OPENBLAS_NUM_THREADS=1
 export EQUATOR_PARENT
+export EQUATOR_RUNTIME_INPUT="$SLURM_SUBMIT_DIR/inputs/boltzmann/photon_ring_lean.in"
 EQUATOR_PARENT=$(python - "$bench" <<'PY'
 from pathlib import Path
 import sys

@@ -41,4 +41,16 @@ print(
     flush=True,
 )
 command = sys.argv[2:] if rank_bound else sys.argv[1:]
+# Queued segments can already have a Slurm-spooled copy of the batch
+# script. Read the campaign release's input overlay at restart launch.
+if "-r" in command and "-i" not in command:
+    overlay = os.environ.get("EQUATOR_RUNTIME_INPUT")
+    if overlay is None and os.environ.get("EQUATOR_RELEASE"):
+        candidate = Path(os.environ["EQUATOR_RELEASE"]).with_name("runtime.in")
+        if candidate.is_file():
+            overlay = str(candidate)
+    if overlay:
+        if rank == 0:
+            print(f"Restart runtime input: {overlay}", flush=True)
+        command.extend(["-i", overlay])
 os.execv(command[0], command)

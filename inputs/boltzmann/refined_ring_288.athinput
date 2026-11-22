@@ -45,7 +45,13 @@ symmetry = cartoon_so2
 coordinate_map = half_rho_z_suppressed_y_v2
 symmetry_schema = 2
 spatial_order = 4
-lean_runtime = false
+lean_runtime = true
+admissibility_checks = consume_and_accept
+vertex_axis_regularity_audit = false
+vc_single_rank_device_sync = true
+vc_sync_postcondition = false
+timestep_structural_shortcuts = true
+timestep_contract_diagnostic = true
 diss = 0.1
 
 <boltzmann>

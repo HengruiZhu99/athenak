@@ -81,7 +81,8 @@ def measure(patch, coeff, theta, center_z=0.):
     poles = (theta == 0) | (theta == np.pi)
     u, sn = np.cos(theta), np.where(poles, 0., np.sin(theta))
     h = leg.legval(u, coeff)
-    dh = -sn * leg.legval(u, leg.legder(coeff))
+    dcoeff = leg.legder(coeff)
+    dh = -sn * leg.legval(u, dcoeff)
     rho, z = h*sn, h*u
     step = 1e-3 * patch.dx
     if h.min() <= 0 or max(abs(rho).max(), abs(z+center_z).max()) + step >= patch.bound:
@@ -90,7 +91,7 @@ def measure(patch, coeff, theta, center_z=0.):
     def normal(r, y):
         radius = np.hypot(r, y)
         sine, cosine = r/radius, y/radius
-        derivative = -sine * leg.legval(cosine, leg.legder(coeff))
+        derivative = -sine * leg.legval(cosine, dcoeff)
         dF = np.stack((sine - derivative*cosine/radius,
                        cosine + derivative*sine/radius, np.zeros_like(r)), axis=-1)
         g = patch.tensor(r, y+center_z, 0)
@@ -104,20 +105,28 @@ def measure(patch, coeff, theta, center_z=0.):
         volume = r * np.sqrt(determinant)
         return n * volume[:, None], volume, n, g, inv
 
-    _, volume, n, g, inv = normal(rho, z)
-    radial = normal(rho+step, z)[0][:, 0]-normal(rho-step, z)[0][:, 0]
-    axial = normal(rho, z+step)[0][:, 1]-normal(rho, z-step)[0][:, 1]
+    # Batch small collocation grids in the least-squares solve. Keep the
+    # dense independent checks in strips to bound interpolation scratch space.
+    if theta.size <= 256:
+        rr = np.concatenate((rho, rho+step, rho-step, rho, rho))
+        zz = np.concatenate((z, z, z, z+step, z-step))
+        fields = normal(rr, zz)
+        central, rp, rm, zp, zm = zip(*(np.split(field, 5) for field in fields))
+    else:
+        central = normal(rho, z)
+        rp, rm = normal(rho+step, z), normal(rho-step, z)
+        zp, zm = normal(rho, z+step), normal(rho, z-step)
+    _, volume, n, g, inv = central
+    radial = rp[0][:, 0]-rm[0][:, 0]
+    axial = zp[0][:, 1]-zm[0][:, 1]
     div = np.divide(radial+axial, 2*step*volume, out=np.zeros_like(volume), where=~poles)
     if np.any(poles):
-        # At the regular axis the cylindrical radial divergence tends to
-        # twice the derivative of sqrt(gamma) s^rho. Evaluate in signed rho.
-        zp = z[poles]
-        zero = np.zeros_like(zp)
-        def densitized(r, y, component):
-            _, _, unit, metric, _ = normal(r, y)
-            return np.sqrt(np.linalg.det(metric))*unit[:,component]
-        dr = (densitized(zero+step,zp,0) - densitized(zero-step,zp,0))/(2*step)
-        dz = (densitized(zero,zp+step,1) - densitized(zero,zp-step,1))/(2*step)
+        # At either pole rho is exactly zero. The signed-radius stencil
+        # already sampled each displaced normal needed for the regular limit.
+        def densitized(sample, component):
+            return np.sqrt(np.linalg.det(sample[3][poles])) * sample[2][poles, component]
+        dr = (densitized(rp,0) - densitized(rm,0))/(2*step)
+        dz = (densitized(zp,1) - densitized(zm,1))/(2*step)
         div[poles] = (2*dr+dz)/np.sqrt(np.linalg.det(g[poles]))
     k = patch.tensor(rho, z+center_z, 6)
     projected = np.einsum("ni,nij,nj->n", n, k, n) - np.einsum("nij,nij->n", inv, k)

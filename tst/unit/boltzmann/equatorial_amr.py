@@ -15,10 +15,12 @@ SECTORS = 12
 BINS = 6 * SECTORS
 
 
-def run(exe, root, name, half, restart=None, coupled=False, scale=1):
+def run(exe, root, name, half, restart=None, coupled=False, scale=1,
+        runtime_input=None, ranks=None):
     directory = root / name
     directory.mkdir(parents=True)
-    ranks = 1 if restart else 2
+    if ranks is None:
+        ranks = 1 if restart else 2
     if os.environ.get("EQUATOR_SRUN") == "1":
         args = ["srun", "--exact", "-N1", f"-n{ranks}", "-c4", f"--gres=gpu:{ranks}",
                 "--gpus-per-task=1", "--gpu-bind=single:1", "--cpu-bind=none", "--mpi=pmix",
@@ -28,6 +30,8 @@ def run(exe, root, name, half, restart=None, coupled=False, scale=1):
         args = [os.environ.get("EQUATOR_MPIEXEC", "mpiexec"), "-n", str(ranks), str(exe)]
     if restart:
         args += ["-r", str(restart)]
+        if runtime_input:
+            args += ["-i", str(runtime_input)]
     else:
         args += ["-i", str(ROOT / "inputs/boltzmann/ring.athinput"),
                  "time/nlim=6", "time/integrator=ssprk104", "boltzmann/transport_order=4",
@@ -125,6 +129,20 @@ def coupled_comparison(exe, work):
         np.testing.assert_allclose(resumed_field,direct_field,rtol=3e-12,atol=5e-16)
 
 
+def compare_lean_regrid(exe, work):
+    # This saved coupled half-domain state is already refined. Both modes
+    # restart with the same rank mapping and derefine across the equator.
+    refined = work / "coupled-1-half/rst/ring.00001.rst"
+    overlay = ROOT / "inputs/boltzmann/photon_ring_lean.in"
+    baseline = run(exe, work, "audit-regrid", True, refined, ranks=2)
+    lean = run(exe, work, "lean-regrid", True, refined, runtime_input=overlay, ranks=2)
+    np.testing.assert_array_equal(lean, baseline)
+    for case in ("audit-regrid", "lean-regrid"):
+        assert "3 deleted by AMR" in (work / case / "log").read_text()
+    for a, b in zip(checkpoint(work, "audit-regrid", 2), checkpoint(work, "lean-regrid", 2)):
+        np.testing.assert_array_equal(a, b)
+
+
 def check(exe, work):
     full = run(exe, work, "full", False)
     half = run(exe, work, "half", True)
@@ -150,6 +168,7 @@ def check(exe, work):
     np.testing.assert_allclose(a[:2, :, ::-1, ::-1], b, rtol=0, atol=mirror_defect+1e-16)
     np.testing.assert_allclose(half, full, rtol=4e-11, atol=5e-16)
     coupled_comparison(exe, work)
+    compare_lean_regrid(exe, work)
 
 
 if __name__ == "__main__":
