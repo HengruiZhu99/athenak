@@ -72,9 +72,13 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
             a[d](m, n, 0, j, i) = faces(m, d, j, i).Speed(dir);
           });
     }
-    par_for(
-        "FV4 angular characteristics", DevExeSpace(), 0, blocks - 1, 0,
-        count - 1, b.js - 1, b.je + 1, b.is - 1, b.ie + 1,
+    using PhasePolicy = Kokkos::MDRangePolicy<DevExeSpace,
+        Kokkos::Rank<4, Kokkos::Iterate::Right, Kokkos::Iterate::Right>>;
+    // Nearby angles reuse the same geometry, while neighboring radial cells
+    // occupy contiguous addresses in each output ordinate.
+    Kokkos::parallel_for(
+        "FV4 angular characteristics", PhasePolicy(
+            {0, 0, b.js - 1, b.is - 1}, {blocks, count, b.je + 2, b.ie + 2}, {1, 8, 1, 16}),
         KOKKOS_LAMBDA(int m, int n, int j, int i) {
           Real mu = start + (n / sectors + 0.5) * dm,
                psi = (n % sectors + 0.5) * dp;
@@ -100,8 +104,8 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
     Real maxrate = 0, maxsource = 0;
     Kokkos::parallel_reduce(
         "FV4 outgoing flux budgets",
-        Kokkos::MDRangePolicy<DevExeSpace, Kokkos::Rank<4>>(
-            {0, 0, b.js - 1, b.is - 1}, {blocks, count, b.je + 2, b.ie + 2}),
+        PhasePolicy({0, 0, b.js - 1, b.is - 1}, {blocks, count, b.je + 2, b.ie + 2},
+                    {1, 1, 4, 32}),
         KOKKOS_LAMBDA(int m, int n, int j, int i, Real& largest, Real& sink) {
           PhaseCell p{i, j, n / sectors, n % sectors};
           Real h[4] = {sz(m).dx1, sz(m).dx2, dm, dp};

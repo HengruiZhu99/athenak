@@ -148,40 +148,36 @@ TaskStatus Boltzmann::Update(Driver* driver, int stage) {
   const auto faces = face_geometry;
   const Real start = mu_min;
   const Real copies = pack->pmesh->mesh_bcs[BoundaryFace::inner_x2] == BoundaryFlag::reflect ? 2 : 1;
-  Kokkos::Array<Real, 3> rates{};
-  for (int v = 0; v < 3; ++v) {
-    Real total = 0;
-    Kokkos::parallel_reduce(
-        "boltzmann integrated sources and fluxes",
-        Kokkos::MDRangePolicy<DevExeSpace, Kokkos::Rank<4>>(
-            {0, 0, b.js, b.is}, {blocks, count, b.je + 1, b.ie + 1}),
-        KOKKOS_LAMBDA(int m, int n, int j, int i, Real& sum) {
-          auto& s = sz(m);
-          Real val = q(m, n, 0, j, i) * s.dx1 * s.dx2;
-          if (v < 2) {
-            Real fr = 0, ft = 0, fb = 0;
-            if (i == b.ie && flags(m, BoundaryFace::outer_x1) == BoundaryFlag::outflow)
-              fr = fx(m, n, 0, j, i + 1);
-            if (j == b.je && flags(m, BoundaryFace::outer_x2) == BoundaryFlag::outflow)
-              ft = fz(m, n, 0, j + 1, i);
-            if (j == b.js && flags(m, BoundaryFace::inner_x2) == BoundaryFlag::outflow)
-              fb = fz(m, n, 0, j, i);
-            if (v == 1) {
-              const Real mu = start + (n / sectors + 0.5) * dm;
-              if (fr != 0) fr *= mu * faces(m, 0, j, i + 1).killing_norm;
-              if (ft != 0) ft *= mu * faces(m, 1, j + 1, i).killing_norm;
-              if (fb != 0) fb *= mu * faces(m, 1, j, i).killing_norm;
-            }
-            val = fr * s.dx2 + (ft - fb) * s.dx1;
-          }
-          sum += val;
-        },
-        total);
-    rates[v] = copies * total * (2 * M_PI * dm * dp);
-  }
-  escaped = g0 * escaped + g1 * budget_old[0] + dt * rates[0];
-  escaped_j = g0 * escaped_j + g1 * budget_old[1] + dt * rates[1];
-  work = g0 * work + g1 * budget_old[2] + dt * rates[2];
+  // Accumulate the three scalar diagnostics in one pass over the same RK state.
+  // The rightmost cell index is contiguous in the radiation and flux views.
+  using CellPolicy = Kokkos::MDRangePolicy<DevExeSpace,
+      Kokkos::Rank<4, Kokkos::Iterate::Right, Kokkos::Iterate::Right>>;
+  Real energy_flux = 0, angular_flux = 0, source_work = 0;
+  Kokkos::parallel_reduce(
+      "boltzmann integrated sources and fluxes",
+      CellPolicy({0, 0, b.js, b.is}, {blocks, count, b.je + 1, b.ie + 1}, {1, 1, 4, 32}),
+      KOKKOS_LAMBDA(int m, int n, int j, int i, Real& energy, Real& angular, Real& src) {
+        const auto& s = sz(m);
+        src += q(m, n, 0, j, i) * s.dx1 * s.dx2;
+        Real fr = 0, ft = 0, fb = 0;
+        if (i == b.ie && flags(m, BoundaryFace::outer_x1) == BoundaryFlag::outflow)
+          fr = fx(m, n, 0, j, i + 1);
+        if (j == b.je && flags(m, BoundaryFace::outer_x2) == BoundaryFlag::outflow)
+          ft = fz(m, n, 0, j + 1, i);
+        if (j == b.js && flags(m, BoundaryFace::inner_x2) == BoundaryFlag::outflow)
+          fb = fz(m, n, 0, j, i);
+        energy += fr * s.dx2 + (ft - fb) * s.dx1;
+        const Real mu = start + (n / sectors + 0.5) * dm;
+        if (fr != 0) fr *= mu * faces(m, 0, j, i + 1).killing_norm;
+        if (ft != 0) ft *= mu * faces(m, 1, j + 1, i).killing_norm;
+        if (fb != 0) fb *= mu * faces(m, 1, j, i).killing_norm;
+        angular += fr * s.dx2 + (ft - fb) * s.dx1;
+      }, Kokkos::Sum<Real>(energy_flux), Kokkos::Sum<Real>(angular_flux),
+         Kokkos::Sum<Real>(source_work));
+  const Real solid_angle = 2 * M_PI * dm * dp;
+  escaped = g0 * escaped + g1 * budget_old[0] + dt * (copies * energy_flux * solid_angle);
+  escaped_j = g0 * escaped_j + g1 * budget_old[1] + dt * (copies * angular_flux * solid_angle);
+  work = g0 * work + g1 * budget_old[2] + dt * (copies * source_work * solid_angle);
   par_for(
       "boltzmann conservative update", DevExeSpace(), 0, blocks - 1, 0, count - 1, b.js, b.je,
       b.is, b.ie, KOKKOS_LAMBDA(int m, int n, int j, int i) {
