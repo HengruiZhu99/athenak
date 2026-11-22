@@ -755,6 +755,10 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack *pack, ParameterInput *pin,
   if (!std::isfinite(inner_target) || inner_target > 0.0)
     throw std::runtime_error("cartoon_inner_target must be zero or negative");
   mode_ = pin->GetOrAddString("fastflow", "cartoon_surface_mode_" + suffix, "single");
+  if (!pin->GetOrAddBoolean("fastflow", "cartoon_search_offcenter_" + suffix, true) &&
+      mode_ == "mirror_pair") {
+    throw std::runtime_error("Cartoon mirror_pair requires off-center searches");
+  }
   if (lmax_ < 1 || ntheta_ < 2 || iterations_ < 1 || find_interval_ < 1 ||
       !(initial_radius_ > 0.0) || !(flow_scale_ > 0.0) ||
       !(hrms_tolerance_ > 0.0) || !(mass_tolerance_ > 0.0) ||
@@ -1200,8 +1204,10 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
   last_search_cycle_ = cycle;
   last_search_time_ = time;
   candidates_.clear();
+  const bool offcenter = pin_->GetBoolean("fastflow", "cartoon_search_offcenter_0");
   std::vector<Real> positions{0.0};
-  for (int index = 1; index <= axis_search_samples_; ++index) {
+  const int axis_samples_per_side = offcenter ? axis_search_samples_ : 0;
+  for (int index = 1; index <= axis_samples_per_side; ++index) {
     const Real magnitude = axis_search_bound_ * index / axis_search_samples_;
     positions.push_back(-magnitude);
     positions.push_back(magnitude);
@@ -1210,14 +1216,19 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
   const auto &origin_sample = axis_samples.front();
   Real plus_center = 0.0, minus_center = 0.0;
   Real plus_lapse = 0.0, minus_lapse = 0.0;
-  const bool plus_valid = SelectM0AxisLapseMinimum(
+  const bool plus_valid = !offcenter || SelectM0AxisLapseMinimum(
       axis_samples, 1, &plus_center, &plus_lapse);
-  const bool minus_valid = SelectM0AxisLapseMinimum(
+  const bool minus_valid = !offcenter || SelectM0AxisLapseMinimum(
       axis_samples, -1, &minus_center, &minus_lapse);
+  std::vector<std::pair<std::string, Real>> centers{{"origin", 0.0}};
+  if (offcenter) {
+    centers.emplace_back("plus", plus_center);
+    centers.emplace_back("minus", minus_center);
+  }
   if (!origin_sample.valid || !plus_valid || !minus_valid) {
-    for (const auto &branch : {"origin", "plus", "minus"}) {
+    for (const auto &entry : centers) {
       M0CandidateSummary failed;
-      failed.branch = branch;
+      failed.branch = entry.first;
       failed.failure = "axis_lapse_scan_coverage";
       candidates_.push_back(std::move(failed));
     }
@@ -1226,16 +1237,15 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
     Capture();
     return;
   }
-  const Real origin_initial_radius = adaptive_initial_radius_
+  const Real origin_initial_radius = offcenter && adaptive_initial_radius_
       ? M0OriginInitialRadius(initial_radius_, origin_lapse_radius_factor_,
                               plus_center, minus_center)
       : initial_radius_;
-  const Real pair_initial_radius = adaptive_initial_radius_
+  const Real pair_initial_radius = offcenter && adaptive_initial_radius_
       ? M0DisjointPairInitialRadius(initial_radius_, pair_disjoint_fraction_,
                                     plus_center, minus_center)
       : initial_radius_;
-  for (const auto &entry : std::vector<std::pair<std::string, Real>>{
-           {"origin", 0.0}, {"plus", plus_center}, {"minus", minus_center}}) {
+  for (const auto &entry : centers) {
     std::vector<Real> warm;
     const auto &saved = pack_->z4c_restart_state.fastflow;
     if (saved.selected_branch == entry.first && saved.center_count == 1)
@@ -1359,6 +1369,11 @@ void CartoonM0FastFlow::Restore() {
     throw std::runtime_error("invalid Cartoon m=0 restart state: " + reason);
   if (mode_ != state.surface_mode)
     throw std::runtime_error("Cartoon m=0 surface mode conflicts with restart");
+  if (!pin_->GetBoolean("fastflow", "cartoon_search_offcenter_0") &&
+      state.converged && state.selected_branch != "origin") {
+    pack_->z4c_restart_state.fastflow = {};
+    return;
+  }
   found_ = state.converged;
   last_search_cycle_ = state.last_search_cycle;
   last_search_time_ = state.last_search_time;
