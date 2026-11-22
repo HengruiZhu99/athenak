@@ -485,14 +485,26 @@ struct BinaryBudgetState {
   Real dt = 0, start = 0, committed_time = 0;
   int committed_cycle = -1;
 };
-std::vector<Real> LoadDiagnosticScalars(ParameterInput*, const std::string&);
+std::vector<Real> LoadDiagnosticScalars(ParameterInput*, const std::string&,
+                                        std::size_t width = 20);
 void InitializeBinaryBudget(BinaryBudgetState&, ParameterInput*, Mesh*,
                             ProblemGenerator*);
 void PrepareBinaryBudget(BinaryBudgetState&, Mesh*);
 void BinaryBudgetStage(BinaryBudgetState&, Mesh*, Driver*, int);
 void BinaryBudgetChange(Mesh*, int, bool);
 void BinaryBudgetHistory(HistoryData*, Mesh*);
+struct ShellInterval {
+  circumbinary::HorizonShell geometry;
+  std::string label;
+  int outer_face, inner_face = -1;
+  Real start[4] = {}, before[4] = {}, change[4] = {}, inflow[4] = {}, source[4] = {};
+  Real residual[4] = {NAN, NAN, NAN, NAN}, dt = 0;
+  bool active = false;
+  bool inherited_unavailable = false;
+  Real grid_jump[4] = {}, grid_before[4] = {}, missed_grid_events = 0;
+};
 struct BinaryDiagnosticState {
+  std::vector<ShellInterval> shells;
   std::vector<circumbinary::QualifiedMass> mass;
   std::vector<std::string> labels;
   std::string identity;
@@ -512,7 +524,10 @@ void RegisterDiagnosticSurfaces(ProblemGenerator* pgen, ParameterInput* pin, Mes
                pack->pmhd->peos->eos_data.is_ideal;
   bool requested = pin->GetOrAddBoolean("problem", "user_hist", false) ||
                    pin->GetOrAddBoolean("problem", "flux_modeled_horizons", false) ||
-                   pin->GetOrAddBoolean("problem", "flux_budget", false);
+                   pin->GetOrAddBoolean("problem", "flux_budget", false) ||
+                   pin->GetOrAddBoolean("problem", "flux_shell_budget", false) ||
+                   pin->GetOrAddReal("problem", "flux_ks_radius1", 0.0) != 0 ||
+                   pin->GetOrAddReal("problem", "flux_ks_radius2", 0.0) != 0;
   bool enabled = pin->GetOrAddBoolean("problem", "flux_diagnostics",
                                       (pm->three_d && ideal) || requested);
   if (!enabled) {
@@ -545,9 +560,23 @@ void RegisterDiagnosticSurfaces(ProblemGenerator* pgen, ParameterInput* pin, Mes
   bool h1 = pin->GetOrAddBoolean("problem", "flux_horizon1", false);
   bool h2 = pin->GetOrAddBoolean("problem", "flux_horizon2", false);
   bool bh = pin->GetOrAddBoolean("problem", "flux_modeled_horizons", false);
+  Real ks_radius[2] = {pin->GetOrAddReal("problem", "flux_ks_radius1", 0.0),
+                       pin->GetOrAddReal("problem", "flux_ks_radius2", 0.0)};
+  int extra = 0;
+  for (int h = 0; h < (bbh.single_black_hole ? 1 : 2); ++h) {
+    if (!std::isfinite(ks_radius[h]) || ks_radius[h] < 0)
+      Kokkos::abort("Component Kerr-Schild radii must be finite and nonnegative");
+    extra += ks_radius[h] > 0;
+  }
+  bool shells = pin->GetOrAddBoolean("problem", "flux_shell_budget", false);
+  if (shells && (!bh || pack->pdynrad || pack->pz4c))
+    Kokkos::abort(
+        "Horizon-exterior shell budgets require modeled horizons and prescribed GRMHD");
   if (nr > NHISTORY_VARIABLES / kSurfaceChannels ||
-      (nr + h1 + h2 + (bh ? (bbh.single_black_hole ? 1 : 2) : 0)) * kSurfaceChannels >
-          NHISTORY_VARIABLES - (3 + 8 * (bh ? (bbh.single_black_hole ? 1 : 2) : 0) +
+      (nr + extra + h1 + h2 + (bh ? (bbh.single_black_hole ? 1 : 2) : 0)) *
+              kSurfaceChannels >
+          NHISTORY_VARIABLES - ((shells ? 45 * nr : 0) + 3 +
+                                8 * (bh ? (bbh.single_black_hole ? 1 : 2) : 0) +
                                 (pin->GetOrAddBoolean("problem", "flux_budget", false)
                                      ? (bbh.single_black_hole ? 66 : 88)
                                      : 0))) {
@@ -585,18 +614,27 @@ void RegisterDiagnosticSurfaces(ProblemGenerator* pgen, ParameterInput* pin, Mes
           pack, nt, np, [=](Real, Real) { return r; }, hole == 0 ? "H1" : "H2"));
     }
   }
-  if (bh && (pack->pz4c ||
-             (!bbh.corotating && !bbh.single_black_hole && !pack->padm->is_dynamic))) {
+  if ((bh || extra) && (pack->pz4c || (!bbh.corotating && !bbh.single_black_hole &&
+                                       !pack->padm->is_dynamic))) {
     Kokkos::abort(
         "Modeled-horizon diagnostics require prescribed ADM, dynamic for inertial "
         "binaries");
   }
-  if (bh) {
+  for (int kind = 0; kind <= 1; ++kind) {
     for (int hole = 0; hole < (bbh.single_black_hole ? 1 : 2); ++hole) {
+      if ((kind == 0 && !bh) || (kind == 1 && ks_radius[hole] == 0)) continue;
+      std::ostringstream id;
+      id << "BH" << hole + 1;
+      if (kind == 0)
+        id << "_Kerr";
+      else
+        id << "_KS" << std::setprecision(std::numeric_limits<Real>::max_digits10)
+           << ks_radius[hole];
       auto surf = std::make_unique<SphericalSurfaceGrid>(
-          pack, nt, np, [](Real, Real) { return 1.0; },
-          hole == 0 ? "BH1_Kerr" : "BH2_Kerr");
-      surf->surface_type = "modeled_component_Kerr";
+          pack, nt, np, [](Real, Real) { return 1.0; }, id.str());
+      surf->component = hole;
+      surf->fixed_ks_radius = kind == 0 ? 0 : ks_radius[hole];
+      surf->surface_type = kind == 0 ? "modeled_component_Kerr" : "component_KS_radius";
       surf->min_cells_per_radius =
           pin->GetOrAddReal("problem", "flux_min_cells_per_radius", 4.0);
       if (!(std::isfinite(surf->min_cells_per_radius) &&
@@ -763,6 +801,78 @@ void PrepareBinaryBudget(BinaryBudgetState& b, Mesh* pm) {
   }
 }
 
+void SetShellGeometry(circumbinary::HorizonShell& shell, Real time) {
+  if (!shell.holes) return;
+  Real tr[NTRAJ], extent[2] = {};
+  find_traj_t(bbh.corotating ? 0.0 : time, tr);
+  for (int h = 0; h < shell.holes; ++h) {
+    Real m = tr[h ? M2T : M1T];
+    Real *chi = &tr[h ? AX2 : AX1], *v = &tr[h ? VX2 : VX1];
+    Real chi2 = SQR(chi[0]) + SQR(chi[1]) + SQR(chi[2]);
+    if (!(m > 0 && chi2 <= 1 && SQR(v[0]) + SQR(v[1]) + SQR(v[2]) < 1))
+      Kokkos::abort("Invalid component Kerr shell geometry");
+    circumbinary::KerrQuadric(m, chi, v, shell.H[h],
+                              [](Real value) { return sqrt(value); });
+    Real rplus = m * (1 + sqrt(1 - chi2));
+    extent[h] = sqrt(rplus * rplus + m * m * chi2);
+    shell.circumscribed[h] = extent[h];
+    shell.inscribed[h] = rplus * sqrt(1 - SQR(v[0]) - SQR(v[1]) - SQR(v[2]));
+    Real c2 = 0;
+    for (int d = 0; d < 3; ++d) {
+      shell.center[h][d] = tr[(h ? X2 : X1) + d];
+      c2 += SQR(shell.center[h][d]);
+    }
+    if (!(sqrt(c2) + extent[h] < shell.outer))
+      Kokkos::abort("Inner sphere must enclose the entire component horizon");
+  }
+  if (shell.holes == 2) {
+    Real distance2 = 0;
+    for (int d = 0; d < 3; ++d) distance2 += SQR(shell.center[1][d] - shell.center[0][d]);
+    if (!(sqrt(distance2) > extent[0] + extent[1]))
+      Kokkos::abort("Horizon holes must be disjoint");
+  }
+}
+
+circumbinary::ShellMoments MeasureShell(Mesh* pm, ShellInterval& shell, Real time,
+                                        bool sources, bool global) {
+  SetShellGeometry(shell.geometry, time);
+  auto m = ReduceHorizonShell(pm->pmb_pack, shell.geometry, sources);
+#if MPI_PARALLEL_ENABLED
+  if (global) {
+    Real v[10] = {m.sampled, m.rejected};
+    for (int d = 0; d < 4; ++d) {
+      v[2 + d] = m.stored[d];
+      v[6 + d] = m.source[d];
+    }
+    MPI_Allreduce(MPI_IN_PLACE, v, 10, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+    m.sampled = v[0];
+    m.rejected = v[1];
+    for (int d = 0; d < 4; ++d) {
+      m.stored[d] = v[2 + d];
+      m.source[d] = v[6 + d];
+    }
+  }
+#endif
+  for (int d = 0; d < 4; ++d)
+    if (!std::isfinite(m.stored[d]) || !std::isfinite(m.source[d])) m.rejected = INFINITY;
+  return m;
+}
+
+Real ShellBoundary(const ShellInterval& shell, Mesh* pm,
+                   const std::vector<SurfaceFluxResult>& fluxes, int d) {
+  auto flow = [&](int face) {
+    const auto& f = fluxes[face];
+    int i = d == 3 ? 30 : 22 + d;
+    return f.valid ? f.values[i] + f.values[i + 3] : NAN;
+  };
+  Real value = flow(shell.outer_face);
+  if (shell.inner_face >= 0) return value - flow(shell.inner_face);
+  for (std::size_t i = 0; i < fluxes.size(); ++i)
+    if (pm->pgen->surface_grids[i]->surface_type == "modeled_component_Kerr")
+      value -= flow(i);
+  return value;
+}
+
 // Kinds: 0 recovery/reset, 1 physical coupling, 2 coordinate rG, 3 nonfinite
 // repair, 4 remap aggregate, 5 zoom aggregate, 6 startup/restart recovery jump.
 void BinaryBudgetChange(Mesh* pm, int kind, bool before) {
@@ -771,6 +881,30 @@ void BinaryBudgetChange(Mesh* pm, int kind, bool before) {
   }
   auto state =
       std::static_pointer_cast<BinaryDiagnosticState>(pm->pgen->user_diagnostic_data);
+  for (auto& shell : state->shells) {
+    if (kind == 4 || kind == 5) {
+      // AMR and zoom hooks bracket distinct, complete hierarchy mutations.
+      auto m = MeasureShell(pm, shell, pm->time, true, true);
+      bool complete = !shell.inherited_unavailable && m.sampled > 0 && m.rejected == 0;
+      if (before) {
+        for (int d = 0; d < 4; ++d) shell.grid_before[d] = complete ? m.stored[d] : NAN;
+      } else if (complete && std::isfinite(shell.grid_before[0])) {
+        for (int d = 0; d < 4; ++d) shell.grid_jump[d] += m.stored[d] - shell.grid_before[d];
+      } else {
+        ++shell.missed_grid_events;
+      }
+      continue;
+    }
+    if (!shell.active || (kind != 0 && kind != 1 && kind != 3)) continue;
+    auto m = MeasureShell(pm, shell, diagnostic_metric_time, false, false);
+    for (int d = 0; d < 4; ++d) {
+      Real value = m.rejected == 0 ? m.stored[d] : NAN;
+      if (before)
+        shell.before[d] = value;
+      else
+        shell.change[d] += value - shell.before[d];
+    }
+  }
   auto& b = state->budget;
   if (!b.enabled) {
     return;
@@ -1004,6 +1138,30 @@ void InitializeBinaryDiagnostics(ProblemGenerator* pgen, ParameterInput* pin, Me
   pin->GetOrAddBoolean("problem", "flux_new_epoch", false);
   auto state = std::make_shared<BinaryDiagnosticState>();
   InitializeBinaryBudget(state->budget, pin, pm, pgen);
+  if (pin->GetOrAddBoolean("problem", "flux_shell_budget", false)) {
+    int n = pin->GetOrAddInteger("problem", "shell_subcells", 8);
+    if (n < 1 || n > 8) Kokkos::abort("shell_subcells must be 1..8");
+    for (std::size_t i = 0; i < pgen->surface_grids.size(); ++i) {
+      const auto& face = *pgen->surface_grids[i];
+      if (face.Label()[0] != 'R') continue;
+      ShellInterval shell;
+      shell.label = face.Label();
+      shell.geometry.subcells = n;
+      shell.geometry.frame_omega = bbh.frame_omega;
+      shell.geometry.outer = pgen->surface_grids[i]->Radius().h_view(0);
+      auto d = pm->mesh_size;
+      if (shell.geometry.outer >
+          std::min({-d.x1min, d.x1max, -d.x2min, d.x2max, -d.x3min, d.x3max}))
+        Kokkos::abort("Shell must fit in the simulation domain");
+      shell.outer_face = i;
+      if (!state->shells.empty()) {
+        shell.inner_face = state->shells.back().outer_face;
+        shell.geometry.inner = state->shells.back().geometry.outer;
+      } else
+        shell.geometry.holes = bbh.single_black_hole ? 1 : 2;
+      state->shells.push_back(shell);
+    }
+  }
   std::ostringstream signature;
   signature << "schema2:" << std::setprecision(17) << pm->pmb_pack->padm->is_dynamic
             << ":" << bbh.single_black_hole << ":" << bbh.corotating << ":"
@@ -1011,6 +1169,8 @@ void InitializeBinaryDiagnostics(ProblemGenerator* pgen, ParameterInput* pin, Me
             << bbh.a2 << ":" << bbh.th_a1 << ":" << bbh.th_a2 << ":" << bbh.ph_a1 << ":"
             << bbh.ph_a2 << ":" << bbh.spin_ramp << ":" << bbh.spin_ramp_start_time << ":"
             << bbh.spin_ramp_timescale;
+  if (!state->shells.empty())
+    signature << ":shells2:" << state->shells[0].geometry.subcells;
   if (bbh.use_traj_table) {
     for (std::size_t row = 0; row < bbh_table.t.size(); ++row) {
       signature << ":" << bbh_table.t[row];
@@ -1125,6 +1285,19 @@ void InitializeBinaryDiagnostics(ProblemGenerator* pgen, ParameterInput* pin, Me
   pgen->user_diagnostic_data = state;
   if (has && pin->GetString("cbd_diagnostics", "identity") == state->identity &&
       !pin->GetBoolean("problem", "flux_new_epoch")) {
+    for (auto& shell : state->shells) {
+      auto v = LoadDiagnosticScalars(pin, "shell_" + shell.label, 23);
+      shell.inherited_unavailable = v[17] != 0;
+      shell.dt = v[0];
+      shell.missed_grid_events = v[18];
+      for (int d = 0; d < 4; ++d) {
+        shell.residual[d] = v[1 + d];
+        shell.inflow[d] = v[5 + d];
+        shell.source[d] = v[9 + d];
+        shell.change[d] = v[13 + d];
+        shell.grid_jump[d] = v[19 + d];
+      }
+    }
     std::string packed = pin->GetString("cbd_diagnostics", "source_flags");
     std::istringstream flags(packed);
     std::string token;
@@ -1144,7 +1317,7 @@ void InitializeBinaryDiagnostics(ProblemGenerator* pgen, ParameterInput* pin, Me
   pin->SetBoolean("problem", "flux_new_epoch", false);
   pgen->user_diagnostic_step_func = BinaryDiagnosticStep;
   pgen->user_diagnostic_export_func = ExportBinaryDiagnostics;
-  if (state->budget.enabled) {
+  if (state->budget.enabled || !state->shells.empty()) {
     pgen->user_diagnostic_change_func = BinaryBudgetChange;
   }
 }
@@ -1170,17 +1343,41 @@ void BinaryDiagnosticStep(Mesh* pm, Driver* driver, int stage) {
       q.Begin();
     }
     state->state_time = pm->time;
+    for (auto& shell : state->shells) {
+      auto m = MeasureShell(pm, shell, pm->time, true, true);
+      shell.active = true;
+      for (int d = 0; d < 4; ++d) {
+        shell.start[d] = !shell.inherited_unavailable && m.sampled > 0 && m.rejected == 0
+                             ? m.stored[d]
+                             : NAN;
+        shell.change[d] = shell.inflow[d] = shell.source[d] = 0;
+      }
+    }
     BinaryBudgetStage(state->budget, pm, driver, 0);
   } else if (stage > 0) {
     UpdateDiagnosticSurfaces(pm, diagnostic_metric_time);
     std::size_t h = 0;
-    for (const auto& s : pm->pgen->surface_grids) {
-      if (s->surface_type == "modeled_component_Kerr") {
-        auto flux = IntegrateSurface(pm->pmb_pack, s.get());
-        state->mass[h++].Stage(driver->gam0[stage - 1], driver->beta[stage - 1] * pm->dt,
-                               flux.values[17], flux.valid, flux.reason);
+    auto& surfaces = pm->pgen->surface_grids;
+    std::vector<SurfaceFluxResult> fluxes(state->shells.empty() ? 0 : surfaces.size());
+    Real g = driver->gam0[stage - 1], bdt = driver->beta[stage - 1] * pm->dt;
+    for (std::size_t i = 0; i < surfaces.size(); ++i) {
+      auto& s = surfaces[i];
+      bool horizon = s->surface_type == "modeled_component_Kerr";
+      if (!horizon && (state->shells.empty() || s->Label()[0] != 'R')) continue;
+      auto f = IntegrateSurface(pm->pmb_pack, s.get());
+      if (horizon) state->mass[h++].Stage(g, bdt, f.values[17], f.valid, f.reason);
+      if (!state->shells.empty()) fluxes[i] = f;
+    }
+    for (auto& shell : state->shells) {
+      auto m = MeasureShell(pm, shell, diagnostic_metric_time, true, true);
+      for (int d = 0; d < 4; ++d) {
+        shell.change[d] *= g;
+        shell.source[d] = g * shell.source[d] +
+                          bdt * (m.rejected == 0 && m.sampled > 0 ? m.source[d] : NAN);
+        shell.inflow[d] = g * shell.inflow[d] + bdt * ShellBoundary(shell, pm, fluxes, d);
       }
     }
+    for (auto& shell : state->shells) shell.inherited_unavailable = false;
     BinaryBudgetStage(state->budget, pm, driver, stage);
     // The pre-stage sample observed the restored state. Subsequent samples see
     // the new RK state and the actual per-cell reset flags written by recovery.
@@ -1193,20 +1390,42 @@ void BinaryDiagnosticStep(Mesh* pm, Driver* driver, int stage) {
     // quadrature sample. Never bridge a missing visit or integrate during history.
     UpdateDiagnosticSurfaces(pm, diagnostic_metric_time);
     std::size_t h = 0;
-    for (const auto& s : pm->pgen->surface_grids) {
-      if (s->surface_type == "modeled_component_Kerr") {
-        auto flux = IntegrateSurface(pm->pmb_pack, s.get());
+    auto& surfaces = pm->pgen->surface_grids;
+    std::vector<SurfaceFluxResult> endpoint(state->shells.empty() ? 0 : surfaces.size());
+    for (std::size_t i = 0; i < surfaces.size(); ++i) {
+      auto& s = surfaces[i];
+      bool horizon = s->surface_type == "modeled_component_Kerr";
+      if (!horizon && (state->shells.empty() || s->Label()[0] != 'R')) continue;
+      auto f = IntegrateSurface(pm->pmb_pack, s.get());
+      if (!endpoint.empty()) endpoint[i] = f;
+      if (horizon) {
         auto& q = state->mass[h++];
-        q.interval_valid &= flux.valid;
-        q.reason |= flux.reason;
+        q.interval_valid &= f.valid;
+        q.reason |= f.reason;
         q.Commit(pm->ncycle + 1, pm->time + pm->dt, pm->dt);
       }
+    }
+    for (auto& shell : state->shells) {
+      auto m = MeasureShell(pm, shell, pm->time + pm->dt, true, true);
+#if MPI_PARALLEL_ENABLED
+      MPI_Allreduce(MPI_IN_PLACE, shell.change, 4, MPI_ATHENA_REAL, MPI_SUM,
+                    MPI_COMM_WORLD);
+#endif
+      shell.active = false;
+      shell.dt = pm->dt;
+      for (int d = 0; d < 4; ++d)
+        shell.residual[d] = m.rejected == 0 && m.sampled > 0 &&
+                                    std::isfinite(ShellBoundary(shell, pm, endpoint, d))
+                                ? m.stored[d] - shell.start[d] - shell.inflow[d] -
+                                      shell.source[d] - shell.change[d]
+                                : NAN;
     }
     BinaryBudgetStage(state->budget, pm, driver, -1);
   }
 }
 
-std::vector<Real> LoadDiagnosticScalars(ParameterInput* pin, const std::string& key) {
+std::vector<Real> LoadDiagnosticScalars(ParameterInput* pin, const std::string& key,
+                                        std::size_t width) {
   std::string packed = pin->GetString("cbd_diagnostics", key);
   std::istringstream stream(packed);
   std::vector<Real> values;
@@ -1227,7 +1446,7 @@ std::vector<Real> LoadDiagnosticScalars(ParameterInput* pin, const std::string& 
   } catch (const std::exception&) {
     Kokkos::abort("Invalid packed diagnostic restart scalar");
   }
-  if (values.size() != 20) {
+  if (values.size() != width) {
     Kokkos::abort("Invalid diagnostic restart region state width");
   }
   return values;
@@ -1243,10 +1462,32 @@ void ExportBinaryDiagnostics(Mesh* pm, ParameterInput* pin) {
   if (state->budget.enabled) {
     PrepareBinaryBudget(state->budget, pm);
   }
+  for (const auto& shell : state->shells) {
+    std::ostringstream packed;
+    packed << std::setprecision(std::numeric_limits<Real>::max_digits10) << shell.dt;
+    for (const Real* group : {shell.residual, shell.inflow, shell.source, shell.change})
+      for (int d = 0; d < 4; ++d) {
+        packed << ',';
+        if (std::isfinite(group[d]))
+          packed << group[d];
+        else
+          packed << "unavailable";
+      }
+    auto geometry = shell.geometry;
+    SetShellGeometry(geometry, pm->time);
+    auto m = ReduceHorizonShell(pm->pmb_pack, geometry);
+    int bad = m.rejected != 0 || shell.inherited_unavailable;
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE, &bad, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+#endif
+    packed << ',' << bad << ',' << shell.missed_grid_events;
+    for (Real jump : shell.grid_jump) packed << ',' << jump;
+    pin->SetString("cbd_diagnostics", "shell_" + shell.label, packed.str());
+  }
   std::ostringstream provenance;
   bool first = true;
   for (auto surface : DiagnosticProvenanceSurfaces(pm->pgen.get())) {
-    surface->RebuildAll();
+    surface->RefreshInterpolationSupport();
     surface->QualifyStencils();
     auto indices = surface->InterpIndices().d_view;
     auto reasons = surface->StencilReasons().d_view;
@@ -1348,7 +1589,11 @@ void TorusHistory(HistoryData* pdata, Mesh* pm) {
   }
 
   // 4. Calculate fluxes
-  TorusFluxes_General(pdata, pmbp, surf_raw_ptrs);
+  auto diagnostics =
+      std::static_pointer_cast<BinaryDiagnosticState>(pgen->user_diagnostic_data);
+  std::vector<SurfaceFluxResult> results;
+  TorusFluxes_General(pdata, pmbp, surf_raw_ptrs,
+                      diagnostics && !diagnostics->shells.empty() ? &results : nullptr);
   std::ostringstream meta;
   meta << "cbd_schema=2 frame=" << (bbh.corotating ? "corotating" : "inertial")
        << " frame_omega=" << bbh.frame_omega
@@ -1386,6 +1631,37 @@ void TorusHistory(HistoryData* pdata, Mesh* pm) {
       add("M0_committed_cycle_" + id, q.committed_cycle);
       add("M0_interval_valid_" + id, q.interval_valid ? 1 : 0);
       add("M0_interval_reason_" + id, q.reason);
+    }
+  }
+  if (diagnostics && !diagnostics->shells.empty()) {
+    pdata->metadata +=
+        " shell_partition=first_R_minus_component_horizons_then_adjacent_R"
+        " shell_generators=coordinate_translations_and_barycentric_z"
+        " shell_volume_measure=coordinate shell_balance=accepted_step_before_remap";
+    for (auto& shell : diagnostics->shells) {
+      auto m = MeasureShell(pm, shell, pm->time, true, true);
+      auto prefix = "shell_" + shell.label + "_";
+      bool valid = !shell.inherited_unavailable && m.rejected == 0 && m.sampled > 0;
+      add(prefix + "sampled_volume", shell.inherited_unavailable ? 0.0 : m.sampled);
+      add(prefix + "rejected_volume",
+          m.rejected + (shell.inherited_unavailable ? m.sampled : 0.0));
+      add(prefix + "volume_valid", valid);
+      add(prefix + "interval_dt", shell.dt);
+      add(prefix + "grid_jump_unavailable_events", shell.missed_grid_events);
+      const char* names[] = {"Px", "Py", "Pz", "Jz"};
+      for (int d = 0; d < 4; ++d) {
+        auto id = prefix + names[d];
+        add(id + "_grid_jump_partial_cumulative", shell.grid_jump[d]);
+        add(id + "_stored", valid ? m.stored[d] : NAN);
+        add(id + "_source", valid ? m.source[d] : NAN);
+        add(id + "_partial_stored", shell.inherited_unavailable ? NAN : m.stored[d]);
+        add(id + "_partial_source", shell.inherited_unavailable ? NAN : m.source[d]);
+        add(id + "_boundary_in", ShellBoundary(shell, pm, results, d));
+        add(id + "_interval_boundary", shell.dt > 0 ? shell.inflow[d] : NAN);
+        add(id + "_interval_source", shell.dt > 0 ? shell.source[d] : NAN);
+        add(id + "_interval_other", shell.dt > 0 ? shell.change[d] : NAN);
+        add(id + "_interval_residual", shell.residual[d]);
+      }
     }
   }
   BinaryBudgetHistory(pdata, pm);
@@ -3989,16 +4265,21 @@ void UpdateDiagnosticSurfaces(Mesh* pm, Real time) {
   find_traj_t_with_deriv(bbh.corotating ? 0.0 : time, tr, dt);
   for (auto& ptr : pm->pgen->surface_grids) {
     auto& grid = *ptr;
-    int hole = (grid.Label() == "H1" || grid.Label() == "BH1_Kerr")   ? 0
+    int hole = grid.component >= 0                                    ? grid.component
+               : (grid.Label() == "H1" || grid.Label() == "BH1_Kerr") ? 0
                : (grid.Label() == "H2" || grid.Label() == "BH2_Kerr") ? 1
                                                                       : -1;
     if (hole < 0) {
       continue;
     }
+    // Prescribed component geometry is a pure function of its epoch during a run.
+    Real epoch = bbh.corotating ? 0.0 : time;
+    if (grid.component_epoch == epoch) continue;
+    grid.component_epoch = epoch;
     int x = hole == 0 ? X1 : X2, v = hole == 0 ? VX1 : VX2, a = hole == 0 ? AX1 : AX2;
     int m = hole == 0 ? M1T : M2T;
     grid.SetCenter(&tr[x]);
-    if (grid.surface_type == "modeled_component_Kerr") {
+    if (grid.component >= 0) {
       Real chi2 = SQR(tr[a]) + SQR(tr[a + 1]) + SQR(tr[a + 2]);
       Real v2 = SQR(tr[v]) + SQR(tr[v + 1]) + SQR(tr[v + 2]);
       if (!(std::isfinite(tr[m]) && tr[m] > 0 && std::isfinite(chi2) && chi2 <= 1.0 &&
@@ -4012,13 +4293,15 @@ void UpdateDiagnosticSurfaces(Mesh* pm, Real time) {
         chi[i] = dual1_real(tr[a + i], bbh.corotating ? 0.0 : dt[a + i]);
         vel[i] = dual1_real(tr[v + i], bbh.corotating ? 0.0 : dt[v + i]);
       }
-      circumbinary::KerrQuadric(dual1_real(tr[m], bbh.corotating ? 0.0 : dt[m]), chi, vel,
-                                H, [](dual1_real z) {
-                                  if (z.val == 0.0) {
-                                    return dual1_real(0.0, z.d == 0.0 ? 0.0 : NAN);
-                                  }
-                                  return metric_sqrt(z);
-                                });
+      circumbinary::KerrQuadric(
+          dual1_real(tr[m], bbh.corotating ? 0.0 : dt[m]), chi, vel, H,
+          [](dual1_real z) {
+            if (z.val == 0.0) {
+              return dual1_real(0.0, z.d == 0.0 ? 0.0 : NAN);
+            }
+            return metric_sqrt(z);
+          },
+          grid.fixed_ks_radius);
       circumbinary::Quadric q;
       for (int i = 0; i < 3; ++i) {
         q.center[i] = tr[x + i];
@@ -4439,6 +4722,7 @@ void numerical_4metric(const Real t, const Real x, const Real y,
   DifferenceMetric(met_p.g, met_m.g, 2.0*hx, outmet.g_z);
 }
 
+KOKKOS_INLINE_FUNCTION
 void TimeMetricAD(const Real x, const Real y, const Real z,
                   const Real tr[NTRAJ], const Real dtr[NTRAJ],
                   const bbh_pgen b, struct dd_sym &g, struct dd_sym &dg) {

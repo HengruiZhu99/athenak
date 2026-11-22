@@ -24,6 +24,16 @@
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
 
+// Built-in histories have at most 11 entries. The user-history column capacity
+// is independent of the per-thread scratch needed for a mesh reduction.
+using BuiltinHistorySum = array_sum::array_type<Real, 11>;
+namespace Kokkos {
+template <>
+struct reduction_identity<BuiltinHistorySum> {
+  KOKKOS_INLINE_FUNCTION static BuiltinHistorySum sum() { return {}; }
+};
+}  // namespace Kokkos
+
 //----------------------------------------------------------------------------------------
 // Constructor: also calls BaseTypeOutput base class constructor
 
@@ -99,7 +109,6 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
   // capture class variables for kernel
   auto &u0_ = pm->pmb_pack->phydro->u0;
   auto &size = pm->pmb_pack->pmb->mb_size;
-  int &nhist_ = pdata->nhist;
 
   // loop over all MeshBlocks in this pack
   auto &indcs = pm->pmb_pack->pmesh->mb_indcs;
@@ -109,9 +118,9 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
   const int nmkji = (pm->pmb_pack->nmb_thispack)*nx3*nx2*nx1;
   const int nkji = nx3*nx2*nx1;
   const int nji  = nx2*nx1;
-  array_sum::GlobalSum sum_this_mb;
+  BuiltinHistorySum sum_this_mb;
   Kokkos::parallel_reduce("HistSums",Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
-  KOKKOS_LAMBDA(const int &idx, array_sum::GlobalSum &mb_sum) {
+  KOKKOS_LAMBDA(const int &idx, BuiltinHistorySum &mb_sum) {
     // compute n,k,j,i indices of thread
     int m = (idx)/nkji;
     int k = (idx - m*nkji)/nji;
@@ -123,7 +132,7 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
     Real vol = size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3;
 
     // Hydro conserved variables:
-    array_sum::GlobalSum hvars;
+    BuiltinHistorySum hvars;
     hvars.the_array[IDN] = vol*u0_(m,IDN,k,j,i);
     hvars.the_array[IM1] = vol*u0_(m,IM1,k,j,i);
     hvars.the_array[IM2] = vol*u0_(m,IM2,k,j,i);
@@ -137,14 +146,9 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
     hvars.the_array[nhydro_+1] = vol*0.5*SQR(u0_(m,IM2,k,j,i))/u0_(m,IDN,k,j,i);
     hvars.the_array[nhydro_+2] = vol*0.5*SQR(u0_(m,IM3,k,j,i))/u0_(m,IDN,k,j,i);
 
-    // fill rest of the_array with zeros, if nhist < NHISTORY_VARIABLES
-    for (int n=nhist_; n<NHISTORY_VARIABLES; ++n) {
-      hvars.the_array[n] = 0.0;
-    }
-
     // sum into parallel reduce
     mb_sum += hvars;
-  }, Kokkos::Sum<array_sum::GlobalSum>(sum_this_mb));
+  }, Kokkos::Sum<BuiltinHistorySum>(sum_this_mb));
 
   // store data into hdata array
   for (int n=0; n<pdata->nhist; ++n) {
@@ -180,7 +184,6 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   auto &adm = pm->pmb_pack->padm->adm;
 
   auto &size = pm->pmb_pack->pmb->mb_size;
-  int &nhist_ = pdata->nhist;
   auto &opt = pm->pmb_pack->pz4c->opt;
 
   // loop over all MeshBlocks in this pack
@@ -191,9 +194,9 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   const int nmkji = (pm->pmb_pack->nmb_thispack)*nx3*nx2*nx1;
   const int nkji = nx3*nx2*nx1;
   const int nji  = nx2*nx1;
-  array_sum::GlobalSum sum_this_mb;
+  BuiltinHistorySum sum_this_mb;
   Kokkos::parallel_reduce("HistSums",Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
-  KOKKOS_LAMBDA(const int &idx, array_sum::GlobalSum &mb_sum) {
+  KOKKOS_LAMBDA(const int &idx, BuiltinHistorySum &mb_sum) {
     // compute n,k,j,i indices of thread
     int m = (idx)/nkji;
     int k = (idx - m*nkji)/nji;
@@ -210,7 +213,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
                * std::sqrt(std::abs(detg));
 
     // Excise the punctures based on chi
-    array_sum::GlobalSum hvars;
+    BuiltinHistorySum hvars;
     if (z4c.chi(m,k,j,i)>=opt.excise_chi) {
       hvars.the_array[0] = vol*u_con_(m,0,k,j,i); // ||C||^2 (comes already squared)
       hvars.the_array[1] = vol*SQR(u_con_(m,1,k,j,i)); //||H||^2
@@ -233,14 +236,9 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       hvars.the_array[8] = 0;
     }
 
-    // fill rest of the_array with zeros, if nhist < NHISTORY_VARIABLES
-    for (int n=nhist_; n<NHISTORY_VARIABLES; ++n) {
-      hvars.the_array[n] = 0.0;
-    }
-
     // sum into parallel reduce
     mb_sum += hvars;
-  }, Kokkos::Sum<array_sum::GlobalSum>(sum_this_mb));
+  }, Kokkos::Sum<BuiltinHistorySum>(sum_this_mb));
 
   // store data into hdata array
   for (int n=0; n<pdata->nhist; ++n) {
@@ -285,7 +283,6 @@ void HistoryOutput::LoadMHDHistoryData(HistoryData *pdata, Mesh *pm) {
   auto &bx2f = pm->pmb_pack->pmhd->b0.x2f;
   auto &bx3f = pm->pmb_pack->pmhd->b0.x3f;
   auto &size = pm->pmb_pack->pmb->mb_size;
-  int &nhist_ = pdata->nhist;
 
   // loop over all MeshBlocks in this pack
   auto &indcs = pm->pmb_pack->pmesh->mb_indcs;
@@ -295,9 +292,9 @@ void HistoryOutput::LoadMHDHistoryData(HistoryData *pdata, Mesh *pm) {
   const int nmkji = (pm->pmb_pack->nmb_thispack)*nx3*nx2*nx1;
   const int nkji = nx3*nx2*nx1;
   const int nji  = nx2*nx1;
-  array_sum::GlobalSum sum_this_mb;
+  BuiltinHistorySum sum_this_mb;
   Kokkos::parallel_reduce("HistSums",Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
-  KOKKOS_LAMBDA(const int &idx, array_sum::GlobalSum &mb_sum) {
+  KOKKOS_LAMBDA(const int &idx, BuiltinHistorySum &mb_sum) {
     // compute n,k,j,i indices of thread
     int m = (idx)/nkji;
     int k = (idx - m*nkji)/nji;
@@ -309,7 +306,7 @@ void HistoryOutput::LoadMHDHistoryData(HistoryData *pdata, Mesh *pm) {
     Real vol = size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3;
 
     // MHD conserved variables:
-    array_sum::GlobalSum hvars;
+    BuiltinHistorySum hvars;
     hvars.the_array[IDN] = vol*u0_(m,IDN,k,j,i);
     hvars.the_array[IM1] = vol*u0_(m,IM1,k,j,i);
     hvars.the_array[IM2] = vol*u0_(m,IM2,k,j,i);
@@ -328,14 +325,9 @@ void HistoryOutput::LoadMHDHistoryData(HistoryData *pdata, Mesh *pm) {
     hvars.the_array[nmhd_+4] = vol*0.25*(SQR(bx2f(m,k,j+1,i)) + SQR(bx2f(m,k,j,i)));
     hvars.the_array[nmhd_+5] = vol*0.25*(SQR(bx3f(m,k+1,j,i)) + SQR(bx3f(m,k,j,i)));
 
-    // fill rest of the_array with zeros, if nhist < NHISTORY_VARIABLES
-    for (int n=nhist_; n<NHISTORY_VARIABLES; ++n) {
-      hvars.the_array[n] = 0.0;
-    }
-
     // sum into parallel reduce
     mb_sum += hvars;
-  }, Kokkos::Sum<array_sum::GlobalSum>(sum_this_mb));
+  }, Kokkos::Sum<BuiltinHistorySum>(sum_this_mb));
   Kokkos::fence();
 
   // store data into hdata array

@@ -39,6 +39,9 @@ class SphericalSurfaceGrid {
   void SetMotion(MotionFunc motion);
   const Real* Center() const { return center_; }
   std::string surface_type = "coordinate_transfer_sphere";
+  Real component_epoch = NAN;
+  int component = -1;
+  Real fixed_ks_radius = 0;
   int inherited_stencil_reason = 0;  // restart provenance until the next evolved state
   Real min_cells_per_radius = 0.0;   // zero disables the resolution qualification
   DualArray2D<Real>& Motion() { return motion_; }
@@ -49,6 +52,7 @@ class SphericalSurfaceGrid {
 
   // Rebuild interpolator and surface geometry.
   void RebuildAll();
+  void RefreshInterpolationSupport();
 
   // Interpolates variables from source_array[start_index...end_index-1]
   DualArray2D<Real> InterpolateToSurface(const DvceArray5D<Real> &source_array,
@@ -56,7 +60,7 @@ class SphericalSurfaceGrid {
 
   // Interpolate the 6 components of the ADM spatial metric to the surface.
   // This now automatically triggers the calculation of derived geometric quantities.
-  void InterpolateMetric();
+  void InterpolateMetric(bool derived = true);
   DualArray2D<Real> InterpolateCached(int slot, const DvceArray5D<Real>& source,
                                       int start, int end);
   // Field-dependent checks: call only once evolved fields and ghosts are ready.

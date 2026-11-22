@@ -16,7 +16,11 @@ KOKKOS_INLINE_FUNCTION void ValenciaTorqueCell(const ADM& adm, const Prim& prim,
                                                const Bcc& bcc, int torque_ng, int ndim,
                                                Real gamma_gas, const Real idx[3], int m,
                                                int k, int j, int i, Real x1v, Real x2v,
-                                               Real x3v, Real torque[3]) {
+                                               Real x3v, Real torque[3],
+                                               Real* force = nullptr,
+                                               const Real* shift_offset = nullptr) {
+  if (force)
+    for (int d = 0; d < 3; ++d) force[d] = std::numeric_limits<Real>::quiet_NaN();
   // --- 1. Metric, det, inverse ---
   Real g_dd_1d[6];
   g_dd_1d[0] = adm.g_dd(m, 0, 0, k, j, i);
@@ -86,74 +90,38 @@ KOKKOS_INLINE_FUNCTION void ValenciaTorqueCell(const ADM& adm, const Prim& prim,
   Real Bv, b0, b_u[3], b_d[3], b2;
   ValenciaComovingB(v_u, v_d, B_u, B_d, W, Bv, b0, b_u, b_d, b2);
 
-  // Total stress-energy (fluid + EM), non-densitized
-  Real E_tot;
-  Real S_d[3];
-  Real S_dd[3][3];
-  ValenciaStressEnergyTotal(rho, pres, gamma_gas, v_u, v_d, W, B_u, B_d, b0, b_d, b2,
-                            g_dd_1d, E_tot, S_d, S_dd);
-
-  // --- 4. Build stresses with needed index placements ---
-  // Mixed spatial stress: S^k{}_j = g^{km} S_{mj}
-  AthenaPointTensor<Real, TensorSymm::NONE, 3, 2> S_ud;
-  for (int kk = 0; kk < 3; ++kk) {
-    for (int jj = 0; jj < 3; ++jj) {
-      Real sum = 0.0;
-      for (int mm = 0; mm < 3; ++mm) {
-        sum += g_uu(kk, mm) * S_dd[mm][jj];
-      }
-      S_ud(kk, jj) = sum;
-    }
-  }
-
-  // Fully contravariant spatial stress: S^{jk} = g^{jm} g^{kn} S_{mn}
-  AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> S_uu;
+  // Build the total Eulerian stress in the index placements the source uses.
+  // b_u is the spatial projection of b, and b0 = alpha b^t.
+  const Real pstar = pres + 0.5 * b2;
+  const Real A = (rho * GammaLawSpecificEnthalpy(rho, pres, gamma_gas) + b2) * W * W;
+  const Real E_tot = A - pstar - b0 * b0;
+  Real S_d[3], W_uu[3][3];
   for (int a = 0; a < 3; ++a) {
+    S_d[a] = A * v_d[a] - b0 * b_d[a];
     for (int b = a; b < 3; ++b) {
-      Real sum = 0.0;
-      for (int m2 = 0; m2 < 3; ++m2) {
-        for (int n2 = 0; n2 < 3; ++n2) {
-          sum += g_uu(a, m2) * g_uu(b, n2) * S_dd[m2][n2];
-        }
-      }
-      S_uu(a, b) = sum;
-    }
-  }
-
-  Real W_uu[3][3];
-  for (int a = 0; a < 3; ++a) {
-    for (int b = 0; b < 3; ++b) {
-      W_uu[a][b] = S_uu(a, b);
+      W_uu[a][b] = A * v_u[a] * v_u[b] + pstar * g_uu(a, b) - b_u[a] * b_u[b];
+      W_uu[b][a] = W_uu[a][b];
     }
   }
   Real G_d[3] = {0.0, 0.0, 0.0};
   ValenciaMomentumSources(E_tot, S_d, W_uu, alpha, dalpha_d, dbeta_du, dg_ddd, 1.0,
                           [&](int a, Real term) { G_d[a] += term; });
 
-  // --- 6. Position and densitized torque density (r × G)_a ---
-  // Start with sqrt(gamma) * (r × G)_a   (using Cartesian r × ...)
-  torque[0] = (x2v * G_d[2] - x3v * G_d[1]) * sqrt_gamma;  // tau_x
-  torque[1] = (x3v * G_d[0] - x1v * G_d[2]) * sqrt_gamma;  // tau_y
-  torque[2] = (x1v * G_d[1] - x2v * G_d[0]) * sqrt_gamma;  // tau_z
+  if (force)
+    for (int d = 0; d < 3; ++d) force[d] = sqrt_gamma * G_d[d];
 
-  // --- 7. Add the product-rule term: F^j{}_i ∂_j φ^i = F^j{}_i ε_{a j}{}^{i} ---
-  // F^j{}_i = α S^j{}_i - β^j S_i
-  Real F_ud[3][3];
-  for (int jdir = 0; jdir < 3; ++jdir) {
-    const Real betaj = adm.beta_u(m, jdir, k, j, i);  // β^j
-    for (int idir = 0; idir < 3; ++idir) {
-      F_ud[jdir][idir] = alpha * S_ud(jdir, idir) - betaj * S_d[idir];
-    }
+  // The isotropic mixed-stress term cancels in F^a_b - F^b_a.
+  const Real x[3] = {x1v, x2v, x3v};
+  Real beta[3];
+  for (int a = 0; a < 3; ++a)
+    beta[a] = adm.beta_u(m, a, k, j, i) + (shift_offset ? shift_offset[a] : 0);
+  for (int d = 0; d < 3; ++d) {
+    int a = (d + 1) % 3, b = (d + 2) % 3;
+    Real antisymmetric_flux = alpha * (A * (v_u[a] * v_d[b] - v_u[b] * v_d[a])
+                                      - b_u[a] * b_d[b] + b_u[b] * b_d[a])
+                            - beta[a] * S_d[b]
+                            + beta[b] * S_d[a];
+    torque[d] = sqrt_gamma * (x[a] * G_d[b] - x[b] * G_d[a] + antisymmetric_flux);
   }
-
-  // (F^j{}_i ε_{a j}{}^{i}) components
-  Real miss[3] = {0.0, 0.0, 0.0};
-  miss[0] = F_ud[1][2] - F_ud[2][1];  // a = x
-  miss[1] = F_ud[2][0] - F_ud[0][2];  // a = y
-  miss[2] = F_ud[0][1] - F_ud[1][0];  // a = z
-
-  torque[0] += sqrt_gamma * miss[0];
-  torque[1] += sqrt_gamma * miss[1];
-  torque[2] += sqrt_gamma * miss[2];
 }
 #endif  // DYN_GRMHD_VALENCIA_DIAGNOSTICS_HPP_

@@ -43,6 +43,49 @@ class Lifecycle(unittest.TestCase):
                 np.testing.assert_allclose(mpi[key][-1],full[key][-1],rtol=2e-12)
                 np.testing.assert_allclose(changed[key][-1],full[key][-1],rtol=2e-12)
 
+    def test_torque_output_selection(self):
+        from bench_diagnostics_gpu import check_torque_output
+        with tempfile.TemporaryDirectory() as temp:
+            fixture = INPUT.with_name("binary_shell.athinput").read_text()
+            fixture = fixture.replace("nlim = 2", "nlim = 8").replace("b_inf = 0", "b_inf = 0.002")
+            launcher = [os.environ.get("MPIEXEC", "mpiexec"), "-n", "2"] if os.environ.get(
+                "ATHENA_DIAGNOSTICS_MPI") else []
+            check_torque_output(EXE, Path(temp)/"selection", fixture, launcher)
+
+    def test_binary_shell_restart_and_rejected_state(self):
+        import re
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fixture = INPUT.with_name("binary_shell.athinput")
+            full = self.run_case(root/"full", "time/nlim=3", input_file=fixture)
+            self.run_case(root/"split", "time/nlim=2", input_file=fixture)
+            checkpoint = sorted((root/"split/rst").glob("*.rst"))[-1]
+            ranks = 2 if os.environ.get("ATHENA_DIAGNOSTICS_MPI") else 1
+            resumed = self.run_case(root/"resumed", "time/nlim=3", ranks=ranks, restart=checkpoint)
+            for label in full:
+                if label.startswith("shell_"):
+                    np.testing.assert_allclose(resumed[label][-1], full[label][-1],
+                                               rtol=5e-9, atol=2e-11, err_msg=label)
+            data = checkpoint.read_bytes()
+            end = data.index(b"<par_end>") + len(b"<par_end>\n")
+            def flag_shell(match):
+                fields = match[2].split(b",")
+                fields[17] = b"1"
+                return match[1] + b",".join(fields)
+            header, count = re.subn(rb"(shell_R3\.75\s*=\s*)([^\s#]+)", flag_shell, data[:end])
+            self.assertEqual(count, 1)
+            injected = root/"rejected.rst"
+            injected.write_bytes(header + data[end:])
+            h = self.run_case(root/"stopped", "time/nlim=2", restart=injected)
+            self.assertEqual(h["shell_R3.75_volume_valid"][-1], 0)
+            self.assertEqual(h["shell_R3.75_sampled_volume"][-1], 0)
+            self.assertGreater(h["shell_R3.75_rejected_volume"][-1], 0)
+            retry = sorted((root/"stopped/rst").glob("*.rst"))[-1]
+            h = self.run_case(root/"retry", "time/nlim=3", restart=retry)
+            for q in ("Px","Py","Pz","Jz"):
+                self.assertTrue(np.isnan(h["shell_R3.75_"+q+"_interval_residual"][-1]))
+                self.assertTrue(np.isfinite(h["shell_R4.25_"+q+"_interval_residual"][-1]))
+
     def test_regional_restart(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);inp=INPUT.with_name('budget_smoke.athinput')

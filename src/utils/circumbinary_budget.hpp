@@ -42,6 +42,65 @@ struct BudgetGeometry {
     return r2 < inner * inner ? 2 : 3;
   }
 };
+// A barycentric spherical shell. The first shell subtracts one or two moving
+// component horizons, each represented by its equal-time Cartesian quadric.
+struct HorizonShell {
+  Real inner = 0, outer = 0, center[2][3] = {}, H[2][3][3] = {};
+  Real inscribed[2] = {}, circumscribed[2] = {}, frame_omega = 0;
+  int holes = 0, subcells = 8;
+  // Classify a cell using an enclosing ball. Only ambiguous cut cells need chords.
+  KOKKOS_INLINE_FUNCTION int CellCoverage(const Real x[3], const Real dx[3]) const {
+    Real d = 0.5 * sqrt(SQR(dx[0]) + SQR(dx[1]) + SQR(dx[2]));
+    Real r = sqrt(SQR(x[0]) + SQR(x[1]) + SQR(x[2]));
+    if (r - d >= outer || r + d <= inner) return 0;
+    bool full = r + d <= outer && (inner == 0 || r - d >= inner);
+    for (int h = 0; h < holes; ++h) {
+      r = sqrt(SQR(x[0] - center[h][0]) + SQR(x[1] - center[h][1]) +
+               SQR(x[2] - center[h][2]));
+      if (r + d <= inscribed[h]) return 0;
+      full &= r - d >= circumscribed[h];
+    }
+    return full ? 1 : -1;
+  }
+  // Integrate the vertical chord analytically. Excluded quadrics are disjoint
+  // and contained in the outer sphere, as checked when geometry is constructed.
+  KOKKOS_INLINE_FUNCTION Real ColumnLength(Real x, Real y, Real lo, Real hi) const {
+    const Real xy = x * x + y * y;
+    if (xy >= outer * outer) return 0;
+    Real z = sqrt(outer * outer - xy);
+    lo = fmax(lo, -z);
+    hi = fmin(hi, z);
+    if (hi <= lo) return 0;
+    Real length = hi - lo;
+    if (xy < inner * inner) {
+      z = sqrt(inner * inner - xy);
+      length -= fmax(0.0, fmin(hi, z) - fmax(lo, -z));
+    }
+    for (int h = 0; h < holes; ++h) {
+      Real X = x - center[h][0], Y = y - center[h][1];
+      const auto& q = H[h];
+      Real A = q[2][2], B = q[0][2] * X + q[1][2] * Y;
+      Real C = q[0][0] * X * X + 2 * q[0][1] * X * Y + q[1][1] * Y * Y - 1;
+      Real disc = B * B - A * C;
+      if (disc <= 0) continue;
+      Real mid = center[h][2] - B / A, half = sqrt(disc) / A;
+      length -= fmax(0.0, fmin(hi, mid + half) - fmax(lo, mid - half));
+    }
+    return fmax(0.0, length);
+  }
+};
+struct ShellMoments {
+  Real stored[4] = {}, source[4] = {}, sampled = 0, rejected = 0;
+  KOKKOS_INLINE_FUNCTION ShellMoments& operator+=(const ShellMoments& other) {
+    for (int d = 0; d < 4; ++d) {
+      stored[d] += other.stored[d];
+      source[d] += other.source[d];
+    }
+    sampled += other.sampled;
+    rejected += other.rejected;
+    return *this;
+  }
+};
 struct RegionMoments {
   Real J[kRegions] = {}, torque[kRegions] = {}, volume[kRegions] = {}, bad[kRegions] = {};
   KOKKOS_INLINE_FUNCTION RegionMoments& operator+=(const RegionMoments& s) {
@@ -57,6 +116,10 @@ struct RegionMoments {
 }  // namespace circumbinary
 namespace Kokkos {
 template <>
+struct reduction_identity<circumbinary::ShellMoments> {
+  KOKKOS_INLINE_FUNCTION static circumbinary::ShellMoments sum() { return {}; }
+};
+template <>
 struct reduction_identity<circumbinary::RegionMoments> {
   KOKKOS_INLINE_FUNCTION static circumbinary::RegionMoments sum() { return {}; }
 };
@@ -65,4 +128,6 @@ struct reduction_identity<circumbinary::RegionMoments> {
 circumbinary::RegionMoments ReduceBinaryRegions(MeshBlockPack*,
                                                 circumbinary::BudgetGeometry,
                                                 bool with_torque = false);
+circumbinary::ShellMoments ReduceHorizonShell(MeshBlockPack*, circumbinary::HorizonShell,
+                                              bool with_sources = true);
 #endif  // UTILS_CIRCUMBINARY_BUDGET_HPP_

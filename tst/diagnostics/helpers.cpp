@@ -34,7 +34,7 @@ struct TestPrim {Real operator()(int,int n,int,int,int)const {
   return n==IDN ? 1.0:n==IPR ? 0.1:n==IVX ? 0.2:n==IVY ? -0.1:0.05;
 }};
 struct TestB {Real operator()(int,int,int,int,int)const{return 0;}};
-void KerrSpatialReference(const Real x[3],Real mass,const Real chi[3],const Real v[3],Real g[6]) {
+Real KerrSpatialReference(const Real x[3],Real mass,const Real chi[3],const Real v[3],Real g[6]) {
   Real a[3],v2=0,a2=0;for(int i=0;i<3;++i){a[i]=mass*chi[i];v2+=v[i]*v[i];a2+=a[i]*a[i];}
   Real gamma=1/sqrt(1-v2),q=gamma*gamma/(gamma+1),L[3][3],xb[3]={};
   for(int i=0;i<3;++i)for(int j=0;j<3;++j){L[i][j]=(i==j?1.0:0.0)+q*v[i]*v[j];xb[i]+=L[i][j]*x[j];}
@@ -46,6 +46,7 @@ void KerrSpatialReference(const Real x[3],Real mass,const Real chi[3],const Real
   for(int i=0;i<3;++i){h[i]=-gamma*v[i];for(int j=0;j<3;++j)h[i]+=ell[j]*L[j][i];}
   Real factor=2*mass*r*r*r/(r*r*r*r+ad*ad);int index=0;
   for(int i=0;i<3;++i)for(int j=i;j<3;++j)g[index++]=(i==j ? 1.0:0.0)+factor*h[i]*h[j];
+  return r;
 }
 void AreaTests() {
   Real zero[3]={},tilt[3]={0.3,0.4,0.5},boost[3]={0.35,-0.2,0.1};
@@ -55,6 +56,15 @@ void AreaTests() {
     circumbinary::KerrQuadric(1.0,chi,velocity,quad.H,[](Real z){return sqrt(z);});
     Real spin2=0;for(int d=0;d<3;++d)spin2+=chi[d]*chi[d];
     Real rp=1+sqrt(1-spin2),exact=4*M_PI*(rp*rp+spin2),previous=0;
+    for (Real fixed : {0.0, 1.2, 2.8}) {
+      circumbinary::Quadric surface;
+      circumbinary::KerrQuadric(1.0, chi, velocity, surface.H, [](Real v){return sqrt(v);}, fixed);
+      for (int a=0; a<23; ++a) for (int b=0; b<37; ++b) {
+        Real th=(a+.5)*M_PI/23, ph=b*2*M_PI/37, r=surface.Radius(th,ph);
+        Real x[3]={r*sin(th)*cos(ph), r*sin(th)*sin(ph), r*cos(th)}, metric[6];
+        Near(KerrSpatialReference(x,1,chi,velocity,metric),fixed ? fixed : rp,5e-14);
+      }
+    }
     for(int nt:{40,80,160}){
       FluxAccumulator integral,combined;
       for(int t=0;t<nt;++t)for(int p=0;p<2*nt;++p){
@@ -127,7 +137,66 @@ void RegionalConvergenceTests() {
   Check(finest<coarse/3,"regional geometric residual convergence");
 }
 
+// Flat-space hydrostatic snapshot with affine pressure. By the divergence theorem
+// F_P = -V grad(p), F_Jz = -(int x dV * p_y - int y dV * p_x).
+// Both holes are tilted/boosted and asymmetric, so every checked flux is nonzero.
+void PerforatedPressureTest() {
+  using circumbinary::Quadric;
+  Quadric q[3];
+  Real zero[3]={}, flat[6]={1,0,0,1,0,1};
+  Real grad[3]={0.035,-0.042,0.051}, chi[3]={0.22,0.12,-0.32};
+  Real boost[3]={0.12,-0.22,0.14};
+  for(int i=0;i<3;++i) q[0].H[i][i]=1.0/9.0;
+  q[1].center[0]=1.1; q[1].center[1]=0.3;
+  q[2].center[0]=-0.9; q[2].center[1]=-0.2;
+  circumbinary::KerrQuadric(0.45,chi,boost,q[1].H,[](Real y){return sqrt(y);});
+  circumbinary::KerrQuadric(0.31,chi,boost,q[2].H,[](Real y){return sqrt(y);});
+  Real expected[4]={}, measured[4]={};
+  circumbinary::HorizonShell shell;
+  shell.outer=3; shell.holes=2;
+  for(int f=0;f<3;++f){
+    auto& face=q[f];const auto& H=face.H;
+    Real volume=(f==0?1:-1)*4*M_PI/(3*sqrt(adm::SpatialDet(
+      H[0][0],H[0][1],H[0][2],H[1][1],H[1][2],H[2][2])));
+    if(f)for(int a=0;a<3;++a){
+      shell.center[f-1][a]=face.center[a];
+      for(int b=0;b<3;++b)shell.H[f-1][a][b]=H[a][b];
+    }
+    for(int d=0;d<3;++d)expected[d]-=volume*grad[d];
+    expected[3]-=volume*(face.center[0]*grad[1]-face.center[1]*grad[0]);
+    FluxAccumulator flux;
+    constexpr int nt=160;
+    for(int t=0;t<nt;++t)for(int p=0;p<2*nt;++p){
+      Real th=(t+.5)*M_PI/nt,ph=p*M_PI/nt;
+      Real n[3]={sin(th)*cos(ph),sin(th)*sin(ph),cos(th)};
+      Real r=face.Radius(th,ph), pos[3], ds[3]={};
+      Real pressure=1;
+      for(int d=0;d<3;++d){
+        pos[d]=face.center[d]+r*n[d]; pressure+=grad[d]*pos[d];
+        for(int k=0;k<3;++k)ds[d]+=H[d][k]*n[k];
+        ds[d]*=r*r*r*r*sin(th)*M_PI*M_PI/(nt*nt);
+      }
+      ValenciaSurfacePoint(1,pressure,5.0/3,zero,zero,flat,1,1,zero,pos,zero,ds,flux);
+    }
+    for(int d=0;d<4;++d)measured[d]+=(f==0?1:-1)*flux.moving[d==3?13:5+d];
+  }
+  Real from_volume[4]={};int nc=256;
+  Real dx=6.0/nc;
+  for(int i=0;i<nc;++i)for(int j=0;j<nc;++j){
+    Real x=-3+(i+.5)*dx,y=-3+(j+.5)*dx;
+    Real volume=shell.ColumnLength(x,y,-3,3)*dx*dx;
+    for(int d=0;d<3;++d)from_volume[d]-=volume*grad[d];
+    from_volume[3]-=volume*(x*grad[1]-y*grad[0]);
+  }
+  for(int d=0;d<4;++d){
+    Check(std::abs(expected[d])>0.01,"degenerate pressure test");
+    Near(measured[d]/expected[d],1,1e-4);
+    Near(from_volume[d]/expected[d],1,8e-4);
+  }
+}
+
 void SurfaceTests() {
+  PerforatedPressureTest();
   Real metric[6]={1,0,0,1,0,1},zero[3]={},normal[3]={0.4,0.2,0.7};
   Real x[3]={2,3,1},velocity[3]={0.2,-0.1,0.3};
   Real W=1/sqrt(1-0.14),wv[3]={W*0.2,W*(-0.1),W*0.3};
@@ -196,6 +265,13 @@ void SurfaceTests() {
     RotADM adm;TestPrim prim;TestB bcc;Real idx[3]={1,1,1},tau[3];
     ValenciaTorqueCell(adm,prim,bcc,ng,dim,5.0/3,idx,0,0,3,4,4,3,0,tau);
     Near(tau[2],0);
+    Real shift[3]={0.03*0.12,0.03*0.27,0}, force[3];
+    ValenciaTorqueCell(adm,prim,bcc,ng,dim,5.0/3,idx,0,0,3,4,4.27,2.88,0,tau,force,shift);
+    Near(tau[2],0);
+    auto invalid = [](int,int,int,int,int) { return std::numeric_limits<Real>::infinity(); };
+    ValenciaTorqueCell(adm,invalid,bcc,ng,dim,5.0/3,idx,0,0,3,4,4,3,0,tau,force);
+    for(int d=0;d<3;++d) Check(std::isnan(tau[d]) && std::isnan(force[d]),"invalid state");
+
   }
   // Region classification is disjoint, including actual exclusions.
   circumbinary::BudgetGeometry geo;geo.inner=3;geo.outer=5;geo.holes=2;

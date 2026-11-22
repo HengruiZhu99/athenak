@@ -13,9 +13,10 @@ namespace circumbinary {
 // Equal-time inverse boost followed by the arbitrary-spin Kerr level set.
 // sqrt_fn permits differentiation with the metric's existing dual-number type.
 template <class T, class Sqrt>
-void KerrQuadric(T mass, const T chi[3], const T velocity[3], T H[3][3], Sqrt sqrt_fn) {
+void KerrQuadric(T mass, const T chi[3], const T velocity[3], T H[3][3], Sqrt sqrt_fn,
+                 Real fixed_ks_radius = 0) {
   T chi2 = chi[0] * chi[0] + chi[1] * chi[1] + chi[2] * chi[2];
-  T rp = mass * (T(1) + sqrt_fn(T(1) - chi2));
+  T rp = fixed_ks_radius > 0 ? T(fixed_ks_radius) : mass * (T(1) + sqrt_fn(T(1) - chi2));
   T a[3] = {mass * chi[0], mass * chi[1], mass * chi[2]};
   T a2 = mass * mass * chi2;
   T v2 =

@@ -61,9 +61,9 @@ void CharacteristicGhostColumns(MeshBlockPack *pack,const PrimitiveSolverHydro<E
       for(int a=d+1;a<3;++a)if(char_ghost::Outside(cfg,box,ind,a,c[a]))return;
       int face[3]={c[0],c[1],c[2]};face[d]+=side;
       Real g[6],beta[3],alpha;
-      if constexpr(d==0)adm::Face1Metric(m,face[2],face[1],face[0],adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
-      if constexpr(d==1)adm::Face2Metric(m,face[2],face[1],face[0],adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
-      if constexpr(d==2)adm::Face3Metric(m,face[2],face[1],face[0],adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
+      if (d==0)adm::Face1Metric(m,face[2],face[1],face[0],adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
+      if (d==1)adm::Face2Metric(m,face[2],face[1],face[0],adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
+      if (d==2)adm::Face3Metric(m,face[2],face[1],face[0],adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
       Real root=sqrt(Primitive::GetDeterminant(g)),ur[3],rc;
       char_ghost::Rest(adm,box,ind,cfg.reservoir_omega,m,c,ur,rc);
       // Projection reference is at the anchor cell, with the face metric used for

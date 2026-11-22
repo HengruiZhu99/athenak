@@ -855,8 +855,11 @@ void BaseTypeOutput::LoadOutputData(Mesh *pm) {
     Kokkos::realloc(outarray, nout_vars, nout_mbs, nout3, nout2, nout1);
   }
 
-  // Calculate derived variables, if required
-  if (out_params.contains_derived) {
+  // Torque uses a wide derivative stencil, so evaluate only the output points.
+  bool selected_torque = out_params.variable == "torque" &&
+      (out_params.slice1 || out_params.slice2 || out_params.slice3 ||
+       out_params.gid >= 0 || out_params.include_gzs);
+  if (out_params.contains_derived && !selected_torque) {
     ComputeDerivedVariable(out_params.variable, pm);
   }
 
@@ -876,6 +879,7 @@ void BaseTypeOutput::LoadOutputData(Mesh *pm) {
       host_selection(m,3)=outmbs[m].oks;
     }
     Kokkos::deep_copy(selection,host_selection);
+    if (selected_torque) ComputeDerivedVariable(out_params.variable, pm, selection);
     DvceArray4D<Real> packed("output_packed",nout_mbs,nk,nj,ni);
     for (int n=0; n<nout_vars; ++n) {
       auto source = *(outvars[n].data_ptr);

@@ -228,7 +228,7 @@ class BaseTypeOutput {
   DvceArray5D<Real> derived_var; // array to store output variables computed from u0/b0
 
   // function which computes derived output variables like vorticity and current density
-  void ComputeDerivedVariable(std::string name, Mesh *pm);
+  void ComputeDerivedVariable(std::string name, Mesh *pm, DvceArray2D<int> selection = {});
 
   // virtual functions may be over-ridden in derived classes
   virtual void LoadOutputData(Mesh *pm);

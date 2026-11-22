@@ -47,12 +47,12 @@ SurfaceFluxResult IntegrateSurface(MeshBlockPack* pmbp,
 
   // Ownership is rebuilt even for stationary surfaces: AMR, redistribution, restart,
   // and zoom restoration can change interpolation support without changing the shape.
-  current_surf->RebuildAll();
+  current_surf->RefreshInterpolationSupport();
   current_surf->QualifyStencils();
   const int np = current_surf->Npts();
 
   // Interpolate primitives and densitized B to the surface
-  const int nvars_mhd = pmbp->pmhd->nmhd + pmbp->pmhd->nscalars;
+  const int nvars_mhd = IPR + 1;
   DualArray2D<Real> w_vals =
       current_surf->InterpolateCached(0, pmbp->pmhd->w0, 0, nvars_mhd);
   auto w_vals_d = w_vals.d_view;
@@ -82,7 +82,7 @@ SurfaceFluxResult IntegrateSurface(MeshBlockPack* pmbp,
   int inherited_reason = current_surf->inherited_stencil_reason;
 
   // Surface metric and dSigma_i
-  current_surf->InterpolateMetric();
+  current_surf->InterpolateMetric(false);
   current_surf->BuildSurfaceCovectors(dSigma);
   auto g_surf_d = current_surf->Metric().d_view;
   auto dSigma_d = dSigma.d_view;
@@ -131,7 +131,8 @@ SurfaceFluxResult IntegrateSurface(MeshBlockPack* pmbp,
           metric_ok &= Kokkos::isfinite(g_dd_1d[c]);
         }
         metric_ok &= g_dd_1d[0] > 0.0 &&
-                     g_dd_1d[0] * g_dd_1d[3] - SQR(g_dd_1d[1]) > 0.0 && detg > 0.0;
+                     g_dd_1d[0] * g_dd_1d[3] - SQR(g_dd_1d[1]) > 0.0 &&
+                     Kokkos::isfinite(detg) && detg > 0.0;
         if (!metric_ok) {
           update.bad[1] += 1.0;
           return;
@@ -240,7 +241,8 @@ SurfaceFluxResult IntegrateSurface(MeshBlockPack* pmbp,
 }
 
 void TorusFluxes_General(HistoryData* pdata, MeshBlockPack* pack,
-                         const std::vector<SphericalSurfaceGrid*>& surfaces) {
+                         const std::vector<SphericalSurfaceGrid*>& surfaces,
+                         std::vector<SurfaceFluxResult>* results) {
   const int count = static_cast<int>(surfaces.size());
   if (count * kSurfaceChannels > NHISTORY_VARIABLES) {
     Kokkos::abort("Requested surface channels exceed history capacity");
@@ -293,6 +295,7 @@ void TorusFluxes_General(HistoryData* pdata, MeshBlockPack* pack,
   pdata->nhist = count * kSurfaceChannels;
   for (int g = 0; g < count; ++g) {
     auto result = IntegrateSurface(pack, surfaces[g]);
+    if (results) results->push_back(result);
     for (int c = 0; c < kSurfaceChannels; ++c) {
       int index = c < 17 ? 17 * g + c : 17 * count + 27 * g + c - 17;
       pdata->label[index] = std::string(names[c]) + surfaces[g]->Label();

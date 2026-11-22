@@ -181,7 +181,10 @@ direction. Medians from the retained raw measurements are:
 The surface-only difference is within short-run timing noise. These timings measure
 the implemented paths without claiming a general speed improvement.
 
-## Remaining limits
+## Scope of the November 11 results
+
+The subsequent [shell and GPU qualification](circumbinary-shells.md) covers moving
+horizon-exterior shells, frame comparisons, binary zoom and GPU torque output.
 
 * Regional closure currently requires stationary corotating prescribed ADM, fixed
   puncture exclusions and no radiation/Z4c. Fully moving/deforming regional budgets,

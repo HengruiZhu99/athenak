@@ -15,5 +15,6 @@ struct SurfaceFluxResult {
 // Global result, reduced outside task lists. Contribute to history on rank 0.
 SurfaceFluxResult IntegrateSurface(MeshBlockPack* pack, SphericalSurfaceGrid* surface);
 void TorusFluxes_General(HistoryData* pdata, MeshBlockPack* pack,
-                         const std::vector<SphericalSurfaceGrid*>& surfaces);
+                         const std::vector<SphericalSurfaceGrid*>& surfaces,
+                         std::vector<SurfaceFluxResult>* results = nullptr);
 #endif  // UTILS_FLUX_GENERALIZED_HPP_

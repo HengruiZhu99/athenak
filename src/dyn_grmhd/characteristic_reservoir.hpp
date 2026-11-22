@@ -175,9 +175,9 @@ void CharacteristicFaces(MeshBlockPack *pack,const PrimitiveSolverHydro<E,Err>& 
         if(!changed)return;
       }
       Real g[NSPMETRIC],beta[3],alpha;
-      if constexpr(d==0)adm::Face1Metric(m,k,j,i,adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
-      if constexpr(d==1)adm::Face2Metric(m,k,j,i,adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
-      if constexpr(d==2)adm::Face3Metric(m,k,j,i,adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
+      if (d==0)adm::Face1Metric(m,k,j,i,adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
+      if (d==1)adm::Face2Metric(m,k,j,i,adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
+      if (d==2)adm::Face3Metric(m,k,j,i,adm.g_dd,adm.beta_u,adm.alpha,g,beta,alpha);
       Real det=Primitive::GetDeterminant(g),root=sqrt(det);
       Real x=CellCenterX(i-ind.is,ind.nx1,box.x1min,box.x1max);
       Real y=CellCenterX(j-ind.js,ind.nx2,box.x2min,box.x2max);

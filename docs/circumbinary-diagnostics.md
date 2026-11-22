@@ -9,6 +9,9 @@ with diagnostics disabled; their generic evolution thermodynamics are unchanged.
 `problem/flux_diagnostics` for other configurations. Torque spatial output supports
 one, two, and three dimensions with the evolution's nghost=2/3/4 derivative dispatch.
 
+The November 22 extension adds exact fixed Kerr–Schild radii and momentum budgets in
+both frames. See the [configuration, equations and B200 measurements](circumbinary-shells.md).
+
 ## Definitions and compatibility
 
 Primitive velocity is W v^i; bcc is sqrt(gamma) B^i. Stored momentum is sqrt(gamma) S_i;
@@ -241,14 +244,15 @@ restart segments/epochs distinct and do not use a temporal outlier screen to fil
 unavailable coverage. The older snapshot disk-structure statistics are not a replacement
 for the new native whole-surface validity or accepted-step mass records.
 
-Interpolation result buffers and proper covectors are reused. Geometry, ownership,
+Interpolation result buffers and proper covectors are reused. Stationary surface embeddings and normal velocities are reused. Ownership,
 metric sampling and support qualification rebuild at each requested evaluation, so
 motion, mass/spin changes, refinement, redistribution, restart and zoom restoration
 cannot leave an ownership/metric cache stale. No evolved values are cached across
 stages. Use a sufficiently precise history format, e.g. `%24.16e`, for budget work.
 Angular sampling is bounded at 16,777,216 points per surface. The exact requested
 history size is checked against the existing 2000-slot capacity before allocation:
-44 per surface, 8 per present horizon accumulator, 3 time columns, and 22 per region.
+44 per surface, 8 per present horizon accumulator, 3 time columns, 22 per legacy region
+and 45 per requested horizon-exterior shell.
 
 
 Current reset provenance also survives restart. The pre-checkpoint hook saves a

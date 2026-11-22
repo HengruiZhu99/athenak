@@ -215,24 +215,15 @@ DualArray2D<Real> SphericalSurfaceGrid::InterpolateCached(
   return result;
 }
 
-void SphericalSurfaceGrid::InterpolateMetric() {
+void SphericalSurfaceGrid::InterpolateMetric(bool derived) {
   const int start = adm::ADM::I_ADM_GXX;
   const int end = start + 6;
   DualArray2D<Real> interpolated_metric =
       InterpolateCached(3, pmy_pack->padm->u_adm, start, end);
 
-  auto dst_view = g_dd_surf_.d_view;
-  auto src_view = interpolated_metric.d_view;
-
-  Kokkos::parallel_for("ManualMetricCopy",
-                       Kokkos::MDRangePolicy<Kokkos::Rank<2>>({0, 0}, {npts, 6}),
-    KOKKOS_LAMBDA(const int p, const int v) {
-      dst_view(p, v) = src_view(p, v);
-    });
-  g_dd_surf_.template modify<DevExeSpace>();
+  g_dd_surf_ = interpolated_metric;
   metric_is_flat_ = false;
-
-  CalculateDerivedGeometry();
+  if (derived) CalculateDerivedGeometry();
 }
 
 void SphericalSurfaceGrid::BuildSurfaceCovectors(DualArray2D<Real>& dSigma) const {
@@ -314,14 +305,20 @@ void SphericalSurfaceGrid::CalculateDerivedGeometry() {
 
 void SphericalSurfaceGrid::RebuildAll() {
   BuildCoordinates();
-  SetInterpolationIndices();
   BuildTangentsFD();
-  BuildQuadWeights();
-  SetInterpolationWeights();
+  RefreshInterpolationSupport();
   InitializeFlatMetric();
 }
 
+void SphericalSurfaceGrid::RefreshInterpolationSupport() {
+  SetInterpolationIndices();
+  BuildQuadWeights();
+  SetInterpolationWeights();
+}
+
 void SphericalSurfaceGrid::InitializeFlatMetric() {
+  // This host write replaces every component, including a previous device metric.
+  g_dd_surf_.clear_sync_state();
   auto h_g = g_dd_surf_.h_view;
   for (int p=0; p<npts; ++p) {
     h_g(p, 0) = 1.0; h_g(p, 1) = 0.0; h_g(p, 2) = 0.0;

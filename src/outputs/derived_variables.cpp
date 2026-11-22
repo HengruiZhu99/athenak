@@ -39,7 +39,8 @@
 //----------------------------------------------------------------------------------------
 // BaseTypeOutput::ComputeDerivedVariable()
 
-void BaseTypeOutput::ComputeDerivedVariable(std::string name, Mesh *pm) {
+void BaseTypeOutput::ComputeDerivedVariable(std::string name, Mesh *pm,
+                                            DvceArray2D<int> selection) {
   int nmb = pm->pmb_pack->nmb_thispack;
   auto &indcs = pm->mb_indcs;
   int &ng = indcs.ng;
@@ -1381,9 +1382,23 @@ void BaseTypeOutput::ComputeDerivedVariable(std::string name, Mesh *pm) {
     if (pm->pmb_pack->pdyngr->eos_policy != DynGRMHD_EOS::eos_ideal ||
         !pm->pmb_pack->pmhd->peos->eos_data.is_ideal)
       Kokkos::abort("Torque stress diagnostics require gamma-law ideal EOS");
+    const bool selected = selection.extent(0) > 0;
+    const int blocks = selected ? selection.extent_int(0) : nmb;
+    const int ni = selected ? outmbs.front().oie - outmbs.front().ois + 1 : indcs.nx1;
+    const int nj = selected ? outmbs.front().oje - outmbs.front().ojs + 1 : indcs.nx2;
+    const int nk = selected ? outmbs.front().oke - outmbs.front().oks + 1 : indcs.nx3;
     par_for(
-        "torque", DevExeSpace(), 0, (nmb - 1), ks, ke, js, je, is, ie,
-        KOKKOS_LAMBDA(int m, int k, int j, int i) {
+        "torque", DevExeSpace(), 0, blocks - 1, 0, nk - 1, 0, nj - 1, 0, ni - 1,
+        KOKKOS_LAMBDA(int block, int k, int j, int i) {
+          int m = selected ? selection(block, 0) : block;
+          i += selected ? selection(block, 1) : is;
+          j += selected ? selection(block, 2) : js;
+          k += selected ? selection(block, 3) : ks;
+          if (i < is || i > ie || j < js || j > je || k < ks || k > ke) {
+            for (int a = 0; a < 3; ++a)
+              dv(m, i_dv + a, k, j, i) = std::numeric_limits<Real>::quiet_NaN();
+            return;
+          }
           Real idx[3] = {1.0 / size.d_view(m).dx1, 1.0 / size.d_view(m).dx2,
                          1.0 / size.d_view(m).dx3};
           Real x =

@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <numeric>
 #include <sstream>
 #include <string>
@@ -49,9 +50,6 @@ MeshBinaryOutput::MeshBinaryOutput(ParameterInput *pin, Mesh *pm, OutputParamete
 //   All MeshBlocks are written to the same file.
 
 void MeshBinaryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
-  // check if slicing
-  bool bin_slice = (out_params.slice1 || out_params.slice2 || out_params.slice3);
-
   // create filename: "bin/file_basename" + "." + "file_id" + "." + XXXXX + ".bin"
   // where XXXXX = 5-digit file_number
 
@@ -124,12 +122,12 @@ void MeshBinaryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
 
   int nout_vars = outvars.size();
   int nout_mbs = outmbs.size();
-  int cells = 0;
+  std::size_t cells = 0;
   if (nout_mbs > 0) {
     int nout1 = outmbs[0].oie - outmbs[0].ois + 1;
     int nout2 = outmbs[0].oje - outmbs[0].ojs + 1;
     int nout3 = outmbs[0].oke - outmbs[0].oks + 1;
-    cells = nout1*nout2*nout3;
+    cells = static_cast<std::size_t>(nout1)*nout2*nout3;
   }
 
   // ois, oie, ojs, oje, oks, oke + il1, il2, il3, level +
@@ -137,11 +135,8 @@ void MeshBinaryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   std::size_t data_size = 10*sizeof(int32_t) + 6*sizeof(Real)
                         + (cells*nout_vars)*sizeof(float);
 
-  int ns_mbs = pm->gids_eachrank[global_variable::my_rank];
-  int nb_mbs = pm->nmb_eachrank[global_variable::my_rank];
-
-  // allocate 1D vector of floats used to convert and output data
-  char *data = new char[nb_mbs*data_size];
+  const std::size_t bytes = nout_mbs * data_size;
+  char *data = new char[bytes];
   float *single_data = new float[cells];
 
   // Loop over MeshBlocks
@@ -229,71 +224,24 @@ void MeshBinaryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     }
   }
 
-  // now write binary data
-  if (bin_slice) {
-    std::vector<int> rank_offset(global_variable::nranks, 0);
-    std::partial_sum(noutmbs.begin(),std::prev(noutmbs.end()),
-                     std::next(rank_offset.begin()));
-    std::size_t myoffset = header_offset+data_size*rank_offset[global_variable::my_rank];
-
-    if (single_file_per_rank) {
-      myoffset = header_offset;  // Reset offset for individual files
-    }
-
-    if (noutmbs_min > 0) {
-      binfile.Write_any_type_at_all(data,(data_size*nout_mbs),myoffset,"byte",
-                                    single_file_per_rank);
-    } else {
-      if (nout_mbs > 0) {
-        binfile.Write_any_type_at(data,(data_size*nout_mbs),myoffset,"byte",
-                                    single_file_per_rank);
-      }
-    }
+  // Account for the records actually packed, including GID and slice filters.
+  // All nonempty ranks have equal record widths. Use one collective write when
+  // every rank participates and all byte counts fit the MPI int interface.
+  const std::size_t preceding = single_file_per_rank ? 0 :
+      std::accumulate(noutmbs.begin(), noutmbs.begin() + global_variable::my_rank,
+                      std::size_t{0});
+  const std::size_t offset = header_offset + preceding * data_size;
+  const std::size_t limit = std::numeric_limits<int>::max();
+  if (noutmbs_min > 0 && noutmbs_max * data_size <= limit) {
+    if (binfile.Write_any_type_at_all(data, bytes, offset, "byte", single_file_per_rank)
+        != bytes) Kokkos::abort("Incomplete collective binary output");
   } else {
-    // check if elements larger than 2^31
-    if (data_size*nb_mbs<=2147483648) {
-      // now write binary data in parallel
-      std::size_t myoffset = header_offset;
-      if (!single_file_per_rank) {
-        myoffset += data_size*ns_mbs;
-      }
-      binfile.Write_any_type_at_all(data,(data_size*nb_mbs),myoffset,"byte",
-                                    single_file_per_rank);
-    } else {
-      // write data over each MeshBlock sequentially and in parallel
-      // calculate max/min number of MeshBlocks across all ranks
-      noutmbs_max = pm->nmb_eachrank[0];
-      noutmbs_min = pm->nmb_eachrank[0];
-      for (int i=0; i<(global_variable::nranks); ++i) {
-        noutmbs_max = std::max(noutmbs_max,pm->nmb_eachrank[i]);
-        noutmbs_min = std::min(noutmbs_min,pm->nmb_eachrank[i]);
-      }
-      for (int m=0;  m<noutmbs_max; ++m) {
-        char *pdata=&(data[m*data_size]);
-        std::size_t myoffset = header_offset + data_size*m;
-        if (!single_file_per_rank) {
-          myoffset += data_size*ns_mbs;
-        }
-        // every rank has a MB to write, so write collectively
-        if (m < noutmbs_min) {
-          if (binfile.Write_any_type_at_all(pdata,(data_size),myoffset,"byte",
-                                              single_file_per_rank) != data_size) {
-            std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-                << std::endl << "binary data not written correctly to binary file, "
-                << "binary file is broken." << std::endl;
-            exit(EXIT_FAILURE);
-          }
-        // some ranks are finished writing, so use non-collective write
-        } else if (m < pm->nmb_thisrank) {
-          if (binfile.Write_any_type_at(pdata,(data_size),myoffset,"byte",
-                                          single_file_per_rank) != data_size) {
-            std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-                 << std::endl << "binary data not written correctly to binary file, "
-                 << "binary file is broken." << std::endl;
-            exit(EXIT_FAILURE);
-          }
-        }
-      }
+    for (std::size_t pos = 0; pos < bytes; ) {
+      const std::size_t count = std::min(limit, bytes - pos);
+      if (binfile.Write_any_type_at(data + pos, count, offset + pos, "byte",
+                                    single_file_per_rank) != count)
+        Kokkos::abort("Incomplete binary output");
+      pos += count;
     }
   }
 
