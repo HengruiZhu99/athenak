@@ -5,4 +5,5 @@ ConditionHost=stellarai-vis1.princeton.edu
 [Service]
 Type=oneshot
 WorkingDirectory=%h/photon-ring/smr288-threshold-20261121
-ExecStart=/usr/bin/python3 %h/photon-ring/smr288-threshold-20261121/advance.py --from-timer
+# Slurm passes the login module environment on to the campaign's batch scripts.
+ExecStart=/bin/bash -lc 'exec /usr/bin/python3 ./advance.py --from-timer'
