@@ -168,6 +168,8 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
                : d == 2 ? angular_mu
                : d == 3 ? angular_psi
                         : source;
+    // All threads in this launch reconstruct the same phase-space direction.
+    const auto speed = a[d];
     par_for(
         "FV4 phase space flux", DevExeSpace(), 0, blocks - 1, 0, count - 1,
         b.js, b.je + (d == 1), b.is, b.ie + (d == 0),
@@ -183,7 +185,7 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
             out(m, n, 0, j, i) = 0;
             return;
           }
-          PhaseFace face{d, m, hemisphere, sectors, state, a[d]};
+          PhaseFace face{d, m, hemisphere, sectors, state, speed};
           Real value = d == 3 ? face.PolarFlux(p, rules(p.band).offset, polar)
                               : face.Product(p);
           if (d < 4 || value < 0) {
@@ -200,7 +202,7 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
             Real norm = donor.Read(inv, m, sectors);
             Real share = norm == 0
                              ? 1. / 9
-                             : (fabs(p.Read(a[d], m, sectors)) * norm / width +
+                             : (fabs(p.Read(speed, m, sectors)) * norm / width +
                                 (d < 2 ? space_floor : .02)) /
                                    normalization;
             // A small unspent fraction keeps the Euler mass positive after

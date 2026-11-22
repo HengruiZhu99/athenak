@@ -124,10 +124,9 @@ KOKKOS_INLINE_FUNCTION Rates Characteristics(const Geometry& g, Real mu, Real ps
   Real up[3]{}, down[3]{};
   Rates r{};
   for (int a = 0; a < 3; ++a) {
-    for (int b = 0; b < 3; ++b) {
-      up[a] += g.frame.inverse[b][a] * n[b];
-      down[a] += g.frame.co[a][b] * n[b];
-    }
+    // The reverse Cholesky coframe and its inverse are upper triangular.
+    for (int b = 0; b <= a; ++b) up[a] += g.frame.inverse[b][a] * n[b];
+    for (int b = a; b < 3; ++b) down[a] += g.frame.co[a][b] * n[b];
   }
   for (int a = 0; a < 2; ++a) r.speed[a] = g.alpha * up[a] - g.beta[a];
   // q = d(log epsilon)/dt. It is also the source per unit densitized gray energy.
@@ -146,7 +145,8 @@ KOKKOS_INLINE_FUNCTION Rates Characteristics(const Geometry& g, Real mu, Real ps
   }
   for (int a = 0; a < 3; ++a) {
     dn[a] = -r.redshift * n[a];
-    for (int b = 0; b < 3; ++b) {
+    // The frame connection has the same triangular structure.
+    for (int b = a; b < 3; ++b) {
       dn[a] += g.frame.inverse[a][b] * force[b];
       dn[a] -= (g.connection[2][a][b] + r.speed[0] * g.connection[0][a][b] +
                 r.speed[1] * g.connection[1][a][b]) *

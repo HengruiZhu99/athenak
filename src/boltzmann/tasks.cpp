@@ -75,10 +75,25 @@ void Boltzmann::Ghosts(bool coarse_only) {
     int js = level == 0 ? b.js : b.cjs, je = level == 0 ? b.je : b.cje;
     // Vacuum incoming radiation. Outgoing face reconstruction uses interior data.
     // Fill z first, then rotate through pi across the axis (including corners).
+    const int ni = state.extent_int(4), nj = state.extent_int(3);
+    const int right_width = ni - ie - 1;
+    const int z_ghosts = (js + nj - je - 1) * ni;
+    // The axial strips include the corners. The outer radial strip spans the
+    // interior rows, so each potential outflow ghost has one writer.
+    const int ghosts = z_ghosts + (je - js + 1) * right_width;
     par_for(
-        "boltzmann axial boundaries", DevExeSpace(), 0, pack->nmb_thispack - 1, 0, nang - 1, 0,
-        state.extent_int(3) - 1, 0, state.extent_int(4) - 1,
-        KOKKOS_LAMBDA(int m, int n, int j, int i) {
+        "boltzmann axial boundaries", DevExeSpace(), 0, pack->nmb_thispack - 1,
+        0, nang - 1, 0, ghosts - 1, KOKKOS_LAMBDA(int m, int n, int index) {
+          int i, j;
+          if (index < z_ghosts) {
+            i = index % ni;
+            j = index / ni;
+            if (j >= js) j += je - js + 1;
+          } else {
+            const int side = index - z_ghosts;
+            i = ie + 1 + side % right_width;
+            j = js + side / right_width;
+          }
           if ((j < js && flags(m, BoundaryFace::inner_x2) == BoundaryFlag::outflow) ||
               (j > je && flags(m, BoundaryFace::outer_x2) == BoundaryFlag::outflow) ||
               (i > ie && flags(m, BoundaryFace::outer_x1) == BoundaryFlag::outflow))

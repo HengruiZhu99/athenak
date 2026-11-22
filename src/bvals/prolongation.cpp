@@ -242,13 +242,16 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  DvceArray1D<unsigned long long> chi_prolongation_counts(
-      "Z4c boundary chi prolongation status counts", 4);
-  Kokkos::deep_copy(chi_prolongation_counts, 0ULL);
-  DvceArray1D<unsigned long long> chi_first_rejected_keys(
-      "Z4c boundary first rejected chi groups", 2);
-  Kokkos::deep_copy(chi_first_rejected_keys,
-                    std::numeric_limits<unsigned long long>::max());
+  DvceArray1D<unsigned long long> chi_prolongation_counts, chi_first_rejected_keys;
+  if (is_z4c) {
+    // These counters are consumed only by the Z4c chi interpolation.
+    chi_prolongation_counts = DvceArray1D<unsigned long long>(
+        "Z4c boundary chi prolongation status counts", 4);
+    chi_first_rejected_keys = DvceArray1D<unsigned long long>(
+        "Z4c boundary first rejected chi groups", 2);
+    Kokkos::deep_copy(chi_first_rejected_keys,
+                      std::numeric_limits<unsigned long long>::max());
+  }
   auto &mb_gid = pmy_pack->pmb->mb_gid;
 
   // Outer loop over (# of MeshBlocks)*(# of buffers)*(# of variables)
