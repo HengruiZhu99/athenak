@@ -24,7 +24,18 @@ struct PhaseCell {
     if (d == 0) p.i += step;
     if (d == 1) p.j += step;
     if (d == 2) p.band += step;
-    if (d == 3) p.sector = (p.sector + sectors + step) % sectors;
+    if (d == 3) {
+      // Reconstruction moves at most four bins on a resolved periodic grid.
+      // Keep a general wrap for coarse grids and shifts spanning several turns.
+      const int shifted = sector + step;
+      if (shifted < -sectors || shifted >= 2 * sectors) {
+        p.sector = shifted % sectors;
+        if (p.sector < 0) p.sector += sectors;
+      } else {
+        p.sector = shifted < 0 ? shifted + sectors
+                              : shifted >= sectors ? shifted - sectors : shifted;
+      }
+    }
     return p;
   }
   KOKKOS_INLINE_FUNCTION Real Read(const DvceArray5D<Real>& a, int m,

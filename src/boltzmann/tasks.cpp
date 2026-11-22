@@ -28,10 +28,13 @@ void Boltzmann::QueueTasks() {
 }
 
 TaskStatus Boltzmann::AcceptedStress(Driver* driver, int stage) {
+  // Constraints and output consume the accepted stress only on the final stage.
+  // Each intermediate stage already builds its own source before the Z4c RHS.
+  if (stage != driver->nexp_stages) return TaskStatus::complete;
   auto status = GeometryAndStress(driver, stage);
   // Store the CFL bound of the accepted metric, as on a checkpoint restart.
   // Its characteristic fields are reused by the next first-stage flux.
-  if (transport_order == 4 && !fixed_metric && stage == driver->nexp_stages)
+  if (transport_order == 4 && !fixed_metric)
     return FluxesFourth(driver, 0);
   return status;
 }

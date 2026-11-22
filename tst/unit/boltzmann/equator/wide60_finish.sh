@@ -3,6 +3,9 @@
 set -eu
 suite=$SLURM_SUBMIT_DIR/tst/unit/boltzmann/equator
 base=$SLURM_SUBMIT_DIR/..
+if [[ -s "$2/executable-release.txt" ]]; then
+    export EQUATOR_RELEASE="$2/executable-release.txt"
+fi
 bash "$suite/stellar.sh" wide-j10600-to60 j10600_refined "$1"
 data=${EQUATOR_DATA:-/scratch/gpfs/FPRETORI/hzhu/photon-boundary-20261120/compact_spin_survey}
 export WIDE_RUN="$base/measure-$SLURM_JOB_ID/wide-j10600-to60"

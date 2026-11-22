@@ -15,12 +15,12 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
   const auto faces = face_geometry;
   const auto a = speeds;
   const auto inv = inverse_budget;
+  const auto parent = coarse;
   const auto rules = polar_rules;
   const auto polar = polar_flux_weights;
   const bool multilevel = pack->pmesh->multilevel;
   const auto neighbors = pack->pmb->nghbr.d_view;
   const auto levels = pack->pmb->mb_lev.d_view;
-  const auto parent = coarse;
   // Four spatial sides, four angular sides and the source share one Euler
   // donor budget. Reserve a known spatial share for fine-to-coarse reflux.
   const Real space_floor = multilevel ? .08 : .02;
@@ -101,48 +101,61 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
             if (rule.offset + k != 0) polar[c++](m, n, 0, j, i) = weights[k];
           a[4](m, n, 0, j, i) = Characteristics(g, mu, psi).redshift;
         });
-    Real maxrate = 0, maxsource = 0;
-    Kokkos::parallel_reduce(
-        "FV4 outgoing flux budgets",
-        PhasePolicy({0, 0, b.js - 1, b.is - 1}, {blocks, count, b.je + 2, b.ie + 2},
-                    {1, 1, 4, 32}),
-        KOKKOS_LAMBDA(int m, int n, int j, int i, Real& largest, Real& sink) {
-          PhaseCell p{i, j, n / sectors, n % sectors};
-          Real h[4] = {sz(m).dx1, sz(m).dx2, dm, dp};
-          Real total = fabs(p.Read(a[4], m, sectors));
-          sink = fmax(sink, total);
-          for (int d = 0; d < 4; ++d) {
-            Real right = d == 2 && (p.band + 1) % hemisphere == 0
-                             ? 0
-                             : p.Shift(d, 1, sectors).Read(a[d], m, sectors);
-            total += (fabs(right) + fabs(p.Read(a[d], m, sectors))) / h[d];
-          }
-          inv(m, n, 0, j, i) = total > 0 ? 1 / total : 0;
-          if (j >= b.js && j <= b.je && i >= b.is && i <= b.ie) {
-            largest =
-                fmax(largest, multilevel ? total * normalization / .99 : total);
-            if (multilevel) {
-              for (int side = 0; side < 4; ++side) {
-                const bool on_face = side == 0   ? i == b.is
-                                     : side == 1 ? i == b.ie
-                                     : side == 2 ? j == b.js
-                                                 : j == b.je;
-                if (!on_face) continue;
-                if (!HasCoarserFace(neighbors, m, side, levels(m))) continue;
-                const int d = side / 2;
-                const auto face = p.Shift(d, side % 2, sectors);
-                // Parent width is twice this fine width. Keep a smooth inflow
-                // below its reserved share without an extra MPI exchange.
-                largest = fmax(largest, fabs(face.Read(a[d], m, sectors)) /
-                                            (.99 * 2 * h[d] * reflux_share));
+    const PhasePolicy budget_cells({0, 0, b.js - 1, b.is - 1},
+                                   {blocks, count, b.je + 2, b.ie + 2}, {1, 1, 4, 32});
+    const auto cell_budget = KOKKOS_LAMBDA(int m, int n, int j, int i) {
+      PhaseCell p{i, j, n / sectors, n % sectors};
+      Real h[4] = {sz(m).dx1, sz(m).dx2, dm, dp};
+      Real total = fabs(p.Read(a[4], m, sectors));
+      for (int d = 0; d < 4; ++d) {
+        Real right = d == 2 && (p.band + 1) % hemisphere == 0
+                         ? 0
+                         : p.Shift(d, 1, sectors).Read(a[d], m, sectors);
+        total += (fabs(right) + fabs(p.Read(a[d], m, sectors))) / h[d];
+      }
+      inv(m, n, 0, j, i) = total > 0 ? 1 / total : 0;
+      return total;
+    };
+    // Only the accepted metric sets the next timestep. At intermediate stages
+    // retain every donor budget and evaluate the volume source directly.
+    if (stage != 0 && !fixed_metric) {
+      Kokkos::parallel_for("FV4 stage donor budgets", budget_cells,
+          KOKKOS_LAMBDA(int m, int n, int j, int i) { cell_budget(m, n, j, i); });
+      source_free = false;
+    } else {
+      Real maxrate = 0, maxsource = 0;
+      Kokkos::parallel_reduce("FV4 outgoing flux budgets", budget_cells,
+          KOKKOS_LAMBDA(int m, int n, int j, int i, Real& largest, Real& sink) {
+            const Real total = cell_budget(m, n, j, i);
+            sink = fmax(sink, fabs(a[4](m, n, 0, j, i)));
+            PhaseCell p{i, j, n / sectors, n % sectors};
+            Real h[2] = {sz(m).dx1, sz(m).dx2};
+            if (j >= b.js && j <= b.je && i >= b.is && i <= b.ie) {
+              largest =
+                  fmax(largest, multilevel ? total * normalization / .99 : total);
+              if (multilevel) {
+                for (int side = 0; side < 4; ++side) {
+                  const bool on_face = side == 0   ? i == b.is
+                                       : side == 1 ? i == b.ie
+                                       : side == 2 ? j == b.js
+                                                   : j == b.je;
+                  if (!on_face) continue;
+                  if (!HasCoarserFace(neighbors, m, side, levels(m))) continue;
+                  const int d = side / 2;
+                  const auto face = p.Shift(d, side % 2, sectors);
+                  // Parent width is twice this fine width. Keep a smooth inflow
+                  // below its reserved share without an extra MPI exchange.
+                  largest = fmax(largest, fabs(face.Read(a[d], m, sectors)) /
+                                              (.99 * 2 * h[d] * reflux_share));
+                }
               }
             }
-          }
-        },
-        Kokkos::Max<Real>(maxrate), Kokkos::Max<Real>(maxsource));
-    source_free = maxsource == 0;
-    if (source_free) Kokkos::deep_copy(DevExeSpace(), source, 0.);
-    dtnew = (ssp4 ? 6 : 1) / fmax(maxrate, std::numeric_limits<Real>::min());
+          },
+          Kokkos::Max<Real>(maxrate), Kokkos::Max<Real>(maxsource));
+      source_free = maxsource == 0;
+      if (source_free) Kokkos::deep_copy(DevExeSpace(), source, 0.);
+      dtnew = (ssp4 ? 6 : 1) / fmax(maxrate, std::numeric_limits<Real>::min());
+    }
     speed_cache_valid = true;
   }
   if (!stage) return TaskStatus::complete;

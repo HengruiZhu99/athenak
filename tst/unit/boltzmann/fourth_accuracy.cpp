@@ -113,6 +113,16 @@ Real TimeError(int n) {
 int main(int argc, char** argv) {
   Kokkos::initialize(argc, argv);
   bool ok = true;
+  // Exercise both sides of the periodic seam, including more than one turn.
+  for (int sectors : {1, 6, 48}) {
+    for (int sector = 0; sector < sectors; ++sector) {
+      boltzmann::PhaseCell cell{0, 0, 0, sector};
+      for (int step = -2 * sectors; step <= 2 * sectors; ++step) {
+        const int expected = ((sector + step) % sectors + sectors) % sectors;
+        if (cell.Shift(3, step, sectors).sector != expected) ok = false;
+      }
+    }
+  }
   std::puts("direction,n,L1,order");
   for (int d = 0; d <= 4; ++d) {
     Real prev = 0;

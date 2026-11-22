@@ -15,6 +15,11 @@ module load cudatoolkit/13.2 hpcx-latest/hpcx
 set -u
 source_dir=$SLURM_SUBMIT_DIR
 exe=${EQUATOR_ATHENA:-$source_dir/build/src/athena}
+if [[ -n "${EQUATOR_RELEASE:-}" ]]; then
+    read -r previous_digest target_digest exe < "$EQUATOR_RELEASE"
+    [[ $previous_digest =~ ^[[:xdigit:]]{64}$ && $target_digest =~ ^[[:xdigit:]]{64}$ ]]
+    printf '%s  %s\n' "$target_digest" "$exe" | sha256sum --status -c -
+fi
 tests=$source_dir/tst/unit/boltzmann
 data=${EQUATOR_DATA:-/scratch/gpfs/FPRETORI/hzhu/photon-boundary-20261120/compact_spin_survey}
 output="$source_dir/../measure-$SLURM_JOB_ID"
@@ -35,7 +40,15 @@ measure() {
     local launch=(-i input)
     if [[ -n "${EQUATOR_PARENT:-}" ]]; then
         grep -q '^Terminating on time limit' "$EQUATOR_PARENT/stdout"
-        cmp hashes "$EQUATOR_PARENT/hashes"
+        if [[ -n "${EQUATOR_RELEASE:-}" ]]; then
+            # Explicit migration of a particular binary, preserving initial data and ancestry.
+            cmp <(head -1 hashes) <(head -1 "$EQUATOR_PARENT/hashes")
+            parent_digest=$(awk 'NR==2 {print $1}' "$EQUATOR_PARENT/hashes")
+            [[ $parent_digest == "$previous_digest" || $parent_digest == "$target_digest" ]]
+            cp "$EQUATOR_RELEASE" executable-release.txt
+        else
+            cmp hashes "$EQUATOR_PARENT/hashes"
+        fi
         cp "$EQUATOR_PARENT/input" input
         local checkpoints=("$EQUATOR_PARENT"/rst/*.rst)
         local checkpoint="${checkpoints[-1]}"
