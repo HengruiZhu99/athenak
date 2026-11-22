@@ -91,7 +91,11 @@ def analyze(work, dest, mass, state):
     verified = [r['cycle'] for r in native if r['verified']]
     branches = {}
     marginal = []
-    for line in (work/'torus.cartoon_m0_horizon_0.txt').read_text().splitlines():
+    scheduled = range((state['cycle']//120+1)*120, rows[-1]['cycle']+1, 120)
+    horizon = work/'torus.cartoon_m0_horizon_0.txt'
+    # A short terminal segment can finish before its first finder call.
+    lines = horizon.read_text().splitlines() if scheduled or horizon.exists() else []
+    for line in lines:
         if not line.strip() or line.startswith('#'):
             continue
         v=line.split(); c=int(v[0]); branches.setdefault(c,set()).add(v[2])
@@ -104,7 +108,7 @@ def analyze(work, dest, mass, state):
         if sep and name.strip()=='cartoon_search_offcenter_0':
             offcenter=val.strip().lower()
     expected={'origin'} if offcenter in ('false','0') else {'origin','plus','minus'}
-    missing=[c for c in range((state['cycle']//120+1)*120,rows[-1]['cycle']+1,120)
+    missing=[c for c in scheduled
              if branches.get(c)!=expected or c not in bycycle]
     if not state.get('event') or state['event']['kind']!='collapse':
         elapsed = fit_pair(SEED, dest, files)
