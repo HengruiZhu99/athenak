@@ -1,0 +1,11 @@
+[Unit]
+Description=Check the StellarAI SMR bisection every two minutes
+ConditionHost=stellarai-vis1.princeton.edu
+
+[Timer]
+OnActiveSec=2min
+OnUnitInactiveSec=2min
+AccuracySec=5s
+
+[Install]
+WantedBy=timers.target

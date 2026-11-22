@@ -1,0 +1,8 @@
+[Unit]
+Description=Check published photon-ring checkpoints and advance the SMR bisection
+ConditionHost=stellarai-vis1.princeton.edu
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/photon-ring/smr288-threshold-20261121
+ExecStart=/usr/bin/python3 %h/photon-ring/smr288-threshold-20261121/advance.py --from-timer
