@@ -28,7 +28,7 @@ def write_blocks(b):
 def refine_disk(b, level, inner, outer, height):
     # Select parent blocks by cylindrical radius. Merge each contiguous row so
     # the input remains small and the Cartesian corners stay at the coarser level.
-    parent_width = 16 * 128 / 2 ** (level - 1)
+    parent_width = int(b["meshblock"]["nx1"]) * 128 / 2 ** (level - 1)
     limit = math.ceil(outer / parent_width)
     index = sum(name.startswith("refined_region") for name in b)
     for j in range(-limit, limit):
@@ -53,7 +53,7 @@ def refine_disk(b, level, inner, outer, height):
             }
 
 
-def make_input(header, sep, mode):
+def make_input(header, sep, mode, large_blocks=False, wide_sweep=False):
     period = 2 * math.pi * sep**1.5
     b = {name: dict(header[name]) for name in ("mesh", "meshblock", "coord", "mhd", "problem")}
     p = b["problem"]
@@ -154,11 +154,14 @@ def make_input(header, sep, mode):
                 box(level, x, half, half)
         if mode != "control":
             b["meshblock"]["nx3"] = 8
+            if large_blocks:
+                b["meshblock"].update(nx1=32, nx2=32)
+                b["mesh_refinement"]["max_nmb_per_rank"] = 736
             refine_disk(b, 4, 480, 768, 64)
-            refine_disk(b, 5, 256, 608, 48)
-            refine_disk(b, 6, 304, 432, 16)
+            refine_disk(b, 5, 256, 672 if large_blocks else 608, 48)
+            refine_disk(b, 6, 304, 480 if large_blocks else 432, 16)
             refine_disk(b, 6, 0, 352, 48)
-            refine_disk(b, 7, 48, 272, 16)
+            refine_disk(b, 7, 48, 288 if large_blocks else 272, 16)
             refine_disk(b, 8, 80, 152, 8)
         if mode == "run":
             for i, normal in enumerate(("x3", "x2"), 3):
@@ -185,6 +188,9 @@ def make_input(header, sep, mode):
         # Bridging zones use several local dynamical times. The outer residence
         # samples disk inflow over a substantial fraction of t_in(3a) ~ 20 Pbin.
         dwells = [0.6 * period, 12, 4 * period]
+        if wide_sweep and mode != "control":
+            z.update(nlevels=4, r_0=0.375, f_ref=64)
+            dwells = [0.6 * period, 12, 32, 4 * period]
         if mode == "control":
             dwells = [0.6 * period, 12, 32, 96, 256, 4 * period]
         for i, dwell in enumerate(dwells):
@@ -198,7 +204,9 @@ def make_input(header, sep, mode):
         if mode != "control":
             # Coarsen complete families near each hole without stripping the
             # thin disk rings during the four-orbit outer residence.
-            z["r_ref_max"] = 32
+            z["r_ref_max"] = 192 if wide_sweep else 32
+            if large_blocks:
+                b["cyclic_zoom"].update(max_nzmb_per_dvce=640, max_nzmb_per_host=736)
         if mode == "scale":
             b["time"].update(nlim=56, ndiag=8)
             b.pop("output2")
@@ -220,6 +228,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("header", type=Path)
     parser.add_argument("out", type=Path)
+    parser.add_argument("--large-blocks", action="store_true", help="Use 32 x 32 x 8 disk blocks")
+    parser.add_argument(
+        "--wide-sweep",
+        action="store_true",
+        help="Coarsen the inner disk annulus for the outer dwell",
+    )
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     header = read_header(args.header)
@@ -229,4 +243,6 @@ if __name__ == "__main__":
             if sep == 25
             else ("run", "pilot")
         ):
-            (args.out / f"mad{sep}-{mode}.athinput").write_text(make_input(header, sep, mode))
+            (args.out / f"mad{sep}-{mode}.athinput").write_text(
+                make_input(header, sep, mode, args.large_blocks, args.wide_sweep)
+            )

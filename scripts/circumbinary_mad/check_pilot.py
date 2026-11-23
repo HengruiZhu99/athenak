@@ -7,6 +7,7 @@ import sys
 import numpy as np
 
 from ct_guard import check
+from inputs import read_header
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "vis/python"))
 import athena_read
@@ -29,13 +30,13 @@ def disk_spacings(snapshot):
     return result
 
 
-def validate(path, sep=25):
+def validate(path, sep=25, levels=3):
     history = path / f"mad{sep}.user.hst"
     check(history)
     h = athena_read.hst(history)
     zones = set(h["zoom_zone"].astype(int))
     returns = sorted(set(h["zoom_event"][h["zoom_zone"] == 0].astype(int)) - {0})
-    if zones != set(range(3)) or len(returns) < 2:
+    if levels not in (3, 4) or zones != set(range(levels)) or len(returns) < 2:
         raise ValueError("Pilot must complete multiple full zoom cycles")
     for key in ("valid_BH1_Kerr", "valid_BH2_Kerr"):
         if not np.all(h[key][h["zoom_zone"] == 0] == 1):
@@ -44,7 +45,7 @@ def validate(path, sep=25):
         if not np.all(h[key] == 1):
             raise ValueError(f"Unqualified 5M transfer surface {key}")
     baseline = None
-    audited = set()
+    audited = {}
     for file in sorted((path / "bin").glob("*mesh_audit*.bin")):
         s = read_binary(str(file))
         i = int(np.argmin(np.abs(h["time"] - s["time"])))
@@ -58,10 +59,15 @@ def validate(path, sep=25):
             if zone != 0:
                 raise ValueError("Missing finest initial disk slice")
             baseline = spacing
-        if spacing != baseline:
-            raise ValueError(f"Inner zoom coarsened an active disk annulus in zone {zone}")
-        audited.add(zone)
-    if audited != zones:
+        for radius, widths in spacing.items():
+            expected = np.array(baseline[radius])
+            if levels == 4 and zone == 3 and radius <= 150:
+                expected = np.maximum(expected, 1.0)
+            if not np.array_equal(widths, expected):
+                raise ValueError(f"Unexpected disk spacing at R={radius} in zone {zone}")
+
+        audited[zone] = {r: max(v) for r, v in spacing.items()}
+    if set(audited) != zones:
         raise ValueError(f"Disk slices cover zones {audited}, expected {zones}")
     return {
         "full_returns": len(returns),
@@ -69,6 +75,7 @@ def validate(path, sep=25):
         "peak_face_B": max(h["ct_face_B_max"]),
         "disk_zones": sorted(audited),
         "max_dx_by_radius": {r: max(v) for r, v in baseline.items()},
+        "max_dx_by_zone": audited,
     }
 
 
@@ -76,5 +83,7 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("pilot", type=Path)
     p.add_argument("--separation", type=int, default=25)
+    p.add_argument("--input", type=Path)
     args = p.parse_args()
-    print(json.dumps(validate(args.pilot, args.separation), indent=2))
+    levels = int(read_header(args.input)["amr_criterion1"]["nlevels"]) if args.input else 3
+    print(json.dumps(validate(args.pilot, args.separation, levels), indent=2))
