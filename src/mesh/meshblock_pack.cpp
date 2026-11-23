@@ -84,6 +84,7 @@ MeshBlockPack::~MeshBlockPack() {
 
 void MeshBlockPack::AddMeshBlocks(ParameterInput *pin) {
   pmb = new MeshBlock(this, gids, nmb_thispack);
+  ++layout_revision;
 }
 
 //----------------------------------------------------------------------------------------

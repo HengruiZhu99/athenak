@@ -34,7 +34,7 @@ class SphericalSurfaceGrid {
 
   // Recompute everything if r(θ,φ) changed externally.
   void RebuildFromRadius();
-  void SetRadiusFunction(RFunc radius_function);
+  void SetRadiusFunction(RFunc radius_function, const Real* center = nullptr);
   using MotionFunc = std::function<void(Real, Real, Real*)>;
   void SetMotion(MotionFunc motion);
   const Real* Center() const { return center_; }
@@ -61,6 +61,9 @@ class SphericalSurfaceGrid {
   // Interpolate the 6 components of the ADM spatial metric to the surface.
   // This now automatically triggers the calculation of derived geometric quantities.
   void InterpolateMetric(bool derived = true);
+  void SampleFluxGeometry(const DvceArray5D<Real>& gauge, int start, int end,
+                          std::uint64_t stationary_revision, DualArray2D<Real>& lapse_shift,
+                          DualArray2D<Real>& covectors);
   DualArray2D<Real> InterpolateCached(int slot, const DvceArray5D<Real>& source,
                                       int start, int end);
   // Field-dependent checks: call only once evolved fields and ghosts are ready.
@@ -102,6 +105,7 @@ class SphericalSurfaceGrid {
   Real dth, dph;
   bool metric_is_flat_;
   RFunc radius_function_;
+  std::uint64_t support_revision_ = 0, metric_revision_ = 0;
   std::array<DualArray2D<Real>, 4> buffers_;
   DualArray2D<Real> motion_;
   mutable DualArray2D<Real> area_covectors_;

@@ -53,6 +53,7 @@ class MeshBlockPack {
   // data
   Mesh *pmesh;            // ptr to Mesh containing this MeshBlockPack
   int gids, gide;         // start/end of global IDs in this MeshBlockPack
+  std::uint64_t layout_revision = 0;  // Changes on every local block layout replacement.
   int nmb_thispack;       // number of MBs in this pack
 
   // following Grid/Physics objects are all pointers so they can be allocated after

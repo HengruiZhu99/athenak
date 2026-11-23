@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "mesh/mesh.hpp"
 #include "mhd/mhd.hpp"
@@ -126,7 +127,8 @@ void SphericalSurfaceGrid::SetCenter(const Real new_center[3]) {
   RebuildAll();
 }
 
-void SphericalSurfaceGrid::SetRadiusFunction(RFunc f) {
+void SphericalSurfaceGrid::SetRadiusFunction(RFunc f, const Real* center) {
+  if (center) std::copy_n(center, 3, center_);
   radius_function_ = f;
   RebuildFromRadius();
 }
@@ -215,7 +217,22 @@ DualArray2D<Real> SphericalSurfaceGrid::InterpolateCached(
   return result;
 }
 
+void SphericalSurfaceGrid::SampleFluxGeometry(const DvceArray5D<Real>& gauge,
+                                             int start, int end, std::uint64_t revision,
+                                             DualArray2D<Real>& lapse_shift,
+                                             DualArray2D<Real>& covectors) {
+  if (!revision || metric_revision_ != revision) {
+    InterpolateCached(2, gauge, start, end);
+    InterpolateMetric(false);
+    BuildSurfaceCovectors(covectors);
+    metric_revision_ = revision;
+  }
+  lapse_shift = buffers_[2];
+  covectors = area_covectors_;
+}
+
 void SphericalSurfaceGrid::InterpolateMetric(bool derived) {
+  metric_revision_ = 0;
   const int start = adm::ADM::I_ADM_GXX;
   const int end = start + 6;
   DualArray2D<Real> interpolated_metric =
@@ -304,6 +321,7 @@ void SphericalSurfaceGrid::CalculateDerivedGeometry() {
 }
 
 void SphericalSurfaceGrid::RebuildAll() {
+  support_revision_ = 0;
   BuildCoordinates();
   BuildTangentsFD();
   RefreshInterpolationSupport();
@@ -311,6 +329,9 @@ void SphericalSurfaceGrid::RebuildAll() {
 }
 
 void SphericalSurfaceGrid::RefreshInterpolationSupport() {
+  if (support_revision_ == pmy_pack->layout_revision && support_revision_ != 0) return;
+  support_revision_ = pmy_pack->layout_revision;
+  metric_revision_ = 0;
   SetInterpolationIndices();
   BuildQuadWeights();
   SetInterpolationWeights();
@@ -372,10 +393,27 @@ void SphericalSurfaceGrid::SetInterpolationIndices() {
   const int nmb = pmy_pack->nmb_thispack;
   auto h_coords = coords.h_view;
   auto h_iind = interp_indcs.h_view;
+  // A component horizon usually occupies only a small part of the local mesh.
+  // Reject disjoint blocks once per embedding, preserving the exact half-open
+  // leaf ownership test (and duplicate-owner accounting) for every point.
+  Real lo[3], hi[3];
+  for (int d = 0; d < 3; ++d) lo[d] = hi[d] = h_coords(0,d);
+  for (int p = 1; p < npts; ++p) {
+    for (int d = 0; d < 3; ++d) {
+      lo[d] = std::min(lo[d], h_coords(p,d));
+      hi[d] = std::max(hi[d], h_coords(p,d));
+    }
+  }
+  std::vector<int> candidates;
+  for (int m = 0; m < nmb; ++m) {
+    const auto& b = size.h_view(m);
+    if (lo[0] < b.x1max && hi[0] >= b.x1min && lo[1] < b.x2max && hi[1] >= b.x2min &&
+        lo[2] < b.x3max && hi[2] >= b.x3min) candidates.push_back(m);
+  }
   for (int p = 0; p < npts; ++p) {
     owners_.h_view(p) = 0;
     h_iind(p,0) = -1; h_iind(p,1) = -1; h_iind(p,2) = -1; h_iind(p,3) = -1;
-    for (int m = 0; m < nmb; ++m) {
+    for (int m : candidates) {
       const auto &mb = size.h_view(m);
       const Real x1p = h_coords(p,0), x2p = h_coords(p,1), x3p = h_coords(p,2);
       if ((x1p >= mb.x1min && x1p < mb.x1max) && (x2p >= mb.x2min && x2p < mb.x2max) && (x3p >= mb.x3min && x3p < mb.x3max)) {

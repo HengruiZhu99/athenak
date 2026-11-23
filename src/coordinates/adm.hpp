@@ -55,6 +55,7 @@ class ADM {
   };
 
   DvceArray5D<Real> u_adm;                                // adm variables
+  std::uint64_t prescribed_revision = 0;  // Zero until a versioned provider sets ADM.
   bool is_dynamic;                                        // is the metric time dependent?
 
   void (*SetADMVariables)(MeshBlockPack *pm);

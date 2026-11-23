@@ -7,14 +7,31 @@ import numpy as np
 from check_binary_shells import ROOT, run
 
 
-def campaign(exe, out, zoom_only=False):
+def reference_volumes():
+    # Equal-time Kerr ellipsoid volume contracts by the inverse orbital Lorentz factor.
+    factor = 4 * np.pi / 3
+    central = factor * 3.75**3
+    for mass, chi in ((1 / 1.75, 0.3), (0.75 / 1.75, 0.2)):
+        r_plus = mass * (1 + np.sqrt(1 - chi**2))
+        speed = 4 * (1 - mass) * 0.125
+        central -= factor * r_plus * (r_plus**2 + (mass * chi)**2) * np.sqrt(1 - speed**2)
+    return {"R3.75": central, "R4.25": factor * (4.25**3 - 3.75**3),
+            "R4.75": factor * (4.75**3 - 4.25**3)}
+
+
+def campaign(exe, out, zoom_only=False, sizes=(48, 64, 96)):
     base = (ROOT / "tst/diagnostics/binary_shell.athinput").read_text()
     base = base.split("<output2>")[0]
     report = {}
-    for n in (() if zoom_only else (48, 64, 96)):
+    volumes = reference_volumes()
+    if any(n < 48 or n % 16 for n in sizes):
+        raise ValueError("This control requires at least 48 cells and complete 16-cell blocks")
+    for n in (() if zoom_only else sorted(set(sizes))):
         params = base.replace(" = 48\n", f" = {n}\n")
         params = params.replace("flux_ntheta = 24", f"flux_ntheta = {n//2}")
-        params = params.replace("nlim = 2", "nlim = 100").replace("tlim = 1\n", "tlim = 0.02\n")
+        params = params.replace("nlim = 2", f"nlim = {max(100, n)}").replace(
+            "tlim = 1\n", "tlim = 0.02\n"
+        )
         params = params.replace("cfl_number = 0.0001", "cfl_number = 0.04")
         params = params.replace("b_inf = 0", "b_inf = 0.002")
         runs = {}
@@ -33,6 +50,10 @@ def campaign(exe, out, zoom_only=False):
             for region in ("R3.75", "R4.25", "R4.75"):
                 pre = "shell_" + region + "_"
                 assert np.all(h[pre + "volume_valid"] == 1)
+                volume_error = abs(h[pre + "sampled_volume"][-1] / volumes[region] - 1)
+                vals[region + "_volume_relative_error"] = float(volume_error)
+                if n == 512:
+                    assert volume_error < 1e-6, (mode, region, volume_error)
                 for comp in ("Px", "Py", "Pz", "Jz"):
                     r = h[pre + comp + "_interval_residual"][1:]
                     assert np.isfinite(r).all()
@@ -99,9 +120,9 @@ def campaign(exe, out, zoom_only=False):
                     assert delta < 0.01 and jdelta < 0.01, (region, kind, delta, jdelta)
         report[f"shell-frame-{n}"] = shell_differences
         report[f"frame-{n}"] = diff
-        if n == 96:
+        if n in (96, 512) and 48 in sizes:
             for mode in ("rot", "inert"):
-                fine, coarse = report[f"{mode}-96"], report[f"{mode}-48"]
+                fine, coarse = report[f"{mode}-{n}"], report[f"{mode}-48"]
                 for region in ("R3.75", "R4.25", "R4.75"):
                     for group in (("Px", "Py"), ("Jz",)):
                         assert sum(fine[region + "_" + q] for q in group) < sum(
@@ -146,6 +167,7 @@ if __name__ == "__main__":
     p.add_argument("executable", type=Path)
     p.add_argument("output", type=Path)
     p.add_argument("--zoom-only", action="store_true")
+    p.add_argument("--sizes", nargs="+", type=int, default=(48, 64, 96))
     a = p.parse_args()
     a.output.mkdir(exist_ok=True)
-    campaign(a.executable.resolve(), a.output.resolve(), a.zoom_only)
+    campaign(a.executable.resolve(), a.output.resolve(), a.zoom_only, a.sizes)

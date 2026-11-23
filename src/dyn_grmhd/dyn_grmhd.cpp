@@ -242,12 +242,15 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::QueueDynGRMHDTasks() {
   //                 {MHD_RecvB});
   pnr->QueueTask(&MHD::Prolongate, pmhd, MHD_Prolong, "MHD_Prolong", Task_Run, {MHD_BCS});
   if (pz4c == nullptr && padm->is_dynamic == true) {
+    // Finish all consumers of the current metric, including corner EMFs and
+    // boundary fills, before replacing it for primitive recovery. MPI receives
+    // can delay either consumer independently of the hydro RK update.
     pnr->QueueTask(&DynGRMHD::SetADMVariables, this, MHD_SetADM, "MHD_SetADM", Task_Run,
-                    {MHD_ExplRK});
+                   {MHD_Prolong});
     pnr->QueueTask(&DynGRMHDPS<EOSPolicy, ErrorPolicy>::ConToPrim, this, MHD_C2P,
-                   "MHD_C2P", Task_Run, {MHD_Prolong, MHD_SetADM}, {Z4c_Excise});
+                   "MHD_C2P", Task_Run, {MHD_SetADM}, {Z4c_Excise});
     pnr->QueueTask(&DynGRMHD::UpdateExcisionMasks, this, MHD_Excise, "MHD_Excise",
-                   Task_Run, {MHD_SetADM});
+                   Task_Run, {MHD_C2P});
   } else {
     pnr->QueueTask(&DynGRMHDPS<EOSPolicy, ErrorPolicy>::ConToPrim, this, MHD_C2P,
                    "MHD_C2P", Task_Run, {MHD_Prolong}, {Z4c_Excise});
@@ -566,7 +569,9 @@ TaskStatus DynGRMHD::SetTmunu(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus DynGRMHD::SetADMVariables(Driver *pdrive, int stage) {
-  pmy_pack->padm->SetADMVariables(pmy_pack);
+  // The task graph is assembled before problem initialization. A prescribed
+  // stationary provider can override adm/dynamic after this task was queued.
+  if (pmy_pack->padm->is_dynamic) pmy_pack->padm->SetADMVariables(pmy_pack);
   return TaskStatus::complete;
 }
 
@@ -575,7 +580,8 @@ TaskStatus DynGRMHD::SetADMVariables(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus DynGRMHD::UpdateExcisionMasks(Driver *pdrive, int stage) {
-  if (pmy_pack->pcoord->coord_data.bh_excise && stage == pdrive->nexp_stages) {
+  if (pmy_pack->padm->is_dynamic && pmy_pack->pcoord->coord_data.bh_excise &&
+      stage == pdrive->nexp_stages) {
     pmy_pack->pcoord->UpdateExcisionMasks();
   }
   return TaskStatus::complete;

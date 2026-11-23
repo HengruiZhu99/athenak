@@ -43,6 +43,19 @@ class Lifecycle(unittest.TestCase):
                 np.testing.assert_allclose(mpi[key][-1],full[key][-1],rtol=2e-12)
                 np.testing.assert_allclose(changed[key][-1],full[key][-1],rtol=2e-12)
 
+    @unittest.skipUnless(os.environ.get("ATHENA_DIAGNOSTICS_MPI"), "requires MPI")
+    def test_inertial_magnetic_flux_decomposition(self):
+        from check_decomposition import compare
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fixture = INPUT.with_name("binary_shell.athinput")
+            args = ("problem/corotating=false", "problem/frame_omega=0",
+                    "problem/b_inf=0.002", "time/cfl_number=0.04",
+                    "time/nlim=20", "time/tlim=0.02")
+            for ranks in (1, 2):
+                self.run_case(root/str(ranks), *args, ranks=ranks, input_file=fixture)
+            compare(root/"1/matched_bondi.user.hst", root/"2/matched_bondi.user.hst")
+
     def test_torque_output_selection(self):
         from bench_diagnostics_gpu import check_torque_output
         with tempfile.TemporaryDirectory() as temp:
@@ -58,6 +71,8 @@ class Lifecycle(unittest.TestCase):
             root = Path(temp)
             fixture = INPUT.with_name("binary_shell.athinput")
             full = self.run_case(root/"full", "time/nlim=3", input_file=fixture)
+            # Problem initialization marks circular ADM stationary after task assembly.
+            np.testing.assert_array_equal(full["diagnostic_metric_time"], 0.0)
             self.run_case(root/"split", "time/nlim=2", input_file=fixture)
             checkpoint = sorted((root/"split/rst").glob("*.rst"))[-1]
             ranks = 2 if os.environ.get("ATHENA_DIAGNOSTICS_MPI") else 1

@@ -39,6 +39,8 @@ For each of `Px`, `Py`, `Pz` and `Jz`, `shell_R*_..._stored`, `_source` and `_bo
 
 Invalid metric or primitive data, nonfinite contributions, contaminated interpolation support, and overlap with a frozen zoom region affect qualification. The histories give sampled/rejected coordinate volume and a validity bit. A whole-volume quantity or interval requiring missing data is NaN. Explicit `_partial_stored` and `_partial_source` sum the admissible cells with their original weights. After restarting from a checkpoint with rejected volume, only whole-shell rejection is known until recovery refreshes the flags. A temporal outlier screen would suppress resolved physical transients and is unnecessary for this policy.
 
+The [extended refinement and MPI audit](circumbinary-convergence.md) tests ten spatial resolutions and the production metric-update path.
+
 ## Verification on StellarAI
 
 The manufactured pressure test applies the divergence theorem independently to a sphere containing two unequal, off-center, obliquely boosted, tilted Kerr ellipsoids. Its nonzero $P_x,P_y,P_z,J_z$ fluxes agree with analytic volume and first-moment results to relative tolerances of $10^{-4}$ on the surface and $8\times10^{-4}$ in the volume. A second check inverts the rest-frame Cartesian Kerr radius at sampled points on each quadric. It covers the horizon, two other radii and three spin/boost configurations with a $5\times10^{-14}$ absolute tolerance. The field and area quadratures have their own discretization errors. [Production-helper tests](../tst/diagnostics/helpers.cpp)

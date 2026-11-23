@@ -293,7 +293,140 @@ void SurfaceTests() {
   correction.Commit(1,1,1);Near(correction.mass,4);
 }
 
+// Independent coordinate-basis check of both stress sectors. The reference uses
+// mixed four-tensors, the moving worldtube normal and the spacetime metric derivative.
+struct AffineADM {
+  struct Lapse {
+    Real operator()(int, Real k, Real j, Real i) const {
+      return .92 + .014 * i - .021 * j + .017 * k;
+    }
+  } alpha;
+  struct Shift {
+    Real operator()(int, int a, Real k, Real j, Real i) const {
+      return .12 * (1 - a) + .013 * (a + 1) * i + .016 * (a - 1) * j - .009 * a * k;
+    }
+  } beta_u;
+  struct Spatial {
+    Real operator()(int, int a, int b, Real k, Real j, Real i) const {
+      return (a == b ? 1.3 + .2 * a : .04 * (a + b + 1)) + .009 * (a + b + 1) * i +
+             .007 * (a * b + 1) * j + .006 * (1 - a - b) * k;
+    }
+  } g_dd;
+};
+
+Real FourMetric(const AffineADM& adm, const Real x[3], Real g[4][4]) {
+  const Real lapse = adm.alpha(0, x[2], x[1], x[0]);
+  Real beta[3];
+  for (int a = 0; a < 3; ++a) beta[a] = adm.beta_u(0, a, x[2], x[1], x[0]);
+  g[0][0] = -lapse * lapse;
+  for (int a = 0; a < 3; ++a) {
+    g[a + 1][0] = 0;
+    for (int b = 0; b < 3; ++b) {
+      Real spatial = adm.g_dd(0, a, b, x[2], x[1], x[0]);
+      g[a + 1][b + 1] = spatial;
+      g[a + 1][0] += spatial * beta[b];
+    }
+    g[0][a + 1] = g[a + 1][0];
+    g[0][0] += beta[a] * g[a + 1][0];
+  }
+  Real det = g[1][1] * (g[2][2] * g[3][3] - g[2][3] * g[3][2]) -
+             g[1][2] * (g[2][1] * g[3][3] - g[2][3] * g[3][1]) +
+             g[1][3] * (g[2][1] * g[3][2] - g[2][2] * g[3][1]);
+  return lapse * sqrt(det);
+}
+
+void FourStressTest() {
+  AffineADM adm;
+  for (int sample = 0; sample < 8; ++sample) {
+    Real x[3] = {Real(sample % 3), Real(sample / 3), Real(sample % 2)};
+    Real g[4][4], vol4 = FourMetric(adm, x, g);
+    Real alpha = adm.alpha(0, x[2], x[1], x[0]), vol = vol4 / alpha;
+    Real beta[3], wv[3] = {.32 - .09 * sample, -.27, .08 * sample},
+                  B[3] = {.52, -.15 * sample, .27};
+    Real spatial[6] = {g[1][1], g[1][2], g[1][3], g[2][2], g[2][3], g[3][3]};
+    Real W2 = 1;
+    for (int a = 0; a < 3; ++a)
+      for (int b = 0; b < 3; ++b) W2 += g[a + 1][b + 1] * wv[a] * wv[b];
+    Real W = sqrt(W2), u[4] = {W / alpha}, bfield[4] = {}, ud[4] = {}, bd[4] = {}, b2 = 0;
+    for (int a = 0; a < 3; ++a) {
+      beta[a] = adm.beta_u(0, a, x[2], x[1], x[0]);
+      u[a + 1] = wv[a] - u[0] * beta[a];
+    }
+    for (int a = 0; a < 4; ++a)
+      for (int c = 0; c < 4; ++c) ud[a] += g[a][c] * u[c];
+    for (int a = 0; a < 3; ++a) bfield[0] += (B[a] / vol) * ud[a + 1] / alpha;
+    for (int a = 0; a < 3; ++a)
+      bfield[a + 1] = (B[a] / vol + alpha * bfield[0] * u[a + 1]) / W;
+    for (int a = 0; a < 4; ++a)
+      for (int c = 0; c < 4; ++c) bd[a] += g[a][c] * bfield[c];
+    for (int a = 0; a < 4; ++a) b2 += bfield[a] * bd[a];
+    Real rho = .8 + .1 * sample, p = .14, gamma = 1.6;
+    Real area[3] = {-.21, .63, .34}, motion[3] = {.08, -.14, .19}, N[4] = {};
+    for (int a = 0; a < 3; ++a) {
+      N[0] += area[a] * motion[a];
+      N[a + 1] = -area[a];
+    }
+    FluxAccumulator f;
+    ValenciaSurfacePoint(rho, p, gamma, wv, B, spatial, vol * vol, alpha, beta, x, motion,
+                         area, f);
+    Real mass = 0, force[3] = {}, total[4][4] = {};
+    for (int a = 0; a < 4; ++a) mass += alpha * rho * u[a] * N[a];
+    Near(f.moving[0], mass);
+    for (int part = 0; part < 2; ++part) {
+      Real enthalpy = part ? b2 : rho + gamma * p / (gamma - 1);
+      Real pressure = part ? b2 / 2 : p;
+      Real projected[4] = {}, mixed[4][4];
+      for (int a = 0; a < 4; ++a)
+        for (int c = 0; c < 4; ++c) {
+          mixed[a][c] = enthalpy * u[a] * ud[c] + (a == c ? pressure : 0) -
+                        (part ? bfield[a] * bd[c] : 0);
+          projected[c] += N[a] * alpha * mixed[a][c];
+          total[a][c] += mixed[a][c];
+        }
+      Real eulerian = -projected[0] / alpha;
+      Near(f.moving[17 + part], -projected[0]);
+      for (int a = 0; a < 3; ++a) {
+        int j = (a + 1) % 3, k = (a + 2) % 3;
+        Near(f.moving[5 + 3 * part + a], projected[a + 1]);
+        Near(f.moving[11 + 3 * part + a],
+             x[j] * projected[k + 1] - x[k] * projected[j + 1]);
+        eulerian += beta[a] * projected[a + 1] / alpha;
+      }
+      Near(f.moving[3 + part], eulerian);
+      for (int d = 0; d < 3; ++d) {
+        Real xp[3] = {x[0], x[1], x[2]}, xm[3] = {x[0], x[1], x[2]};
+        constexpr Real eps = 1e-4;
+        xp[d] += eps;
+        xm[d] -= eps;
+        Real gp[4][4], gm[4][4], vp = FourMetric(adm, xp, gp), vm = FourMetric(adm, xm, gm);
+        force[d] += pressure * (vp - vm) / (2 * eps);
+        for (int a = 0; a < 4; ++a)
+          for (int c = 0; c < 4; ++c)
+            force[d] += .5 * vol4 *
+                        (enthalpy * u[a] * u[c] - (part ? bfield[a] * bfield[c] : 0)) *
+                        (gp[a][c] - gm[a][c]) / (2 * eps);
+      }
+    }
+    auto prim = [&](int, int n, int, int, int) {
+      return n == IDN ? rho : n == IPR ? p : wv[n - IVX];
+    };
+    auto bcc = [&](int, int n, int, int, int) { return B[n]; };
+    Real idx[3] = {1, 1, 1}, torque[3], measured[3];
+    ValenciaTorqueCell(adm, prim, bcc, 4, 3, gamma, idx, 0, x[2], x[1], x[0], x[0], x[1],
+                       x[2], torque, measured);
+    for (int d = 0; d < 3; ++d) {
+      int j = (d + 1) % 3, k = (d + 2) % 3;
+      Near(measured[d], force[d], 2e-10);
+      Near(torque[d],
+           x[j] * force[k] - x[k] * force[j] +
+               vol4 * (total[j + 1][k + 1] - total[k + 1][j + 1]),
+           5e-10);
+    }
+  }
+}
+
 int main() {
+  FourStressTest();
   RegionalConvergenceTests();
   AreaTests();
   SurfaceTests();

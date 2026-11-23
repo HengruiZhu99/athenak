@@ -452,7 +452,7 @@ bool use_bondi_inflow = false;
 bool reservoir_test_flat_metric = false;
 bool cache_bondi_boundary = true;
 Real reservoir_perturbation = 0.0;
-std::uint64_t bondi_metric_revision = 0;
+
 struct BondiBoundaryCache {
   DvceArray5D<Real> primitive;
   std::uint64_t revision = 0;
@@ -472,6 +472,7 @@ void PreconditionDynBBHRestartMHD(Mesh *pm);
 
 Real diagnostic_metric_time = 0.0;
 struct BinaryBudgetState {
+  std::uint64_t geometry_revision = 0;
   bool enabled = false, in_step = false;
   int aggregate_depth = 0, stage = 0;
   circumbinary::BudgetGeometry geometry;
@@ -772,6 +773,9 @@ void PrepareBinaryBudget(BinaryBudgetState& b, Mesh* pm) {
   if (!b.enabled) {
     return;
   }
+  const auto revision = pm->pmb_pack->padm->prescribed_revision;
+  if (revision && revision == b.geometry_revision) return;
+  b.geometry_revision = revision;
   const auto& c = pm->pmb_pack->pcoord->coord_data;
   for (int h = 0; h < b.geometry.holes; ++h) {
     const Real* spin = h == 0 ? c.punc_0_spin : c.punc_1_spin;
@@ -791,8 +795,7 @@ void PrepareBinaryBudget(BinaryBudgetState& b, Mesh* pm) {
         q.H[i][j] = b.geometry.excision_H[h][i][j];
       }
     }
-    b.excision[h]->SetCenter(q.center);
-    b.excision[h]->SetRadiusFunction([q](Real th, Real ph) { return q.Radius(th, ph); });
+    b.excision[h]->SetRadiusFunction([q](Real th, Real ph) { return q.Radius(th, ph); }, q.center);
     b.excision[h]->SetMotion([](Real, Real, Real* w) {
       for (int i = 0; i < 3; ++i) {
         w[i] = 0.0;
@@ -3537,7 +3540,7 @@ void BinaryReservoirBoundary(Mesh *pm) {
       pm->pgen->user_boundary_data=std::make_shared<BondiBoundaryCache>();
     }
     cache=std::static_pointer_cast<BondiBoundaryCache>(pm->pgen->user_boundary_data);
-    refresh=cache->revision != bondi_metric_revision ||
+    refresh=cache->revision != pack->padm->prescribed_revision ||
             cache->primitive.extent(0) != static_cast<size_t>(pack->nmb_thispack);
     if (refresh) {
       Kokkos::realloc(cache->primitive,pack->nmb_thispack,5,n3,n2,n1);
@@ -3604,7 +3607,7 @@ void BinaryReservoirBoundary(Mesh *pm) {
   // Primitive-to-conserved conversion restricted to each exterior ghost slab.
   // The EOS filter overload keeps active cells and exchanged internal ghosts intact.
   // Implemented through the general masked conversion entry point below.
-  if (cached) cache->revision=bondi_metric_revision;
+  if (cached) cache->revision=pack->padm->prescribed_revision;
   pack->pdyngr->PrimToConBoundary();
   if (pm->multilevel) {
     // Coarse-neighbor prolongation also reads coarse ghost corners at physical
@@ -3663,7 +3666,7 @@ void StoreADMVariables(ADMVars adm_vars, const int m, const int k,
 
 void SetADMVariablesToBBH(MeshBlockPack *pmbp) {
   diagnostic_metric_time=pmbp->pmesh->time;
-  ++bondi_metric_revision;  // Includes mesh redistribution and restart initialization.
+  ++pmbp->padm->prescribed_revision;  // Includes mesh redistribution and restart initialization.
   const Real tt = bbh.corotating ? 0.0 : pmbp->pmesh->time;
   auto &adm = pmbp->padm->adm;
   auto &size = pmbp->pmb->mb_size;
@@ -4278,7 +4281,6 @@ void UpdateDiagnosticSurfaces(Mesh* pm, Real time) {
     grid.component_epoch = epoch;
     int x = hole == 0 ? X1 : X2, v = hole == 0 ? VX1 : VX2, a = hole == 0 ? AX1 : AX2;
     int m = hole == 0 ? M1T : M2T;
-    grid.SetCenter(&tr[x]);
     if (grid.component >= 0) {
       Real chi2 = SQR(tr[a]) + SQR(tr[a + 1]) + SQR(tr[a + 2]);
       Real v2 = SQR(tr[v]) + SQR(tr[v + 1]) + SQR(tr[v + 2]);
@@ -4311,9 +4313,10 @@ void UpdateDiagnosticSurfaces(Mesh* pm, Real time) {
           q.H_dot[i][j] = H[i][j].d;
         }
       }
-      grid.SetRadiusFunction([q](Real th, Real ph) { return q.Radius(th, ph); });
+      grid.SetRadiusFunction([q](Real th, Real ph) { return q.Radius(th, ph); }, q.center);
       grid.SetMotion([q](Real th, Real ph, Real* w) { q.Motion(th, ph, w); });
     } else {
+      grid.SetCenter(&tr[x]);
       Real w[3] = {bbh.corotating ? 0.0 : dt[x], bbh.corotating ? 0.0 : dt[x + 1],
                    bbh.corotating ? 0.0 : dt[x + 2]};
       grid.SetMotion([=](Real, Real, Real* out) {

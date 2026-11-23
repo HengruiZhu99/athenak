@@ -45,8 +45,7 @@ SurfaceFluxResult IntegrateSurface(MeshBlockPack* pmbp,
 
   DualArray2D<Real> dSigma;
 
-  // Ownership is rebuilt even for stationary surfaces: AMR, redistribution, restart,
-  // and zoom restoration can change interpolation support without changing the shape.
+  // Mesh and embedding revisions govern ownership. Evolved stencil flags are sampled every time.
   current_surf->RefreshInterpolationSupport();
   current_surf->QualifyStencils();
   const int np = current_surf->Npts();
@@ -69,8 +68,11 @@ SurfaceFluxResult IntegrateSurface(MeshBlockPack* pmbp,
     ab_start = z4c::Z4c::I_Z4C_ALPHA;
     ab_end = z4c::Z4c::I_Z4C_BETAZ + 1;
   }
-  DualArray2D<Real> ab_vals =
-      current_surf->InterpolateCached(2, gauge_source_array, ab_start, ab_end);
+  DualArray2D<Real> ab_vals;
+  const auto stationary_revision = !pmbp->pz4c && !pmbp->padm->is_dynamic
+                                     ? pmbp->padm->prescribed_revision : 0;
+  current_surf->SampleFluxGeometry(gauge_source_array, ab_start, ab_end,
+                                   stationary_revision, ab_vals, dSigma);
   auto ab_vals_d = ab_vals.d_view;
 
   // Cartesian coordinates and interpolation indices
@@ -82,8 +84,6 @@ SurfaceFluxResult IntegrateSurface(MeshBlockPack* pmbp,
   int inherited_reason = current_surf->inherited_stencil_reason;
 
   // Surface metric and dSigma_i
-  current_surf->InterpolateMetric(false);
-  current_surf->BuildSurfaceCovectors(dSigma);
   auto g_surf_d = current_surf->Metric().d_view;
   auto dSigma_d = dSigma.d_view;
 

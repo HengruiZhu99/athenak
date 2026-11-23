@@ -244,11 +244,12 @@ restart segments/epochs distinct and do not use a temporal outlier screen to fil
 unavailable coverage. The older snapshot disk-structure statistics are not a replacement
 for the new native whole-surface validity or accepted-step mass records.
 
-Interpolation result buffers and proper covectors are reused. Stationary surface embeddings and normal velocities are reused. Ownership,
-metric sampling and support qualification rebuild at each requested evaluation, so
-motion, mass/spin changes, refinement, redistribution, restart and zoom restoration
-cannot leave an ownership/metric cache stale. No evolved values are cached across
-stages. Use a sufficiently precise history format, e.g. `%24.16e`, for budget work.
+Surface ownership and interpolation weights are reused until the embedding or local
+block layout changes. A stationary prescribed metric also reuses its surface
+lapse, shift, spatial metric and proper covectors until the provider updates ADM.
+AMR and restart replace the block layout or initialize fresh surfaces. Each flux
+measurement interpolates the evolved state and checks ownership, reset/excision
+support and zoom coverage. Use a sufficiently precise history format, e.g. `%24.16e`, for budget work.
 Angular sampling is bounded at 16,777,216 points per surface. The exact requested
 history size is checked against the existing 2000-slot capacity before allocation:
 44 per surface, 8 per present horizon accumulator, 3 time columns, 22 per legacy region
