@@ -31,6 +31,7 @@
 #include "mhd/mhd.hpp"
 #include "diffusion/current_density.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
+#include "dyn_grmhd/valencia_stress_energy.hpp"
 #include "cyclic_zoom/cyclic_zoom.hpp"
 #include "dyn_radiation/dyn_radiation.hpp"
 #include "utils/flux_generalized.hpp"
@@ -449,6 +450,7 @@ void InitializeBinaryReservoir(Mesh *pm, ParameterInput *pin, bool restart);
 void BinaryReservoirBoundary(Mesh *pm);
 Real reservoir_density, reservoir_pressure, reservoir_bz;
 bool use_bondi_inflow = false;
+bool monitor_ct = false;
 bool reservoir_test_flat_metric = false;
 bool cache_bondi_boundary = true;
 Real reservoir_perturbation = 0.0;
@@ -529,6 +531,7 @@ void RegisterDiagnosticSurfaces(ProblemGenerator* pgen, ParameterInput* pin, Mes
                    pin->GetOrAddBoolean("problem", "flux_shell_budget", false) ||
                    pin->GetOrAddReal("problem", "flux_ks_radius1", 0.0) != 0 ||
                    pin->GetOrAddReal("problem", "flux_ks_radius2", 0.0) != 0;
+  monitor_ct = pin->GetOrAddBoolean("problem", "flux_monitor_ct", false);
   bool enabled = pin->GetOrAddBoolean("problem", "flux_diagnostics",
                                       (pm->three_d && ideal) || requested);
   if (!enabled) {
@@ -576,7 +579,7 @@ void RegisterDiagnosticSurfaces(ProblemGenerator* pgen, ParameterInput* pin, Mes
   if (nr > NHISTORY_VARIABLES / kSurfaceChannels ||
       (nr + extra + h1 + h2 + (bh ? (bbh.single_black_hole ? 1 : 2) : 0)) *
               kSurfaceChannels >
-          NHISTORY_VARIABLES - ((shells ? 45 * nr : 0) + 3 +
+          NHISTORY_VARIABLES - ((monitor_ct ? 6 : 0) + (shells ? 45 * nr : 0) + 3 +
                                 8 * (bh ? (bbh.single_black_hole ? 1 : 2) : 0) +
                                 (pin->GetOrAddBoolean("problem", "flux_budget", false)
                                      ? (bbh.single_black_hole ? 66 : 88)
@@ -1620,6 +1623,44 @@ void TorusHistory(HistoryData* pdata, Mesh* pm) {
   add("diagnostic_state_time", pm->time);
   add("diagnostic_metric_time", pmbp->pz4c ? pm->time : diagnostic_metric_time);
   add("diagnostic_geometry_time", pm->time);
+  if (monitor_ct) {
+    const auto ind = pm->mb_indcs;
+    auto size = pmbp->pmb->mb_size.d_view;
+    auto B = pmbp->pmhd->b0;
+    const int cells = ind.nx1 * ind.nx2 * ind.nx3;
+    Real maxima[3] = {};
+    int invalid = 0;
+    Kokkos::parallel_reduce("history_ct_divergence", pmbp->nmb_thispack * cells,
+      KOKKOS_LAMBDA(int n, Real& div, Real& scale, Real& field, int& bad) {
+        int m = n / cells, i = ind.is + n % ind.nx1;
+        int j = ind.js + (n / ind.nx1) % ind.nx2, k = ind.ks + (n % cells) / (ind.nx1 * ind.nx2);
+        Real lo[3] = {B.x1f(m,k,j,i), B.x2f(m,k,j,i), B.x3f(m,k,j,i)};
+        Real hi[3] = {B.x1f(m,k,j,i+1), B.x2f(m,k,j+1,i), B.x3f(m,k+1,j,i)};
+        Real dx[3] = {size(m).dx1, size(m).dx2, size(m).dx3};
+        Real divergence = 0, local_scale = 0;
+        for (int a = 0; a < 3; ++a) {
+          if (!Kokkos::isfinite(lo[a]) || !Kokkos::isfinite(hi[a])) { bad = 1; return; }
+          Real amplitude = fmax(fabs(lo[a]), fabs(hi[a]));
+          local_scale += amplitude / dx[a];
+          field = fmax(field, amplitude);
+          divergence += (hi[a] - lo[a]) / dx[a];
+        }
+        div = fmax(div, fabs(divergence));
+        scale = fmax(scale, local_scale);
+      }, Kokkos::Max<Real>(maxima[0]), Kokkos::Max<Real>(maxima[1]),
+         Kokkos::Max<Real>(maxima[2]), Kokkos::Max<int>(invalid));
+    invalid = invalid > 0;
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE, maxima, 3, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &invalid, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+#endif
+    add("ct_divB_max", invalid ? NAN : maxima[0]);
+    add("ct_divB_relative", invalid ? NAN : maxima[1] > 0 ? maxima[0]/maxima[1] : 0);
+    add("ct_face_B_max", invalid ? NAN : maxima[2]);
+    add("ct_nonfinite", invalid);
+    add("zoom_zone", pm->pzoom ? pm->pzoom->zstate.zone : 0);
+    add("zoom_event", pm->pzoom ? pm->pzoom->zstate.id : 0);
+  }
   if (pgen->user_diagnostic_data) {
     auto state =
         std::static_pointer_cast<BinaryDiagnosticState>(pgen->user_diagnostic_data);
@@ -2221,9 +2262,8 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       !use_bondi_inflow) {
     Kokkos::abort("dynbbh initial_condition must be torus, bondi_reservoir or bondi_inflow");
   }
-  if ((bbh.corotating || bbh.single_black_hole) &&
-      initial_condition != "bondi_reservoir" && !use_bondi_inflow) {
-    Kokkos::abort("corotating/single_black_hole requires a Bondi initial condition");
+  if (bbh.single_black_hole && initial_condition == "torus") {
+    Kokkos::abort("single_black_hole requires a Bondi initial condition");
   }
   if (!restart && pmy_mesh_->pzoom != nullptr && pmy_mesh_->pzoom->zstate.zone != 0) {
     Kokkos::abort("Start binary cyclic zoom at zone=0; other zones require a restart");
@@ -2252,8 +2292,15 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
 
   // copied form torus PG, needs to be rewritten?
 
-  // return if restart
-  if (restart) return;
+  // Puncture masks are runtime arrays and are not checkpointed. Populate them
+  // before ghost recovery samples the restored torus, including on a frozen zone.
+  if (restart) {
+    if (pmbp->padm && pmbp->pcoord->coord_data.bh_excise) {
+      pmbp->padm->SetADMVariables(pmbp);
+      pmbp->pcoord->UpdateExcisionMasks();
+    }
+    return;
+  }
 
   // Select either Hydro or MHD
   DvceArray5D<Real> u0_, w0_;
@@ -2352,6 +2399,12 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
 
   bbh_traj_state traj0 = find_traj_state(0.0);
 
+  // At t=0 the spatial bases and slice normal coincide. Project the inertial
+  // torus four-velocity with its inertial shift. Equivalently, subtract
+  // (Omega cross x) u^t from u^i and add Omega cross x to the shift.
+  auto initial_frame = trs;
+  initial_frame.corotating = false;
+
   Kokkos::parallel_reduce("pgen_torus1", Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
   KOKKOS_LAMBDA(const int &idx, Real &max_ptot) {
     // compute m,k,j,i indices of thread and call function
@@ -2378,9 +2431,8 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     Real &dx2 = size.d_view(m).dx2;
     Real &dx3 = size.d_view(m).dx3;
 
-    // Extract metric and inverse -- presumably should get actual metric?????
     Real glower[4][4], gupper[4][4];
-    GetSuperposedAndInverse(0.0, x1v, x2v, x3v, glower, gupper, traj0.q, trs);
+    GetSuperposedAndInverse(0.0, x1v, x2v, x3v, glower, gupper, traj0.q, initial_frame);
 
     // Calculate Boyer-Lindquist coordinates of cell
     Real r, theta, phi;
@@ -2465,9 +2517,6 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       TransformVector(trs, u0_bl, 0.0, u2_bl, u3_bl,
                       x1v, x2v, x3v, &u0, &u1, &u2, &u3);
 
-      Real glower[4][4], gupper[4][4];
-      GetSuperposedAndInverse(0.0, x1v, x2v, x3v, glower, gupper, traj0.q, trs);
-
       uu1 = u1 - gupper[0][1]/gupper[0][0] * u0;
       uu2 = u2 - gupper[0][2]/gupper[0][0] * u0;
       uu3 = u3 - gupper[0][3]/gupper[0][0] * u0;
@@ -2529,7 +2578,6 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     if (pmbp->pcoord->coord_data.bh_excise) {
       pmbp->pcoord->UpdateExcisionMasks();
     }
-    pmbp->pdyngr->PrimToConInit(is, ie, js, je, ks, ke);
   }
 
   // initialize magnetic fields ---------------------------------------
@@ -2753,8 +2801,8 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       Real &x3min = size.d_view(m).x3min;
       Real &x3max = size.d_view(m).x3max;
       Real x3v = CellCenterX(k-ks, indcs.nx3, x3min, x3max);
-      Real glower[4][4], gupper[4][4];
-      GetSuperposedAndInverse(0.0, x1v, x2v, x3v, glower, gupper, traj0.q, trs);
+      Real glower[4][4];
+      SuperposedBBH(0.0, x1v, x2v, x3v, glower, traj0.q, initial_frame);
 
       // Calculate Boyer-Lindquist coordinates of cell
       Real r, theta, phi;
@@ -2787,42 +2835,19 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
         }
       }
 
-      // Extract primitive velocity, magnetic field B^i, and gas pressure
-      Real &wvx = w0_(m,IVX,k,j,i);
-      Real &wvy = w0_(m,IVY,k,j,i);
-      Real &wvz = w0_(m,IVZ,k,j,i);
-      Real &wbx = bcc_(m,IBX,k,j,i);
-      Real &wby = bcc_(m,IBY,k,j,i);
-      Real &wbz = bcc_(m,IBZ,k,j,i);
-
-      // Calculate 4-velocity (exploiting symmetry of metric)
-      Real q = glower[1][1]*wvx*wvx +2.0*glower[1][2]*wvx*wvy +2.0*glower[1][3]*wvx*wvz
-             + glower[2][2]*wvy*wvy +2.0*glower[2][3]*wvy*wvz
-             + glower[3][3]*wvz*wvz;
-      Real alpha = sqrt(-1.0/gupper[0][0]);
-      Real lor = sqrt(1.0 + q);
-      Real u0 = lor / alpha;
-      Real u1 = wvx - alpha * lor * gupper[0][1];
-      Real u2 = wvy - alpha * lor * gupper[0][2];
-      Real u3 = wvz - alpha * lor * gupper[0][3];
-
-      // lower vector indices
-      Real u_1 = glower[1][0]*u0 + glower[1][1]*u1 + glower[1][2]*u2 + glower[1][3]*u3;
-      Real u_2 = glower[2][0]*u0 + glower[2][1]*u1 + glower[2][2]*u2 + glower[2][3]*u3;
-      Real u_3 = glower[3][0]*u0 + glower[3][1]*u1 + glower[3][2]*u2 + glower[3][3]*u3;
-
-      // Calculate 4-magnetic field
-      Real b0 = u_1*wbx + u_2*wby + u_3*wbz;
-      Real b1 = (wbx + b0 * u1) / u0;
-      Real b2 = (wby + b0 * u2) / u0;
-      Real b3 = (wbz + b0 * u3) / u0;
-
-      // lower vector indices and compute bsq
-      Real b_0 = glower[0][0]*b0 + glower[0][1]*b1 + glower[0][2]*b2 + glower[0][3]*b3;
-      Real b_1 = glower[1][0]*b0 + glower[1][1]*b1 + glower[1][2]*b2 + glower[1][3]*b3;
-      Real b_2 = glower[2][0]*b0 + glower[2][1]*b1 + glower[2][2]*b2 + glower[2][3]*b3;
-      Real b_3 = glower[3][0]*b0 + glower[3][1]*b1 + glower[3][2]*b2 + glower[3][3]*b3;
-      Real bsq = b0*b_0 + b1*b_1 + b2*b_2 + b3*b_3;
+      // CT evolves sqrt(gamma) B^i. Normalize using the fluid-rest-frame
+      // invariant on the common phase-zero slice, including its determinant.
+      Real spatial[6] = {glower[1][1], glower[1][2], glower[1][3],
+                         glower[2][2], glower[2][3], glower[3][3]};
+      Real wv[3], bt[3], vu[3], vd[3], Bu[3], Bd[3], bu[3], bd[3];
+      for (int a = 0; a < 3; ++a) {
+        wv[a] = w0_(m,IVX+a,k,j,i);
+        bt[a] = bcc_(m,IBX+a,k,j,i);
+      }
+      Real W, sqrt_gamma, Bv, btime, bsq;
+      ValenciaPrimsToEulerianVelocity(wv, spatial, W, vu, vd);
+      ValenciaEulerianMagneticFromDensitized(bt, spatial, sqrt_gamma, Bu, Bd);
+      ValenciaComovingB(vu, vd, Bu, Bd, W, Bv, btime, bu, bd, bsq);
 
       max_bsq = fmax(bsq, max_bsq);
       if (in_torus) {
@@ -2833,9 +2858,9 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
 
 #if MPI_PARALLEL_ENABLED
     // get maximum value of gas pressure and bsq over all MPI ranks
-    MPI_Allreduce(MPI_IN_PLACE, &ptotmax, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-    MPI_Allreduce(MPI_IN_PLACE, &bsqmax, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-    MPI_Allreduce(MPI_IN_PLACE, &bsqmax_intorus, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &ptotmax, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &bsqmax, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &bsqmax_intorus, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
 #endif
 
     // Apply renormalization of magnetic field

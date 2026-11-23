@@ -123,7 +123,8 @@ not establish double-precision checkpoint equivalence for arbitrary inputs.
 
 Unsupported inputs fail explicitly: dynamical spacetime/radiation with zoom,
 self-gravity, tilted or evolving spins, trajectory tables in the rotating
-setup, moving excision, invalid hierarchy/intervals, and rotating torus ICs.
+setup, moving excision, and invalid hierarchy/intervals. Circular aligned rotating
+torus initial conditions are covered by the [MAD sequence tests](circumbinary-mad-sequences.md).
 Use exactly one AMR criterion for Valencia cyclic zoom.
 The tests do not validate MPI, GPUs, a steady Bondi accretion rate, or long-time
 conservation/convergence of the cyclic approximation.
