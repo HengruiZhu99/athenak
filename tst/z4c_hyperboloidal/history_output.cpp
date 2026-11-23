@@ -79,6 +79,16 @@ void SyntheticChecks(ParameterInput &pin,Mesh &mesh,HistoryOutput &history) {
     MPI_Allreduce(MPI_IN_PLACE,&caught,1,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
     Require(caught==global_variable::nranks,"invalid history did not fail collectively");
   }
+  // With no accepted surface, the full-domain row must still be written.
+  HistoryOutput missing(&pin, &mesh, Parameters("missing"));
+  auto &partial = missing.hist_data.front();
+  partial.nhist = 10;
+  const auto local = Synthetic(true, 1);
+  for (int n=0; n<10; ++n) {
+    partial.label[n] = labels[n];
+    partial.hdata[n] = n<5 ? local[n] : std::numeric_limits<Real>::quiet_NaN();
+  }
+  missing.WriteOutputFile(&mesh, &pin);
   // Existing non-hyperboloidal scalar sums and filenames retain their behavior.
   HistoryOutput ordinary(&pin,&mesh,Parameters("ordinary"));ordinary.hist_data.clear();
   for (auto physics:{PhysicsModule::HydroDynamics,PhysicsModule::MagnetoHydroDynamics,

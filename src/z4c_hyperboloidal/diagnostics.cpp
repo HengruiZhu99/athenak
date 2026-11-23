@@ -322,21 +322,31 @@ const FastFlow::Result &Diagnostics::FindHorizon() {
     complete=complete && result.found && result.complete_surface && surfaces_.back().Valid();
   }
   horizon_=horizons_.front();surface_=surfaces_.front();
-  RequireAll(complete,"Hyperboloidal exterior requires every component horizon; failed, skipped or missing surface");
   if (components == 2 && pack_->pmesh->adaptive &&
       pin_->GetOrAddReal("z4c_amr", "horizon_padding_cells", -1) >= 0) {
     for (int h = 0; h < components; ++h) {
+      if (!surfaces_[h].Valid()) continue;
       pin_->SetRealExact("fastflow", "amr_radius_" + std::to_string(h),
                          surfaces_[h].upper);
     }
   }
-  auto mask=Kokkos::create_mirror_view(exterior_);
-  for (int q=0;q<module_->npoints;++q) {
-    const Real x[3]={positions_(q,0),positions_(q,1),positions_(q,2)};
-    mask(q)=1;
-    for(const auto &surface:surfaces_)if(!surface.Outside(x))mask(q)=0;
+  if (complete) {
+    auto mask=Kokkos::create_mirror_view(exterior_);
+    for (int q = 0; q < module_->npoints; ++q) {
+      const Real x[3]={positions_(q,0),positions_(q,1),positions_(q,2)};
+      mask(q)=1;
+      for (const auto &surface : surfaces_) {
+        if (!surface.Outside(x)) mask(q) = 0;
+      }
+    }
+    Kokkos::deep_copy(exterior_,mask);
+  } else {
+    Kokkos::deep_copy(exterior_, 0);
+    if (global_variable::my_rank == 0) {
+      std::cout << "Exterior diagnostics unavailable at cycle " << cycle_
+                << ": missing accepted horizon surface" << std::endl;
+    }
   }
-  Kokkos::deep_copy(exterior_,mask);
   Kokkos::fence();statistics_.horizon_seconds+=timer.seconds();
   ++statistics_.searches;horizon_ready_=true;
   return horizon_;
@@ -349,6 +359,10 @@ std::array<Real,10> Diagnostics::HistorySums() {
     Kokkos::parallel_reduce("hyperboloidal history sums",
         Kokkos::RangePolicy<>(0,module_->npoints),SumConstraints{points_,weights_,exterior_},out);
     for (int a=0;a<10;++a) sums_[a]=out.sum[a];
+    if (std::any_of(surfaces_.begin(), surfaces_.end(),
+                    [](const FastFlowSurface &s) { return !s.Valid(); })) {
+      std::fill(sums_.begin()+5, sums_.end(), std::numeric_limits<Real>::quiet_NaN());
+    }
     statistics_.reduction_seconds+=timer.seconds();sums_ready_=true;
   }
   if (!written_) {

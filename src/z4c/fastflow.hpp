@@ -85,7 +85,7 @@ class FastFlow {
   void MetricInterp();
   void ComputeSphericalHarmonics();
   void RadiiFromSphericalHarmonics();
-  void UpdateFlowSpectralComponents();
+  void UpdateFlowSpectralComponents(Real relaxation);
   void SurfaceIntegrals();
 
   // Some of the main parameters in the fast-flow algorithm

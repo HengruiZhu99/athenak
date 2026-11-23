@@ -125,6 +125,7 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n,
   // If surface was found prior to checkpoint, read it as warm-up guess
   last_a0 = pin->GetOrAddReal("fastflow", "last_a0_" + n_str, -1.0);
   ah_found = pin->GetOrAddBoolean("fastflow", "ah_found_a0_" + n_str, false);
+  if (geometry_sampler && !ah_found) last_a0 = -1.0;
   time_first_found = pin->GetOrAddReal("fastflow", "time_first_found_" + n_str, -1.0);
 
   // Center
@@ -527,6 +528,9 @@ void FastFlow::Find(int iter, Real time) {
 //! \fn void FastFlow::InitialGuess()
 //! \brief Initial guess for spectral coefs of horizon n
 void FastFlow::InitialGuess() {
+  // A missed search invalidates the measurement. The last accepted radius
+  // remains a useful initial guess, including across a checkpoint restart.
+  const bool use_last_radius = last_a0 > 0 && (ah_found || geometry_sampler);
   // Reset Coefficients to Zero
   Kokkos::deep_copy(a0.h_view, 0.0);
   Kokkos::deep_copy(ac.h_view, 0.0);
@@ -544,7 +548,7 @@ void FastFlow::InitialGuess() {
     // make radius a bit larger than half the distance between any of the punctures
     Real largedist = PuncMaxDistance(use_puncture);
     Real mass = pmbp->pz4c->ptracker[use_puncture]->GetMass();
-    if (ah_found && last_a0 > 0) {
+    if (use_last_radius) {
       a0.h_view(0) = last_a0 * expand_guess;
     } else {
       a0.h_view(0) = Kokkos::fmax(0.5 * mass, Kokkos::fmin(mass, 0.5 * largedist));
@@ -571,7 +575,7 @@ void FastFlow::InitialGuess() {
   }
 
   // Take a0 either from previous or from input value
-  if (ah_found && last_a0 > 0) {
+  if (use_last_radius) {
     a0.h_view(0) = last_a0 * expand_guess;
   } else {
     a0.h_view(0) = Kokkos::sqrt(4.0 * M_PI) * initial_radius;
@@ -885,6 +889,9 @@ void FastFlow::FastFlowLoop() {
   Real area = 0;
   Real hrms = 0;
   Real hmean = 0;
+  Real previous_hmean = 0;
+  Real relaxation = 1;
+  int alternating_steps = 0;
   Real Sx = 0;
   Real Sy = 0;
   Real Sz = 0;
@@ -1009,7 +1016,7 @@ void FastFlow::FastFlowLoop() {
     }
 
     // End flow when mass difference is small
-    if (Kokkos::fabs(mass_prev-mass) < mass_tol
+    if (Kokkos::fabs(mass_prev-mass) < relaxation * mass_tol
         && (expansion_rms_tol < 0 || std::sqrt(hrms) <= expansion_rms_tol)) {
       ah_found = true;
       search_status = SearchStatus::converged;
@@ -1017,7 +1024,24 @@ void FastFlow::FastFlowLoop() {
     }
 
     // Step 5: Find new spectral components.
-    UpdateFlowSpectralComponents();
+    // An interpolated surface can alternate across the same root without
+    // reducing its residual. Damp the next update only after repeated stalls.
+    if (geometry_sampler && relaxation > 0.125) {
+      const bool alternating = (hmean > 0 && previous_hmean < 0) ||
+                               (hmean < 0 && previous_hmean > 0);
+      alternating_steps = alternating && std::abs(hmean) >= 0.9 * std::abs(previous_hmean)
+                              ? alternating_steps + 1 : 0;
+      if (alternating_steps == 4) {
+        relaxation *= 0.5;
+        alternating_steps = 0;
+        if (verbose && ioproc) {
+          fprintf(pofile_verbose, "Damping oscillating flow at iteration %d: factor %g\n",
+                  k, static_cast<double>(relaxation));
+        }
+      }
+      previous_hmean = hmean;
+    }
+    UpdateFlowSpectralComponents(relaxation);
   }
 
   if (ah_found) {
@@ -1058,7 +1082,7 @@ void FastFlow::FastFlowLoop() {
 //----------------------------------------------------------------------------------------
 //! \fn void FastFlow::UpdateFlowSpectralComponents()
 //! \brief Find new spectral components with fast-flow.
-void FastFlow::UpdateFlowSpectralComponents() {
+void FastFlow::UpdateFlowSpectralComponents(Real relaxation) {
   const Real alpha = flow_alpha_beta_const;
   const Real beta = 0.5 * flow_alpha_beta_const;
   const Real A = alpha / (lmax * lmax1) + beta;
@@ -1072,7 +1096,7 @@ void FastFlow::UpdateFlowSpectralComponents() {
   // Step 1: Initialize coefficients.
   for (int l = 0; l <= lmax; l++) {
     spec0[l] = 0;
-    ABfac[l] = A / (1.0 + B * l * (l + 1));
+    ABfac[l] = relaxation * A / (1.0 + B * l * (l + 1));
 
     for (int m = 1; m <= l; m++) {
       int l1 = lmindex(l,m,lmax);

@@ -484,18 +484,25 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
       // MPI sums raw volume and squared-constraint integrals. Averaging local
       // RMS values would give the wrong weighting, including on empty ranks.
       int invalid=0;
+      int regions = 2;
       if (global_variable::my_rank==0) {
         invalid=data.nhist!=10;
-        for (int n=0;n<10;++n)
+        // A missing component surface makes all five exterior integrals unavailable.
+        bool missing_exterior = true;
+        for (int n = 5; n < 10; ++n) missing_exterior &= std::isnan(data.hdata[n]);
+        if (missing_exterior) regions = 1;
+        for (int n = 0; n < 5*regions; ++n)
           invalid|=!std::isfinite(data.hdata[n]) || data.hdata[n]<0;
-        invalid|=!(data.hdata[0]>0) || !(data.hdata[5]>0);
+        for (int region = 0; region < regions; ++region) {
+          invalid |= !(data.hdata[5*region] > 0);
+        }
       }
 #if MPI_PARALLEL_ENABLED
       MPI_Bcast(&invalid,1,MPI_INT,0,MPI_COMM_WORLD);
 #endif
       if (invalid) throw std::runtime_error("Invalid global hyperboloidal history integrals");
       if (global_variable::my_rank==0)
-        for (int region=0;region<2;++region)
+        for (int region = 0; region < regions; ++region)
           for (int field=1;field<5;++field)
             data.hdata[5*region+field]=
                 std::sqrt(data.hdata[5*region+field]/data.hdata[5*region]);

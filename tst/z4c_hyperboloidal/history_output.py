@@ -112,6 +112,10 @@ try:
                     _, expected = synthetic_expected(sample)
                     assert all(abs(a-b) <= 1e-15*(1+abs(b)) for a, b in zip(row[2:], expected))
                 expected_raw, _ = synthetic_expected(1)
+                partial = folder/'missing.z4c_hyperboloidal.hst'
+                row = [float(x) for x in partial.read_text().splitlines()[-1].split()]
+                assert len(row) == 12 and row[2:7] == rows[0][2:7]
+                assert all(math.isnan(x) for x in row[7:])
                 for suffix in ('hydro', 'mhd', 'z4c.user', 'user'):
                     path = folder/f'ordinary.{suffix}.hst'
                     old_columns, old_rows = read_history(path)
