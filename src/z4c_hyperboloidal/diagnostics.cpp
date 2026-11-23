@@ -305,6 +305,13 @@ const FastFlow::Result &Diagnostics::FindHorizon() {
     }
     ++component;
     finder->Find(pack_->pmesh->ncycle,pack_->pmesh->time);
+    if (finder->GetResult().status == FastFlow::SearchStatus::stalled) {
+      // Switching the ordinary interpolation stencil can introduce a small
+      // jump in sampled derivatives. Retry this component at the same time.
+      sampler_->UseContinuousDerivatives(true);
+      finder->Find(pack_->pmesh->ncycle, pack_->pmesh->time);
+      sampler_->UseContinuousDerivatives(false);
+    }
     horizons_.push_back(finder->GetResult());surfaces_.push_back(finder->GetSurface());
     const auto &result=horizons_.back();
     if(components==2 && global_variable::my_rank==0)

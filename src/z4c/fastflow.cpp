@@ -1026,12 +1026,20 @@ void FastFlow::FastFlowLoop() {
     // Step 5: Find new spectral components.
     // An interpolated surface can alternate across the same root without
     // reducing its residual. Damp the next update only after repeated stalls.
-    if (geometry_sampler && relaxation > 0.125) {
+    if (geometry_sampler) {
       const bool alternating = (hmean > 0 && previous_hmean < 0) ||
                                (hmean < 0 && previous_hmean > 0);
       alternating_steps = alternating && std::abs(hmean) >= 0.9 * std::abs(previous_hmean)
                               ? alternating_steps + 1 : 0;
       if (alternating_steps == 4) {
+        if (relaxation == 0.125) {
+          search_status = SearchStatus::stalled;
+          failed = true;
+          if (verbose && ioproc) {
+            fprintf(pofile_verbose, "Flow oscillation persisted after damping\n");
+          }
+          break;
+        }
         relaxation *= 0.5;
         alternating_steps = 0;
         if (verbose && ioproc) {

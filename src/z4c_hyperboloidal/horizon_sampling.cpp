@@ -60,6 +60,7 @@ struct HorizonSampler::Impl {
   std::uint64_t version=0;
   int sequence=-1;
   bool current=false;
+  bool continuous_derivatives=false;
 
   Impl(MeshBlockPack *p,Z4cHyperboloidal *m):pack(p),module(m) {
     for (int f=0;f<15;++f)if (Fields::Independent(f))fields.push_back(f);
@@ -142,6 +143,27 @@ struct HorizonSampler::Impl {
           q.dw[a][i]+=term;
         }
       }
+      if (continuous_derivatives) {
+        // Blend the two five-node Lagrange polynomials centered on the cell
+        // endpoints. Their common nodal value and centered derivative agree
+        // with the neighboring cell at a stencil switch. The difference from
+        // the six-node polynomial depends only on its leading coefficient.
+        const Real xlocal = t - q.first[a];
+        const Real u = std::clamp(xlocal - 2, Real(0), Real(1));
+        Real product = 1, derivative = 0;
+        for (int j = 1; j <= 4; ++j) {
+          derivative = derivative*(xlocal-j) + product;
+          product *= xlocal-j;
+        }
+        const Real factor = 5*u - xlocal;
+        const Real slope = (xlocal >= 2 && xlocal <= 3) ? 4 : -1;
+        constexpr Real fifth_difference[] = {-1, 5, -10, 10, -5, 1};
+        for (int i = 0; i < 6; ++i) {
+          const Real leading = fifth_difference[i]/120;
+          q.w[a][i] += leading*factor*product;
+          q.dw[a][i] += leading*(slope*product + factor*derivative);
+        }
+      }
     }
     int index=0;
     for (int k=0;k<6;++k)for (int j=0;j<6;++j)for (int i=0;i<6;++i) {
@@ -178,6 +200,9 @@ HorizonSampler::HorizonSampler(MeshBlockPack *pack,Z4cHyperboloidal *module)
 }
 HorizonSampler::~HorizonSampler()=default;
 void HorizonSampler::Invalidate() {impl_->current=false;}
+void HorizonSampler::UseContinuousDerivatives(bool enable) {
+  impl_->continuous_derivatives = enable;
+}
 const HorizonSampler::Statistics &HorizonSampler::GetStatistics() const {
   return impl_->statistics;
 }

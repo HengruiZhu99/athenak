@@ -31,6 +31,7 @@ class HorizonSampler {
   // Optional explicit invalidation; StateVersion and the native mesh sequence
   // are also checked automatically before every batch.
   void Invalidate();
+  void UseContinuousDerivatives(bool enable);
   const Statistics &GetStatistics() const;
 
  private:

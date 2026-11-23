@@ -50,7 +50,9 @@ class FastFlow {
   FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n,
            GeometrySampler sampler = {});
 
-  enum class SearchStatus { not_searched, converged, incomplete_surface, failed };
+  enum class SearchStatus {
+    not_searched, converged, incomplete_surface, failed, stalled
+  };
   struct Result {
     SearchStatus status;
     bool found, complete_surface;
