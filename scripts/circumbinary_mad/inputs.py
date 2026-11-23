@@ -172,7 +172,7 @@ def make_input(header, sep, mode):
         # The largest frozen ball ends inside the original disk edge for all three binaries.
         b["amr_criterion1"] = z = {
             "method": "cyclic_zoom",
-            "nlevels": 6,
+            "nlevels": 6 if mode == "control" else 3,
             "ncenters": 2,
             "x1c": sep / 2,
             "x1c2": -sep / 2,
@@ -184,7 +184,10 @@ def make_input(header, sep, mode):
         }
         # Bridging zones use several local dynamical times. The outer residence
         # samples disk inflow over a substantial fraction of t_in(3a) ~ 20 Pbin.
-        for i, dwell in enumerate([0.6 * period, 12, 32, 96, 256, 4 * period]):
+        dwells = [0.6 * period, 12, 4 * period]
+        if mode == "control":
+            dwells = [0.6 * period, 12, 32, 96, 256, 4 * period]
+        for i, dwell in enumerate(dwells):
             z[f"trun_fac_{i}"] = 0.06 if mode == "pilot" else dwell
         b["cyclic_zoom"] = {
             "verbose": "false",
@@ -195,7 +198,10 @@ def make_input(header, sep, mode):
         if mode != "control":
             # Coarsen complete families near each hole without stripping the
             # thin disk rings during the four-orbit outer residence.
-            z["r_ref_max"] = 24
+            z["r_ref_max"] = 32
+        if mode == "scale":
+            b["time"].update(nlim=56, ndiag=8)
+            b.pop("output2")
         if mode == "pilot":
             b["output3"] = {
                 "file_type": "bin",
@@ -219,6 +225,8 @@ if __name__ == "__main__":
     header = read_header(args.header)
     for sep in (25, 15, 35):
         for mode in (
-            ("run", "pilot", "control", "inertial-ic", "rotating-ic") if sep == 25 else ("run",)
+            ("run", "pilot", "scale", "control", "inertial-ic", "rotating-ic")
+            if sep == 25
+            else ("run", "pilot")
         ):
             (args.out / f"mad{sep}-{mode}.athinput").write_text(make_input(header, sep, mode))

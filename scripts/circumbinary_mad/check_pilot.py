@@ -29,17 +29,20 @@ def disk_spacings(snapshot):
     return result
 
 
-def validate(path):
-    history = path / "mad25.user.hst"
+def validate(path, sep=25):
+    history = path / f"mad{sep}.user.hst"
     check(history)
     h = athena_read.hst(history)
     zones = set(h["zoom_zone"].astype(int))
     returns = sorted(set(h["zoom_event"][h["zoom_zone"] == 0].astype(int)) - {0})
-    if zones != set(range(6)) or len(returns) < 2:
+    if zones != set(range(3)) or len(returns) < 2:
         raise ValueError("Pilot must complete multiple full zoom cycles")
     for key in ("valid_BH1_Kerr", "valid_BH2_Kerr"):
         if not np.all(h[key][h["zoom_zone"] == 0] == 1):
             raise ValueError(f"Unqualified finest-zone horizon {key}")
+    for key in ("valid_H1", "valid_H2"):
+        if not np.all(h[key] == 1):
+            raise ValueError(f"Unqualified 5M transfer surface {key}")
     baseline = None
     audited = set()
     for file in sorted((path / "bin").glob("*mesh_audit*.bin")):
@@ -72,4 +75,6 @@ def validate(path):
 if __name__ == "__main__":
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("pilot", type=Path)
-    print(json.dumps(validate(p.parse_args().pilot), indent=2))
+    p.add_argument("--separation", type=int, default=25)
+    args = p.parse_args()
+    print(json.dumps(validate(args.pilot, args.separation), indent=2))

@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "vis/python"))
 import athena_read
 
 
-def summarize(h, start, end, settle_time=4 * math.sqrt(5**3 / 0.5)):
+def summarize(h, start, end, settle_time=4 * math.sqrt(5**3 / 0.5), max_gap=3.0):
     t = h["time"]
     if start >= end or end > t[-1] + 1e-7 or start < t[0]:
         raise ValueError("Analysis window must be covered by the history")
@@ -21,6 +21,7 @@ def summarize(h, start, end, settle_time=4 * math.sqrt(5**3 / 0.5)):
         raise ValueError("Overlapping or decreasing history times")
     left, right = np.maximum(t[:-1], start), np.minimum(t[1:], end)
     same_event = np.diff(h["zoom_event"]) == 0
+    sampled = same_event & (dt <= max_gap)
 
     def mean(key, valid, phase_left=None, phase_right=None):
         x = h[key]
@@ -28,7 +29,7 @@ def summarize(h, start, end, settle_time=4 * math.sqrt(5**3 / 0.5)):
         lo = left if phase_left is None else np.maximum(left, phase_left)
         hi = right if phase_right is None else np.minimum(right, phase_right)
         weights = np.maximum(hi - lo, 0)
-        use = (weights > 0) & same_event & mask[1:] & mask[:-1]
+        use = (weights > 0) & sampled & mask[1:] & mask[:-1]
         duration = float(np.sum(weights[use]))
         if not duration:
             return None, 0.0
@@ -41,6 +42,7 @@ def summarize(h, start, end, settle_time=4 * math.sqrt(5**3 / 0.5)):
         return h["valid_" + surface] == 1
 
     transfer = good("H1") & good("H2")
+    transfer &= np.isfinite(h["M0_net_in_moving_H1"]) & np.isfinite(h["M0_net_in_moving_H2"])
     rates = [mean(f"M0_net_in_moving_H{i}", transfer) for i in (1, 2)]
     total = sum(x for x, c in rates) if all(x is not None for x, c in rates) else None
     results = {"start": start, "end": end, "mean_5M_mdot_total": total, "holes": {}}
@@ -84,6 +86,7 @@ def summarize(h, start, end, settle_time=4 * math.sqrt(5**3 / 0.5)):
                 "phi_per_hole": normalized(flux, rate),
             }
         results["holes"][i] = out
+    results["max_sample_gap"] = max_gap
     results["post_return_settle_time"] = settle_time
     return results
 

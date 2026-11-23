@@ -17,8 +17,9 @@ def final_target(state, period):
     t = state["time"]
     zone = state["zone"]
     dwell = state["parameters"]
-    bridge = sum(float(dwell[f"amr_criterion1/trun_fac_{z}"]) for z in (1, 2, 3, 4))
-    span = 2 * bridge + sum(float(dwell[f"amr_criterion1/trun_fac_{z}"]) for z in (0, 5))
+    outer = int(dwell["amr_criterion1/nlevels"]) - 1
+    bridge = sum(float(dwell[f"amr_criterion1/trun_fac_{z}"]) for z in range(1, outer))
+    span = 2 * bridge + sum(float(dwell[f"amr_criterion1/trun_fac_{z}"]) for z in (0, outer))
     span += 0.55 * period + 10
     if zone == 0:
         return t + span
@@ -28,7 +29,7 @@ def final_target(state, period):
         zone += direction
         if zone == 0:
             break
-        if zone == 5:
+        if zone == outer:
             direction = -1
         arrival += float(dwell[f"amr_criterion1/trun_fac_{zone}"])
     # Each of at most nine time-triggered transitions can overshoot by one step.
@@ -93,6 +94,30 @@ def run(sep, predecessor, nodes, paired):
     done = end["time"] >= target * (1 - 1e-12) and target > ordinary_end + 1
     if done and paired:
         print("Completed ordinary-cycle replay of the extended finest interval", flush=True)
+        scripts = Path(__file__).resolve().parent
+        subprocess.run(
+            [
+                "sbatch",
+                "--parsable",
+                f"--dependency=afterok:{os.environ['SLURM_JOB_ID']}",
+                "-N1",
+                "-n1",
+                "-c1",
+                "--mem=12G",
+                "-p",
+                "cpu",
+                "-A",
+                "fpretori",
+                "-t",
+                "00:30:00",
+                "-J",
+                f"mad{sep}-results",
+                str(scripts / "qualify_stellar.sh"),
+                str(scripts),
+                str(sep),
+            ],
+            check=True,
+        )
         return
     if done:
         if end["zone"] != 0:
