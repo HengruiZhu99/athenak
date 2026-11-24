@@ -14,6 +14,7 @@
 
 #include "athena.hpp"
 #include "z4c_hyperboloidal/activity_policy.hpp"
+#include "z4c_hyperboloidal/dissipation.hpp"
 #include "z4c_hyperboloidal/overlap_agreement.hpp"
 #include "parameter_input.hpp"
 #include "tasklist/task_list.hpp"
@@ -74,6 +75,8 @@ class Z4cHyperboloidal {
   int n[3], storage[3], origin, overlap, nghost;
   int nblocks, nfaces, npoints, nsurface_points;
   Real ko, chi_floor, penalty, requested_dt, dtnew;
+  AngularKOFloor ko_angular;
+  bool restart_with_new_dissipation=false;
   ActivityPolicy activity;
   AgreementParameters agreement;
   std::array<Real,12> AgreementHistorySums();

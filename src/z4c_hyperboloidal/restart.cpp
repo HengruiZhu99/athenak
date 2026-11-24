@@ -145,7 +145,13 @@ std::string Identity(const Z4cHyperboloidal &p) {
     << ";real=" << sizeof(Real) << ";n=" << p.n[0] << ',' << p.n[1] << ',' << p.n[2]
     << ";overlap=" << p.overlap << ";nghost=" << p.nghost << std::hexfloat;
 #define HYP_ID(value) s << ";" #value "=" << value
-  HYP_ID(p.ko); HYP_ID(p.chi_floor); HYP_ID(p.penalty); HYP_ID(p.requested_dt);
+  HYP_ID(p.ko);
+  // Absent for a zero floor, which keeps earlier checkpoints byte-identical.
+  if (p.ko_angular.strength>0) {
+    HYP_ID(p.ko_angular.strength); HYP_ID(p.ko_angular.begin); HYP_ID(p.ko_angular.full);
+    HYP_ID(p.ko_angular.fade); HYP_ID(p.ko_angular.end);
+  }
+  HYP_ID(p.chi_floor); HYP_ID(p.penalty); HYP_ID(p.requested_dt);
 
   s << ";agreement=full-unmasked-union-evolved-cube-taper-rowmass-v1;H=coordinate-volume";
   HYP_ID(p.agreement.kappa);HYP_ID(p.agreement.inner);HYP_ID(p.agreement.taper_width);
@@ -171,6 +177,16 @@ std::string Identity(const Z4cHyperboloidal &p) {
   if(p.UsesMultirate())s<<';'<<p.MultirateIdentity();
   if(!p.initial_data_identity.empty())s<<";initial-data="<<p.initial_data_identity;
   return s.str();
+}
+
+std::string WithoutDissipation(std::string identity) {
+  for (const char *key:{";p.ko=",";p.ko_angular."}) {
+    for (auto at=identity.find(key);at!=std::string::npos;at=identity.find(key)) {
+      const auto end=identity.find(';',at+1);
+      identity.erase(at,end==std::string::npos ? end : end-at);
+    }
+  }
+  return identity;
 }
 
 IOWrapperSizeT WriteMetadata(IOWrapper &file, const Mesh &mesh, bool per_rank) {
@@ -208,7 +224,10 @@ void ReadMetadata(IOWrapper &file, const Mesh &mesh, bool per_rank) {
       "per-rank restart ownership changed; use a shared restart file to repartition");
   std::string identity(header[2],'\0');
   ReadHeaderBytes(file,identity.data(),identity.size(),per_rank);
-  RequireAll(identity==Identity(p),"mathematical parameters or formulation mismatch");
+  const auto expected=Identity(p);
+  RequireAll(identity==expected || (p.restart_with_new_dissipation &&
+      WithoutDissipation(identity)==WithoutDissipation(expected)),
+      "mathematical parameters or formulation mismatch");
   if (per_rank) CheckPerRankConsistency(mesh,identity);
 }
 

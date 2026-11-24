@@ -116,7 +116,10 @@ void DissipationPlan::Rebuild(const MeshBlockPack &pack,
           inverse_length+=donor.J[line.axis][d]*donor.J[line.axis][d];
           r2+=donor.x[d]*donor.x[d];
         }
-        const Real r=std::sqrt(r2),taper=std::pow(std::max(Real(0),1-r*r/.64),6);
+        const Real r=std::sqrt(r2);
+        Real taper=std::pow(std::max(Real(0),1-r*r/.64),6);
+        // Angular lines alone receive the floor; it leaves radial lines unchanged.
+        if (line.axis>0) taper=std::max(taper,module.ko_angular(r));
         line.weight+=volumes(donor_index)*std::sqrt(inverse_length)*taper/5;
       }
       lines.push_back(line);

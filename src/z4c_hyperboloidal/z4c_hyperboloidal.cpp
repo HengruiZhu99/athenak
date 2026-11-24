@@ -69,6 +69,20 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
   for (int a=0;a<3;++a) storage[a]=n[a]+2*origin;
   nblocks=ppack->nmb_thispack;
   ko=pin->GetOrAddReal("z4c_hyperboloidal","ko",0.1);
+  ko_angular.strength=pin->GetOrAddReal("z4c_hyperboloidal","ko_angular_floor",0);
+  if (ko_angular.strength>0) {
+    ko_angular.begin=pin->GetOrAddReal("z4c_hyperboloidal","ko_angular_begin",.55);
+    ko_angular.full=pin->GetOrAddReal("z4c_hyperboloidal","ko_angular_full",.65);
+    ko_angular.fade=pin->GetOrAddReal("z4c_hyperboloidal","ko_angular_fade",.91);
+    ko_angular.end=pin->GetOrAddReal("z4c_hyperboloidal","ko_angular_end",.96);
+  }
+  // A checkpoint stores no dissipation state. This admits a restart whose
+  // only identity difference is the KO strength or the angular floor.
+  restart_with_new_dissipation=pin->GetOrAddBoolean("z4c_hyperboloidal",
+      "restart_with_new_dissipation",false);
+  if (!ko_angular.Valid())
+    throw std::invalid_argument("Angular KO floor needs 0<=strength<=1 and "
+                                "0<=begin<full<=fade<end");
   chi_floor=pin->GetOrAddReal("z4c_hyperboloidal","chi_floor",1e-10);
   penalty=pin->GetOrAddReal("z4c_hyperboloidal","scri_penalty",0.5);
   const auto &grid = pm->mesh_size;
