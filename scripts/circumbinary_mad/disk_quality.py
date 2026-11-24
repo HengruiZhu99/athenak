@@ -24,7 +24,10 @@ def measure(midplane, meridional):
     snapshots = [read_binary(str(f)) for f in (midplane, meridional)]
     if snapshots[0]["cycle"] != snapshots[1]["cycle"]:
         raise ValueError("Disk slices are from different accepted steps")
-    bins = {r: {"q": [], "w": [], "m": 0.0, "mz2": 0.0} for r in RADII}
+    peak = next((float(v.split("=", 1)[1]) for v in snapshots[0]["header"]
+                 if v.split("=", 1)[0].strip() == "r_peak"), None)
+    radii = RADII if peak is None else sorted(set((*RADII, peak)))
+    bins = {r: {"q": [], "w": [], "m": 0.0, "mz2": 0.0} for r in radii}
     gamma = 13 / 9
     for plane, h in enumerate(snapshots):
         b = h["mb_data"]

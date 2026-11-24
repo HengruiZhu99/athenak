@@ -53,7 +53,7 @@ def refine_disk(b, level, inner, outer, height):
             }
 
 
-def make_input(header, sep, mode, large_blocks=False, wide_sweep=False):
+def make_input(header, sep, mode, large_blocks=False, wide_sweep=False, separation_layout=False):
     period = 2 * math.pi * sep**1.5
     b = {name: dict(header[name]) for name in ("mesh", "meshblock", "coord", "mhd", "problem")}
     p = b["problem"]
@@ -69,6 +69,12 @@ def make_input(header, sep, mode, large_blocks=False, wide_sweep=False):
     }
     if not all(float(p[k]) == v for k, v in expected.items()) or p["vertical_field"] != "true":
         raise ValueError("Expected the aligned +0.7 vertical-field reference dump")
+    tailored = separation_layout and sep in (15, 35)
+    if tailored:
+        if wide_sweep:
+            raise ValueError("The separation-specific disk annuli use the three-zone sweep")
+        large_blocks = True
+        p.update(r_edge=2 * sep, r_peak={15: 126, 35: 275}[sep])
     b["job"] = {"basename": f"mad{sep}"}
     p.update(
         sep=sep,
@@ -157,12 +163,24 @@ def make_input(header, sep, mode, large_blocks=False, wide_sweep=False):
             if large_blocks:
                 b["meshblock"].update(nx1=32, nx2=32)
                 b["mesh_refinement"]["max_nmb_per_rank"] = 736
-            refine_disk(b, 4, 480, 768, 64)
-            refine_disk(b, 5, 256, 672 if large_blocks else 608, 48)
-            refine_disk(b, 6, 304, 480 if large_blocks else 432, 16)
-            refine_disk(b, 6, 0, 352, 48)
-            refine_disk(b, 7, 48, 288 if large_blocks else 272, 16)
-            refine_disk(b, 8, 80, 152, 8)
+            if tailored:
+                # Refine the inner magnetized disk vertically and retain about
+                # ten cells per initial MRI wavelength near its pressure maximum.
+                rings = {
+                    15: [(4, 320, 512, 64), (5, 160, 384, 48), (6, 0, 240, 32),
+                         (6, 208, 288, 16), (7, 32, 176, 16), (8, 40, 104, 8)],
+                    35: [(4, 480, 896, 64), (5, 256, 704, 48), (6, 0, 400, 48),
+                         (6, 352, 512, 16), (7, 64, 320, 16), (8, 96, 144, 8)],
+                }[sep]
+                for ring in rings:
+                    refine_disk(b, *ring)
+            else:
+                refine_disk(b, 4, 480, 768, 64)
+                refine_disk(b, 5, 256, 672 if large_blocks else 608, 48)
+                refine_disk(b, 6, 304, 480 if large_blocks else 432, 16)
+                refine_disk(b, 6, 0, 352, 48)
+                refine_disk(b, 7, 48, 288 if large_blocks else 272, 16)
+                refine_disk(b, 8, 80, 152, 8)
         if mode == "run":
             for i, normal in enumerate(("x3", "x2"), 3):
                 b[f"output{i}"] = {
@@ -206,7 +224,10 @@ def make_input(header, sep, mode, large_blocks=False, wide_sweep=False):
             # thin disk rings during the four-orbit outer residence.
             z["r_ref_max"] = 192 if wide_sweep else 32
             if large_blocks:
-                b["cyclic_zoom"].update(max_nzmb_per_dvce=640, max_nzmb_per_host=736)
+                limit = 416 if tailored and sep == 15 else 736
+                device_limit = {15: 384, 35: 704}[sep] if tailored else 640
+                b["mesh_refinement"]["max_nmb_per_rank"] = limit
+                b["cyclic_zoom"].update(max_nzmb_per_dvce=device_limit, max_nzmb_per_host=limit)
         if mode == "scale":
             b["time"].update(nlim=56, ndiag=8)
             b.pop("output2")
@@ -221,6 +242,12 @@ def make_input(header, sep, mode, large_blocks=False, wide_sweep=False):
             b["time"].update(tlim=20, nlim=100, ndiag=1)
             b["output1"] = {"file_type": "hst", "dcycle": 1, "data_format": "%24.16e"}
             b.pop("output2")
+            if tailored:
+                for i, name, normal in [(4, "midplane", "x3"), (5, "meridional", "x2")]:
+                    b[f"output{i}"] = {
+                        "file_type": "bin", "variable": "mhd_w_bcc", "id": name,
+                        f"slice_{normal}": 0, "dt": 2 * period,
+                    }
     return write_blocks(b)
 
 
@@ -234,6 +261,10 @@ if __name__ == "__main__":
         action="store_true",
         help="Coarsen the inner disk annulus for the outer dwell",
     )
+    parser.add_argument(
+        "--separation-layout", action="store_true",
+        help="Generate the revised 15M and 35M disks with their own large-block annuli",
+    )
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     header = read_header(args.header)
@@ -244,5 +275,5 @@ if __name__ == "__main__":
             else ("run", "pilot")
         ):
             (args.out / f"mad{sep}-{mode}.athinput").write_text(
-                make_input(header, sep, mode, args.large_blocks, args.wide_sweep)
+                make_input(header, sep, mode, args.large_blocks, args.wide_sweep, args.separation_layout)
             )

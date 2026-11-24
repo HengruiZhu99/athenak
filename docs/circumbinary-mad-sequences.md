@@ -1,6 +1,6 @@
 # Circular, aligned MAD sequences
 
-The three inputs set total mass to one, component masses to 0.5, aligned spins to +0.7 and fixed separation to 25, 15 or 35. The six outer Cartesian faces use the native diode condition. The torus inner edge and pressure maximum are at 60 and 240 in all three runs. The vertical field uses the reference potential with radial power 2, falloff 1500 and target beta 100. The spin is constant from initialization. The gas, field, reconstruction and atmosphere parameters come from the aligned run's parameter dump.
+The three inputs set total mass to one, component masses to 0.5, aligned spins to +0.7 and fixed separation to 25, 15 or 35. The six outer Cartesian faces use the native diode condition. The original matched inputs put the torus inner edge at 60 and the pressure maximum at 240 for all three separations. The active 15M and 35M sequences use the revised disks below. The vertical field uses the reference potential with radial power 2, falloff 1500 and target beta 100. The spin is constant from initialization. The gas, field, reconstruction and atmosphere parameters come from the aligned run's parameter dump.
 
 Generate the decks with the dump used in the analysis repository.
 
@@ -10,6 +10,20 @@ python3 scripts/circumbinary_mad/inputs.py \
 ```
 
 The [archived physical parameters](../scripts/circumbinary_mad/aligned_reference.par) reproduce the same decks byte for byte and record the SHA-256 of the original dump.
+
+## Production disks at 15M and 35M
+
+Pass `--separation-layout` to the generator for these two sequences. Their edges lie at twice the binary separation. The pressure maxima were chosen by measuring the outer zero of the initial Chakrabarti enthalpy and matching the 25M torus extent. All radii and mesh spacings below use the total mass as the length unit.
+
+| Separation | Inner edge | Pressure maximum | Torus outer edge | Finest-phase blocks | Disk spacing at pressure maximum |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 15 | 30 | 126 | 2546 | 2664 | 1 |
+| 25 | 60 | 240 | 2527 | 13400 | 1 |
+| 35 | 70 | 275 | 2528 | 5296 | 1 |
+
+The new runs use 32 × 32 × 8 blocks and three zoom zones on one eight-GPU node each. Both holes reach M/8 on the finest visits. Annuli follow each disk's initial vertical MRI wavelength, with 0.5M cells on part of the inner disk and coarser cells farther out. A change in disk size and thickness accompanies the change in separation. The vertical-field potential, target beta, diode boundaries, physical dwell prescription, and 200-orbit target retain the 25M settings. The peak Keplerian periods in binary orbits are approximately 24.3, 29.7 and 22.0 at 15M, 25M and 35M respectively. Inflow times and flux equilibration are measured from the evolution.
+
+The revised decks run under `production-sep-20261124` in the StellarAI campaign. Each production job depends on its own eight-rank cyclic-zoom pilot. The main campaign's dispatch records identify these submissions so its terminal 25M analysis can skip the already-submitted runs.
 
 ## Frame and field initialization
 

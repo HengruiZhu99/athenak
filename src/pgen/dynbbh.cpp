@@ -2358,7 +2358,9 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   CalculateCN(bbh, &bbh.c_param, &bbh.n_param);
   bbh.l_peak = CalculateL(bbh, bbh.r_peak, 1.0);
   // Common to both tori:
-  bbh.log_h_edge = LogHAux(bbh, bbh.r_edge, 1.0);
+  // LogHAux is referenced to the equatorial edge, where h is exactly one.
+  // Rounding just below one would return the outside-torus sentinel.
+  bbh.log_h_edge = 0.0;
   bbh.log_h_peak = LogHAux(bbh, bbh.r_peak, 1.0) - bbh.log_h_edge;
   bbh.ptot_over_rho_peak = gm1/bbh.gamma_adi * (exp(bbh.log_h_peak)-1.0);
   bbh.rho_peak = pow(bbh.ptot_over_rho_peak, 1.0/gm1) / bbh.rho_max;

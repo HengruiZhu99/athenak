@@ -12,6 +12,7 @@ if [[ $sep != 25 ]]; then exit 0; fi
 for next in 15 35; do
     # Reserve the slot first to prevent duplicated science jobs on a manual replay.
     ledger="dispatch-$next"
+    if [[ -s "$ledger/continue.job" ]]; then continue; fi
     mkdir "$ledger"
     flags=(-N1 --ntasks-per-node=8 -c4 --mem=450G --gres=gpu:8 -p gpu -A fpretori)
     pilot=$(sbatch --parsable "${flags[@]}" --qos=gpu-test -t 00:20:00 \
