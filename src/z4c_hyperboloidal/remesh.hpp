@@ -80,7 +80,9 @@ class RemeshState {
   DvceArray5D<Real> &Coarse();
 
  private:
+ public:  // nvcc requires public access for device-lambda types and functions
   struct Impl;
+ private:
   std::unique_ptr<Impl> impl_;
 };
 }  // namespace z4c_hyperboloidal

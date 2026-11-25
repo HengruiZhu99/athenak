@@ -197,7 +197,9 @@ class FastFlow {
   Real sampled_expansion_rms = -1, sampled_mean_radius = -1, sampled_max_radius = -1;
 
   // Functions used in the fast-flow algorithm
+ public:  // nvcc requires public access for device-lambda types and functions
   void FastFlowLoop();
+ private:
   void InitialGuess();
   void SampleGeometry();
 

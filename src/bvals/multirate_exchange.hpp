@@ -92,7 +92,9 @@ class RecordExchange {
   // with the consumer counts registered by Begin.
   std::vector<RecordKey> TakeArrivals();
  private:
+ public:  // nvcc requires public access for device-lambda types and functions
   struct Impl;
+ private:
   std::unique_ptr<Impl> impl_;
 };
 }  // namespace bvals::multirate

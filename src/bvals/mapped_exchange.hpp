@@ -72,7 +72,9 @@ class MappedExchange {
   int SendPeers() const {return send_peers_.size();}
 
  private:
+ public:  // nvcc requires public access for device-lambda types and functions
   struct LocalPoint {int block, k, j, i, ordinal;};
+ private:
   struct Peer {int rank, offset, count;};  // scalar Real payload offsets/counts
 
   MeshBlockPack *pack_ = nullptr;

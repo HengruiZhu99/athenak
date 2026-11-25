@@ -210,7 +210,9 @@ class Z4cHyperboloidal {
   std::vector<int> active_slots_;
   void BuildLocalWorkLists();
   void AllocateStorage();
+ public:  // nvcc requires public access for device-lambda types and functions
   void BuildReferenceCache();
+ private:
   void ResetMeshStorage();
 };
 }  // namespace z4c_hyperboloidal

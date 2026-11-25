@@ -61,6 +61,7 @@ class OverlapAgreementPlan {
   std::vector<int> agreement_blocks_;
   std::vector<std::uint64_t> stencil_terms_;
   DonorsByRecipient multirate_donors_;
+ public:  // nvcc requires public access for device-lambda types and functions
   struct Row {int begin,end;Real weight;bool owned;};
   struct Entry {int ordinal;Real coefficient;};
   struct Target {HaloPoint point;int begin,end;Real chi_weight;};
@@ -71,6 +72,7 @@ class OverlapAgreementPlan {
   DvceArray1D<int> segment_offsets_;
   DvceArray2D<Real> partials_;
   struct Transpose {int row;Real coefficient;};
+ private:
   bvals::MappedExchange exchange_;
   DvceArray1D<Row> rows_;
   DvceArray1D<Entry> entries_;

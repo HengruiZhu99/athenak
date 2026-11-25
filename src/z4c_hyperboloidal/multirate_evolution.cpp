@@ -29,6 +29,9 @@ namespace mr = time_integration::multirate;
 namespace transport = bvals::multirate;
 namespace bal = ::multirate::balance;
 namespace {
+template <class... T>
+KOKKOS_INLINE_FUNCTION void Capture(const T &...) {}
+
 template <class T>
 DvceArray1D<T> Device(const std::vector<T>& v, const char* name) {
   DvceArray1D<T> d(Kokkos::view_alloc(Kokkos::WithoutInitializing,std::string(name)),v.size());
@@ -971,6 +974,8 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
   Kokkos::parallel_reduce(
       "multirate reconstruct and project owned stage", Kokkos::RangePolicy<>(0, count),
       KOKKOS_LAMBDA(int i, int& bad) {
+        // nvcc cannot first-capture a variable inside a constexpr-if branch.
+        Capture(weight, residual, reference);
         const auto point = points(indexed ? indices(i) : i);
         if (!indexed && !active(point.m)) return;
         const auto c = combinations_d(point.m);
@@ -1117,6 +1122,80 @@ DirectDonorViews MultirateEvolution::Impl::MakeDonorViews(
   out.targets = Device(targets,"multirate active donor destinations");
   return out;
 }
+namespace {
+// Donor values of one recipient batch. nvcc admits no device lambda inside a
+// generic lambda, hence a function template.
+template <bool with_surface, class Output, class Metadata, class Combinations>
+void ReconstructDonors(const Output& output, int begin, int end, const Metadata& metadata,
+                       const Combinations& combinations_d, Real floor) {
+  if (begin==end) return;
+  int invalid = 0;
+  Kokkos::parallel_reduce(
+    "multirate recipient donor values", Kokkos::RangePolicy<>(begin, end),
+    KOKKOS_LAMBDA(int i, int& bad) {
+      const auto target = output.Destination(i);
+      const auto meta = metadata(target.index);
+      const auto c = combinations_d(target.coupling_row >= 0 ? target.coupling_row : meta.gid);
+      std::array<Real, Fields::count> values{};
+      if (!c.base) {
+        int slot = 0;
+        for (int f = 0; f < Fields::count; ++f)
+          output.Store(target,meta.kind,f,Fields::Independent(f) ? slot++ : -1,0,0);
+        return;
+      }
+      for (int f = 0; f < Fields::count; ++f) values[f] = c.Value(meta.index, f);
+      if (Kokkos::isfinite(values[0]) && floor > 0 && values[0] < floor)
+        values[0] = floor;
+      Real inverse[3][3];
+      const bool valid = (with_surface && meta.kind)
+                             ? ProjectConstantChart(values, inverse)
+                             : TryExpandCartesianChart(values);
+      if (!valid) {
+        ++bad;
+        return;
+      }
+      if constexpr (with_surface) {
+        if (meta.kind) {
+          // The full geometry contracts the symmetric off-diagonal Ricci entries
+          // with twice the inverse metric, even for a constant chart.
+          for (int a = 0; a < 3; ++a)
+            for (int b = a + 1; b < 3; ++b)
+              if (!Kokkos::isfinite(2 * inverse[a][b])) { ++bad; return; }
+          Real Q = 0;
+          for (int a = 0; a < 3; ++a)
+            for (int b = 0; b < 3; ++b) Q += inverse[a][b] * meta.x[a] * meta.x[b];
+          if (!(values[0] > 0 && Q > 0)) {
+            ++bad;
+            return;
+          }
+          const Real speed = sqrt(values[0] * Q);
+          values[18] = 0;
+          for (int a = 0; a < 3; ++a) {
+            values[22 + a] = (1 - speed) * meta.x[a];
+            values[28 + a] = 0;
+            Real C = 0;
+            for (int k = 0; k < 5; ++k) {
+              const auto support = metadata(meta.support[k]);
+              C += meta.radial_weight[k] *
+                   (c.Value(support.index, 25 + a) - c.Value(support.index, 15 + a));
+            }
+            values[25 + a] = values[15 + a] + C;
+          }
+        }
+      }
+      int slot = 0;
+      for (int f = 0; f < Fields::count; ++f) {
+        const Real value = values[f];
+        const Real delta = Fields::Independent(f)
+                               ? (value - meta.ref[f]) / (f == 0 ? meta.chi_weight : 1)
+                               : 0;
+        if (!Kokkos::isfinite(value) || !Kokkos::isfinite(delta)) ++bad;
+        output.Store(target,meta.kind,f,Fields::Independent(f) ? slot++ : -1,value,delta);
+      }
+    },invalid);
+  if (invalid) throw std::runtime_error("Invalid recipient-specific multirate donor stage");
+}
+}  // namespace
 void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>& slots,
                                            DvceArray2D<Real>& physical,
                                            DvceArray2D<Real>& residual) {
@@ -1153,73 +1232,8 @@ void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>&
   residual = donor_residual;
   const Real floor = p.chi_floor;
   auto reconstruct = [&](const auto& output, int begin, int end, auto use_jets) {
-    if (begin==end) return;
-    constexpr bool with_surface=decltype(use_jets)::value;
-    int invalid = 0;
-    Kokkos::parallel_reduce(
-      "multirate recipient donor values", Kokkos::RangePolicy<>(begin, end),
-      KOKKOS_LAMBDA(int i, int& bad) {
-        const auto target = output.Destination(i);
-        const auto meta = metadata(target.index);
-        const auto c = combinations_d(target.coupling_row >= 0 ? target.coupling_row : meta.gid);
-        std::array<Real, Fields::count> values{};
-        if (!c.base) {
-          int slot = 0;
-          for (int f = 0; f < Fields::count; ++f)
-            output.Store(target,meta.kind,f,Fields::Independent(f) ? slot++ : -1,0,0);
-          return;
-        }
-        for (int f = 0; f < Fields::count; ++f) values[f] = c.Value(meta.index, f);
-        if (Kokkos::isfinite(values[0]) && floor > 0 && values[0] < floor)
-          values[0] = floor;
-        Real inverse[3][3];
-        const bool valid = (with_surface && meta.kind)
-                               ? ProjectConstantChart(values, inverse)
-                               : TryExpandCartesianChart(values);
-        if (!valid) {
-          ++bad;
-          return;
-        }
-        if constexpr (with_surface) {
-          if (meta.kind) {
-            // The full geometry contracts the symmetric off-diagonal Ricci entries
-            // with twice the inverse metric, even for a constant chart.
-            for (int a = 0; a < 3; ++a)
-              for (int b = a + 1; b < 3; ++b)
-                if (!Kokkos::isfinite(2 * inverse[a][b])) { ++bad; return; }
-            Real Q = 0;
-            for (int a = 0; a < 3; ++a)
-              for (int b = 0; b < 3; ++b) Q += inverse[a][b] * meta.x[a] * meta.x[b];
-            if (!(values[0] > 0 && Q > 0)) {
-              ++bad;
-              return;
-            }
-            const Real speed = sqrt(values[0] * Q);
-            values[18] = 0;
-            for (int a = 0; a < 3; ++a) {
-              values[22 + a] = (1 - speed) * meta.x[a];
-              values[28 + a] = 0;
-              Real C = 0;
-              for (int k = 0; k < 5; ++k) {
-                const auto support = metadata(meta.support[k]);
-                C += meta.radial_weight[k] *
-                     (c.Value(support.index, 25 + a) - c.Value(support.index, 15 + a));
-              }
-              values[25 + a] = values[15 + a] + C;
-            }
-          }
-        }
-        int slot = 0;
-        for (int f = 0; f < Fields::count; ++f) {
-          const Real value = values[f];
-          const Real delta = Fields::Independent(f)
-                                 ? (value - meta.ref[f]) / (f == 0 ? meta.chi_weight : 1)
-                                 : 0;
-          if (!Kokkos::isfinite(value) || !Kokkos::isfinite(delta)) ++bad;
-          output.Store(target,meta.kind,f,Fields::Independent(f) ? slot++ : -1,value,delta);
-        }
-      },invalid);
-    if (invalid) throw std::runtime_error("Invalid recipient-specific multirate donor stage");
+    ReconstructDonors<decltype(use_jets)::value>(output,begin,end,metadata,combinations_d,
+                                                 floor);
   };
   if (complete_local_batches) {
     const auto& view = active_layouts.at(slots).donor_views;

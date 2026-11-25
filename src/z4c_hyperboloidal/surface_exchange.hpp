@@ -178,7 +178,9 @@ class SurfaceExchange {
   Real host_face_spacing_ = 0, host_face_gap_ = 0;
   TaskStatus FinishRates(int invalid, Real compatibility, Real clock);
   DvceArray1D<SurfacePoleCache> stage_pole_;
+ public:  // nvcc requires public access for device-lambda types and functions
   struct NormalCase {Real defect[3]; bool valid;};
+ private:
   DvceArray2D<NormalCase> normal_cases_;
   DvceArray1D<SpatialGeometry<Real>> metric_geometry_,penrose_geometry_;
   DvceArray4D<Real> correction_;
@@ -193,7 +195,9 @@ class SurfaceExchange {
   bool endpoint_only_=false;
   bool correction_jets_ready_=false;
   DvceArray2D<Real> history_values_;
+ public:  // nvcc requires public access for device-lambda types and functions
   std::array<Real,20> MeasureHistory();
+ private:
   void CheckReady() const;
 };
 

@@ -71,9 +71,11 @@ class Diagnostics {
   Real time_=0;
   bool ready_=false, horizon_ready_=false, sums_ready_=false, written_=false;
   std::array<Real,10> sums_{};
+ public:  // nvcc requires public access for device-lambda types and functions
   void Rebuild();
   void Prepare();
   void EvaluateConstraints();
+ private:
 };
 }  // namespace z4c_hyperboloidal
 #endif  // Z4C_HYPERBOLOIDAL_DIAGNOSTICS_HPP_

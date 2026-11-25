@@ -92,10 +92,13 @@ class MappedHalo {
 
  private:
   ActivityPolicy activity_;
+ public:  // nvcc requires public access for device-lambda types and functions
   struct DeviceRow {HaloPoint target; int begin, end;};
   struct DeviceEntry {int ordinal; Real weight;};
+ private:
   struct SlotOffset {int row=0, entry=0;};
   using AxisWeights = std::array<std::array<Real, 6>, 3>;
+ public:  // nvcc requires public access for device-lambda types and functions
   struct TensorLine { int block, ordinal[6]; Real weight[6]; };
   struct TensorRow {
     HaloPoint target;
@@ -108,15 +111,18 @@ class MappedHalo {
     DvceArray1D<DeviceRow> rows;
     std::vector<int> donor_ordinals;
   };
+ private:
   std::map<int, AxisWeights> tensor_weights_;
   DvceArray2D<Real> line_values_;
   bool AppendTensorBlock(const SlotOffset &begin, const SlotOffset &end,
                          std::vector<TensorLine> &lines,
                          std::vector<TensorRow> &tensors) const;
+ public:  // nvcc requires public access for device-lambda types and functions
   void FillTensors(const BatchPlan &plan, const DvceArray5D<Real> &residual,
                    const DvceArray5D<Real> &physical,
                    bvals::MappedExchange::ConstValues rv,
                    bvals::MappedExchange::ConstValues pv, DvceArray1D<int> active) const;
+ private:
   std::vector<int> all_slots_;
   std::vector<SlotOffset> slot_offsets_;
   std::map<std::vector<int>,BatchPlan> batches_;
@@ -130,6 +136,7 @@ class MappedHalo {
   bool ready_=false, packed_=false, received_=false;
   void BuildRows(MeshBlockPack *pack, int origin,
                  std::vector<bvals::DonorPoint> &requests);
+ public:  // nvcc requires public access for device-lambda types and functions
   void Fill(const DvceArray1D<DeviceRow> &rows, const DvceArray5D<Real> &residual,
             const DvceArray5D<Real> &physical,
             bvals::MappedExchange::ConstValues residual_values={},
