@@ -13,11 +13,46 @@ from formation_branches import (
 CHECK = np.r_[0.0, np.linspace(1e-5, np.pi - 1e-5, 4097), np.pi]
 
 
-def pair(file, seeds, order=48, stride=1):
+def geometry(file, order, stride=1):
     frame = read_binary(file)
     patch = NativePatch(frame, stride)
     curve = Curve(patch, order)
     interps = [patch, LocalPolynomial(patch, 3), LocalPolynomial(patch, 5)]
+    return frame, curve, interps
+
+
+def fit_seed(file, context, seed, factor, label):
+    frame, curve, interps = context
+    order = 2 * (curve.V.shape[1] - 1)
+    a = np.zeros(order // 2 + 1)
+    coeff = np.asarray(seed)[::2]
+    n = min(len(a), len(coeff))
+    a[:n] = factor * coeff[:n]
+    try:
+        row, _ = fit_curve(frame, file, curve, a, order, CHECK, interps, label)
+    except (ValueError, np.linalg.LinAlgError):
+        return None
+    return row if row["accepted"] else None
+
+
+def continued_outer(file, seed):
+    """Follow the stable branch independently once a pair ceases to resolve."""
+    high = geometry(file, 48)
+    for scale in (1.0, 1.06, 0.95):
+        row = fit_seed(file, high, seed, scale, 0)
+        if row is None or row["lambda0"] <= 0 or row["min_cells"] < 20:
+            continue
+        low = fit_seed(file, geometry(file, 40), row["coeff"], 1.0, 0)
+        if low is None or low["lambda0"] <= 0 or low["min_cells"] < 20:
+            continue
+        diff = leg.legval(np.cos(CHECK), leg.legsub(row["coeff"], low["coeff"]))
+        if max(abs(diff)) <= high[1].patch.dx:
+            return row
+    return None
+
+
+def pair(file, seeds, order=48, stride=1):
+    context = geometry(file, order, stride)
     candidates = []
     for label, seed, factor in [
         (0, seeds[0], 1.0),
@@ -27,15 +62,8 @@ def pair(file, seeds, order=48, stride=1):
         (1, seeds[0], 0.82),
         (0, seeds[0], 1.2),
     ]:
-        a = np.zeros(order // 2 + 1)
-        coeff = np.asarray(seed)[::2]
-        n = min(len(a), len(coeff))
-        a[:n] = factor * coeff[:n]
-        try:
-            row, _ = fit_curve(frame, file, curve, a, order, CHECK, interps, label)
-        except (ValueError, np.linalg.LinAlgError):
-            continue
-        if not row["accepted"]:
+        row = fit_seed(file, context, seed, factor, label)
+        if row is None:
             continue
         candidates.append(row)
         for outer in candidates:
@@ -63,7 +91,11 @@ def qualify(file, seeds, mass):
     if p is None:
         return None
     other = pair(file, [p["outer"]["coeff"], p["inner"]["coeff"]], 40)
-    if other is None:
+    if (
+        other is None
+        or min(fit[k]["min_cells"] for fit in (p, other) for k in ("outer", "inner"))
+        < 20
+    ):
         return None
     p["order40"] = dict(chi=other["outer"]["chi"], min_gap=other["min_gap"])
     # Demand resolvable separation under change of fit order.

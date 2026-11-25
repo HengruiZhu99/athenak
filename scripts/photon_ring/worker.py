@@ -287,11 +287,7 @@ def run(spin):
         rst.rename(dest / "final.rst")
         dest.rename(case / f"segment-{n:03d}")
         save(statefile, state)
-        # Keep 1 M checkpoint spacing for the last four segments and a coarse 5 M history.
-        # Once trapping is seen freeze all retained checkpoints for the independent replay.
-        old_segment = n - 4
-        if not state["event"] and old_segment > 0 and old_segment % 5:
-            (case / f"segment-{old_segment:03d}" / "final.rst").unlink(missing_ok=True)
+        # Retain every validated segment for retrospective formation searches.
         shutil.rmtree(work)
         print(state, flush=True)
         if time.time() + 5400 > int(os.environ.get("SLURM_JOB_END_TIME", 2**40)):

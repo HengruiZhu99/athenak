@@ -242,6 +242,7 @@ def main(case, source):
         window=[start, end],
         previous_without_pair_M=before,
     )
+    turning = {}
     if found:
         result.update(first_pair_M=found[0]["t_M"], fold=fold_fit(found[:20]))
     if found:
@@ -284,6 +285,13 @@ def main(case, source):
             comparison_coarse_chi=(old or {}).get("outer", {}).get("chi"),
             inner_chi=strict["inner"]["chi"],
         )
+    from horizon_history import export
+
+    if json.loads((source / "state.json").read_text())["status"] != "collapse":
+        raise ValueError("production tail is incomplete")
+    result["formation_history"] = export(
+        work, mass, dense, found, strict, rows, turning, effective
+    )
     save(work / "result.json", result)
 
 

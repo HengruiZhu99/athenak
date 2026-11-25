@@ -136,7 +136,9 @@ def advance(dry_run=False):
                     if (replay / "window.json").exists()
                     else "plan"
                 )
-                stages.append((k, stage))
+                # A published history must include the completed post-trapping tail.
+                if stage != "reduce" or state["status"] == "collapse":
+                    stages.append((k, stage))
         elif k in scan.get("archived", {}):
             raise FileNotFoundError(source / "state.json")
 
