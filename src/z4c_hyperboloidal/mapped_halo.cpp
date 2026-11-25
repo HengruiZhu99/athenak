@@ -10,6 +10,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <functional>
 #include <limits>
 #include <map>
 #include <numeric>
@@ -110,6 +111,125 @@ NativeDonorSelector::NativeDonorSelector(const Mesh &mesh, int origin, ActivityP
     return std::tie(x.layer,x.face,x.lo[2],x.lo[1],x.lo[0])
         <std::tie(y.layer,y.face,y.lo[2],y.lo[1],y.lo[0]);
   });
+  shell_by_face_.assign(6,{});
+  chain_of_.assign(mesh.nmb_total,-1);
+  for (int gid:order_) {
+    const auto &map=maps_[gid];
+    by_face_layer_[{map.face,map.layer}].push_back(gid);
+    if (map.face<0) {core_.push_back(gid);continue;}
+    shell_by_face_.at(map.face).push_back(gid);
+    if (map.layer<=0) first_shell_.push_back(gid);
+  }
+  if (core_.empty()) return;
+  // Bucket the Cartesian leaves. The margin of one cell beyond the evolved
+  // overlap exceeds every containment tolerance used below by ten orders of
+  // magnitude, and the bucket index is a monotone function of the coordinate.
+  Real width[3];
+  std::vector<std::array<Real,6>> boxes(mesh.nmb_total);
+  for (int a=0;a<3;++a) {
+    grid_.lower[a]=width[a]=std::numeric_limits<Real>::infinity();
+    grid_.upper[a]=-std::numeric_limits<Real>::infinity();
+  }
+  for (int gid:core_) for (int a=0;a<3;++a) {
+    const auto &map=maps_[gid];
+    const Real h=(map.hi[a]-map.lo[a])/n_;
+    boxes[gid][2*a]=map.lo[a]-(map.overlap_sides[2*a]+1)*h;
+    boxes[gid][2*a+1]=map.hi[a]+(map.overlap_sides[2*a+1]+1)*h;
+    grid_.lower[a]=std::min(grid_.lower[a],boxes[gid][2*a]);
+    grid_.upper[a]=std::max(grid_.upper[a],boxes[gid][2*a+1]);
+    width[a]=std::min(width[a],map.hi[a]-map.lo[a]);
+  }
+  for (int a=0;a<3;++a) {
+    const Real extent=grid_.upper[a]-grid_.lower[a];
+    // Without a finite positive box every query falls back to all of core_.
+    if (!(std::isfinite(extent) && extent>0 && width[a]>0)) return;
+    grid_.cells[a]=static_cast<int>(std::min(std::ceil(extent/width[a]),Real(64)));
+    grid_.inverse[a]=grid_.cells[a]/extent;
+  }
+  const int buckets=grid_.cells[0]*grid_.cells[1]*grid_.cells[2];
+  std::vector<int> counts(buckets,0);
+  const auto each_bucket=[&](int gid,const std::function<void(int)> &visit) {
+    int lo[3],hi[3];
+    for (int a=0;a<3;++a) {
+      lo[a]=Bucket(boxes[gid][2*a],a);
+      hi[a]=Bucket(boxes[gid][2*a+1],a);
+    }
+    for (int k=lo[2];k<=hi[2];++k) for (int j=lo[1];j<=hi[1];++j)
+      for (int i=lo[0];i<=hi[0];++i)
+        visit((k*grid_.cells[1]+j)*grid_.cells[0]+i);
+  };
+  for (int gid:core_) each_bucket(gid,[&](int b) {++counts[b];});
+  grid_.offsets.assign(buckets+1,0);
+  for (int b=0;b<buckets;++b) grid_.offsets[b+1]=grid_.offsets[b]+counts[b];
+  grid_.gids.resize(grid_.offsets[buckets]);
+  std::fill(counts.begin(),counts.end(),0);
+  // core_ is in order_ order, so every bucket is too.
+  for (int gid:core_) each_bucket(gid,[&](int b) {
+    grid_.gids[grid_.offsets[b]+counts[b]++]=gid;
+  });
+  grid_.active=true;
+}
+
+int NativeDonorSelector::Bucket(Real x,int axis) const {
+  const Real t=std::floor((x-grid_.lower[axis])*grid_.inverse[axis]);
+  if (!(t>0)) return 0;
+  return t>=grid_.cells[axis]-1 ? grid_.cells[axis]-1 : static_cast<int>(t);
+}
+
+// Every Cartesian leaf whose containment test can pass at x, in order_ order.
+std::pair<const int*,const int*> NativeDonorSelector::CoreCandidates(const Real x[3]) const {
+  const int *begin=core_.data();
+  const std::pair<const int*,const int*> all{begin,begin+core_.size()};
+  if (!grid_.active) return all;
+  for (int a=0;a<3;++a) {
+    if (!std::isfinite(x[a])) return all;
+    if (x[a]<grid_.lower[a] || x[a]>grid_.upper[a]) return {begin,begin};
+  }
+  const int b=(Bucket(x[2],2)*grid_.cells[1]+Bucket(x[1],1))*grid_.cells[0]+Bucket(x[0],0);
+  return {grid_.gids.data()+grid_.offsets[b],grid_.gids.data()+grid_.offsets[b+1]};
+}
+
+void NativeDonorSelector::SortRadial(std::vector<RadialNode> &nodes) {
+  std::sort(nodes.begin(),nodes.end(),[](const RadialNode &a,const RadialNode &b) {
+    return a.radius<b.radius;
+  });
+}
+
+const NativeDonorSelector::RadialChain &NativeDonorSelector::Chain(int owner) const {
+  if (chain_of_[owner]>=0) return chains_[chain_of_[owner]];
+  const auto &block=maps_[owner];
+  RadialChain chain;
+  std::vector<Real> coverage(radii_.size(),0);
+  chain.fixed_radii=true;
+  for (int gid:shell_by_face_.at(block.face)) {
+    const auto &map=maps_[gid];
+    if (map.lo[1]==block.lo[1]&&map.hi[1]==block.hi[1]
+        &&map.lo[2]==block.lo[2]&&map.hi[2]==block.hi[2]) {
+      chain.gids.push_back(gid);coverage[map.layer]+=map.hi[0]-map.lo[0];
+      chain.fixed_radii=chain.fixed_radii&&!map.cube_transition;
+    }
+  }
+  chain.mixed=std::any_of(coverage.begin(),coverage.end(),[](Real x) {
+    return std::abs(x-1)>64*std::numeric_limits<Real>::epsilon();
+  });
+  if (chain.fixed_radii && !chain.mixed) {
+    // The nodes every angular donor line of this chain sorts, in the same
+    // initial order; only the angular indices are filled in per line.
+    for (int gid:chain.gids) {
+      const auto &map=maps_[gid];
+      const Real lower=map.inner_radius;
+      for (int i=0;i<n_;++i) {
+        const Real s=map.lo[0]+(i+map.node_offset[0])/n_*(map.hi[0]-map.lo[0]);
+        chain.nodes.push_back({lower+s*(map.outer_radius-lower),{gid,0,0,i+origin_}});
+      }
+    }
+    SortRadial(chain.nodes);
+  }
+  // Leaves with the same angular patch on this face share the chain.
+  const int index=static_cast<int>(chains_.size());
+  for (int gid:chain.gids) chain_of_[gid]=index;
+  chains_.push_back(std::move(chain));
+  return chains_.back();
 }
 
 int NativeDonorSelector::Lower(int gid,int axis) const {
@@ -136,7 +256,16 @@ int NativeDonorSelector::Owner(const Real x[3],bool shell) const {
   const int layer=core ? -1 : static_cast<int>(std::lower_bound(radii_.begin(),
       radii_.end(),std::min(radius,outer_radius_))-radii_.begin());
   int selected=-1;
-  for (int gid:order_) {
+  std::pair<const int*,const int*> candidates{nullptr,nullptr};
+  if (core) {
+    candidates=CoreCandidates(x);
+  } else {
+    const auto found=by_face_layer_.find({face,layer});
+    if (found!=by_face_layer_.end())
+      candidates={found->second.data(),found->second.data()+found->second.size()};
+  }
+  for (const int *it=candidates.first;it!=candidates.second;++it) {
+    const int gid=*it;
     const auto &map=maps_[gid];
     if (map.face!=face||map.layer!=layer) continue;
     Real q[3];map.Inverse(x,q);
@@ -153,6 +282,7 @@ std::vector<WeightedDonor> NativeDonorSelector::Tensor(
   for (int a=0; a<3; ++a)
     LagrangeWeights(n_*q[a]-maps_[gid].node_offset[a], first[a], length[a], weights[a]);
   std::vector<WeightedDonor> out;
+  out.reserve(static_cast<std::size_t>(length[0])*length[1]*length[2]);
   for (int k=0;k<length[2];++k) for (int j=0;j<length[1];++j)
     for (int i=0;i<length[0];++i) {
       const Real weight=weights[0][i]*weights[1][j]*weights[2][k];
@@ -166,7 +296,9 @@ std::vector<WeightedDonor> NativeDonorSelector::Tensor(
 
 std::vector<WeightedDonor> NativeDonorSelector::Cartesian(const Real x[3],int width) const {
   int owner=-1;Real best_h=std::numeric_limits<Real>::infinity();
-  for (int gid:order_) {
+  const auto candidates=CoreCandidates(x);
+  for (const int *it=candidates.first;it!=candidates.second;++it) {
+    const int gid=*it;
     const auto &map=maps_[gid];if (map.face>=0) continue;
     Real q[3];map.Inverse(x,q);bool inside=true;
     for (int a=0;a<3;++a)
@@ -191,7 +323,7 @@ std::vector<WeightedDonor> NativeDonorSelector::Cartesian(const Real x[3],int wi
 std::vector<WeightedDonor> NativeDonorSelector::Overlap(const Real x[3],int width) const {
   const int preferred=Owner(x);int selected=-1,best_first[3]{},best_length[3]{};
   Real best_q[3]{},best_margin=-1e300;
-  for (int gid:order_) {
+  for (int gid:first_shell_) {
     const auto &map=maps_[gid];if (map.face<0||map.layer>0) continue;
     if ((map.face%2?-x[map.face/2]:x[map.face/2])<=0) continue;
     Real q[3];map.Inverse(x,q);int first[3],length[3];Real margin=1e300;
@@ -219,7 +351,7 @@ std::vector<WeightedDonor> NativeDonorSelector::Overlap(const Real x[3],int widt
     // centered six-point stencil across its internal radial/angular boundary.
     // Keep the established centered search above unchanged. Only if it finds
     // no donor, use a one-sided stencil entirely in a covering evolved leaf.
-    for (int gid:order_) {
+    for (int gid:first_shell_) {
       const auto &map=maps_[gid];if (map.face<0||map.layer>0) continue;
       if ((map.face%2?-x[map.face/2]:x[map.face/2])<=0) continue;
       Real q[3];map.Inverse(x,q);int first[3],length[3];Real margin=1e300;
@@ -255,24 +387,17 @@ std::vector<WeightedDonor> NativeDonorSelector::Shell(
   const auto &block=maps_[owner];const Real radius=Radius(x);
   const Real angle[2]={block.lo[1]+local[1]*(block.hi[1]-block.lo[1]),
                        block.lo[2]+local[2]*(block.hi[2]-block.lo[2])};
-  std::vector<int> chain;std::vector<Real> coverage(radii_.size(),0);
-  for (int gid:order_) {
-    const auto &map=maps_[gid];if (map.face!=block.face) continue;
-    if (map.lo[1]==block.lo[1]&&map.hi[1]==block.hi[1]
-        &&map.lo[2]==block.lo[2]&&map.hi[2]==block.hi[2]) {
-      chain.push_back(gid);coverage[map.layer]+=map.hi[0]-map.lo[0];
-    }
-  }
-  const bool mixed=std::any_of(coverage.begin(),coverage.end(),[](Real x) {
-    return std::abs(x-1)>64*std::numeric_limits<Real>::epsilon();
-  });
+  const auto &radial=Chain(owner);
+  const auto &chain=radial.gids;
+  const auto &face_leaves=shell_by_face_.at(block.face);
+  const bool mixed=radial.mixed;
   std::vector<WeightedDonor> out;
   if (mixed) {
     // Each radial plane uses its own native angular leaf. This handles angular
     // and radial refinement without inventing a uniform shell-layer index.
     if (!spherical_) throw std::runtime_error("mixed angular cube-transition donors unsupported");
     struct Plane {Real radius;int gid,i;};std::vector<Plane> planes;
-    for (int gid:order_) {
+    for (int gid:face_leaves) {
       const auto &map=maps_[gid];if (map.face!=block.face) continue;
       if (angle[0]<map.lo[1]-2e-13||angle[0]>map.hi[1]+2e-13
           ||angle[1]<map.lo[2]-2e-13||angle[1]>map.hi[2]+2e-13) continue;
@@ -280,7 +405,7 @@ std::vector<WeightedDonor> NativeDonorSelector::Shell(
         const Real s=map.lo[0]+(i+map.node_offset[0])/n_*(map.hi[0]-map.lo[0]);
         const Real r=map.inner_radius+s*(map.outer_radius-map.inner_radius);
         int selected=gid;
-        for (int other:order_) {
+        for (int other:face_leaves) {
           const auto &b=maps_[other];if (b.face!=block.face) continue;
           if (angle[0]<b.lo[1]-2e-13||angle[0]>b.hi[1]+2e-13
               ||angle[1]<b.lo[2]-2e-13||angle[1]>b.hi[2]+2e-13) continue;
@@ -327,7 +452,33 @@ std::vector<WeightedDonor> NativeDonorSelector::Shell(
     for (int i=0;i<width;++i) {weights[a][i]=1;for (int j=0;j<width;++j)
       if (i!=j) weights[a][i]*=(t-first[a]-j)/Real(i-j);}
   }
-  struct Node {Real radius;bvals::DonorPoint point;};
+  if (radial.fixed_radii) {
+    // No node radius depends on the angular donor line, so each line would sort
+    // the same radii to the same order and take the same radial stencil. Apply
+    // the stored order and form each weight by the same sequence of products.
+    const auto &nodes=radial.nodes;
+    if (nodes.size()<static_cast<std::size_t>(width)) throw std::runtime_error("short mapped radial chain");
+    const auto pos=std::lower_bound(nodes.begin(),nodes.end(),radius,
+                              [](const RadialNode&a,Real r) {return a.radius<r;});
+    const int begin=std::clamp(int(pos-nodes.begin())-width/2,0,int(nodes.size())-width);
+    Real factor[6][6]{};
+    for (int i=0;i<width;++i) for (int b=0;b<width;++b) if (i!=b)
+      factor[i][b]=(radius-nodes[begin+b].radius)/(nodes[begin+i].radius-nodes[begin+b].radius);
+    out.reserve(static_cast<std::size_t>(width)*width*width);
+    for (int k=0;k<width;++k) for (int j=0;j<width;++j) {
+      for (int i=0;i<width;++i) {
+        Real weight=weights[0][j]*weights[1][k];
+        for (int b=0;b<width;++b) if (i!=b) weight*=factor[i][b];
+        if (std::abs(weight)>1e-18) {
+          auto point=nodes[begin+i].point;
+          point.k=k+first[1]+origin_;point.j=j+first[0]+origin_;
+          out.push_back({point,weight});
+        }
+      }
+    }
+    return out;
+  }
+  using Node=RadialNode;
   for (int k=0;k<width;++k) for (int j=0;j<width;++j) {
     const Real u=block.lo[1]+(first[0]+j+.5)/n_*(block.hi[1]-block.lo[1]);
     const Real v=block.lo[2]+(first[1]+k+.5)/n_*(block.hi[2]-block.lo[2]);
@@ -341,7 +492,7 @@ std::vector<WeightedDonor> NativeDonorSelector::Shell(
                          {gid,k+first[1]+origin_,j+first[0]+origin_,i+origin_}});
       }
     }
-    std::sort(nodes.begin(),nodes.end(),[](const Node&a,const Node&b) {return a.radius<b.radius;});
+    SortRadial(nodes);
     if (nodes.size()<static_cast<std::size_t>(width)) throw std::runtime_error("short mapped radial chain");
     auto pos=std::lower_bound(nodes.begin(),nodes.end(),radius,
                               [](const Node&a,Real r) {return a.radius<r;});

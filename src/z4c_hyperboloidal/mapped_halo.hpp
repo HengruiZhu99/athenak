@@ -48,6 +48,35 @@ class NativeDonorSelector {
   std::vector<Real> radii_;
   std::vector<chart_atlas::BlockMap> maps_;
   std::vector<int> levels_, order_;
+  // Candidate subsets of order_, each in order_ order. A search over a subset
+  // visits the leaves that can pass its filter in the same sequence as a search
+  // over order_, so every selection and every tie is unchanged.
+  std::vector<int> core_, first_shell_;
+  std::vector<std::vector<int>> shell_by_face_;
+  std::map<std::pair<int,int>,std::vector<int>> by_face_layer_;
+  // Uniform buckets over the Cartesian leaves, each extended by its evolved
+  // overlap and one further cell. A bucket lists every leaf whose extended box
+  // meets it.
+  struct CoreGrid {
+    Real lower[3]{}, upper[3]{}, inverse[3]{};
+    int cells[3]{};
+    bool active=false;
+    std::vector<int> offsets, gids;
+  } grid_;
+  int Bucket(Real x,int axis) const;
+  std::pair<const int*,const int*> CoreCandidates(const Real x[3]) const;
+  // Radial chain of the leaves sharing one angular patch. The nodes are sorted
+  // once when no member has a (u,v)-dependent radius.
+  struct RadialNode {Real radius; bvals::DonorPoint point;};
+  struct RadialChain {
+    std::vector<int> gids;
+    bool mixed=false, fixed_radii=false;
+    std::vector<RadialNode> nodes;
+  };
+  mutable std::vector<int> chain_of_;
+  mutable std::vector<RadialChain> chains_;
+  const RadialChain &Chain(int owner) const;
+  static void SortRadial(std::vector<RadialNode> &nodes);
   std::vector<WeightedDonor> Overlap(const Real x[3], int width) const;
   std::vector<WeightedDonor> Shell(int owner, const Real x[3],
                                   const Real local[3], int width) const;
