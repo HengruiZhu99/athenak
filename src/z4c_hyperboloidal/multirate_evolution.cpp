@@ -437,15 +437,37 @@ void MultirateEvolution::Impl::BuildGraphAndLevels() {
                  m.layer, -1,         m.outer_surface ? 0 : -1};
   }
   PhaseTimer phases("multirate_graph", mesh->ncycle);
-  std::map<std::pair<int, int>, std::set<Point>> dependencies;
+  // Only the number of distinct donor points of each directed pair is used.
+  // Keep each set as a list that is sorted and stripped of repeats as it grows.
+  struct PointList {
+    std::vector<Point> points;
+    size_t limit = 1 << 16;
+    void Compact() {
+      std::sort(points.begin(), points.end());
+      points.erase(std::unique(points.begin(), points.end()), points.end());
+      limit = std::max<size_t>(1 << 16, 2 * points.size());
+    }
+    void Add(const Point& point) {
+      points.push_back(point);
+      if (points.size() >= limit) Compact();
+    }
+  };
+  std::map<std::pair<int, int>, PointList> dependencies;
   std::set<int> scri_support;
+  std::pair<int, int> last_pair{-1, -1};
+  PointList* last_list = nullptr;
   auto add = [&](int recipient, const bvals::DonorPoint& point, int kind) {
     if (recipient == point.gid) return;
-    auto& set = dependencies[{recipient, point.gid}];
-    set.insert({point.gid, point.k, point.j, point.i, kind});
+    const std::pair<int, int> pair{recipient, point.gid};
+    if (!last_list || pair != last_pair) {
+      last_list = &dependencies[pair];
+      last_pair = pair;
+    }
+    auto& set = *last_list;
+    set.Add({point.gid, point.k, point.j, point.i, kind});
     if (kind)
       for (int k = 0; k < 5; ++k)
-        set.insert(
+        set.Add(
             {point.gid, p.origin + point.k, p.origin + point.j, p.origin + p.n[0] - 5 + k, 0});
   };
   for (const auto& r : p.mapped_halo_->Rows())
@@ -491,9 +513,11 @@ void MultirateEvolution::Impl::BuildGraphAndLevels() {
     for (const auto& donor : recipient.second) add(recipient.first, donor, 0);
   phases.Mark("agreement_donors");
   std::vector<int> local;
-  for (const auto& entry : dependencies)
-    local.insert(local.end(),
-                 {entry.first.first, entry.first.second, static_cast<int>(entry.second.size())});
+  for (auto& entry : dependencies) {
+    entry.second.Compact();
+    local.insert(local.end(), {entry.first.first, entry.first.second,
+                               static_cast<int>(entry.second.points.size())});
+  }
   const auto all = AllIntegers(local);
   for (size_t i = 0; i < all.size(); i += 3) {
     const int recipient = all[i], donor = all[i + 1];
