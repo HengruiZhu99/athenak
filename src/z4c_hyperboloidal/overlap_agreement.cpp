@@ -4,7 +4,8 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
-#include <unordered_map>
+#include <numeric>
+#include <unordered_set>
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -116,49 +117,93 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   kappa_=p.agreement.kappa;
   NativeDonorSelector selector(mesh,o,p.activity);
   dependency_edges_.clear();agreement_blocks_.clear();multirate_donors_.clear();
-  std::set<std::pair<int,int>> graph;
-  std::set<int> group;
+  // The containers below only find earlier occurrences. Every list they
+  // feed is emitted in the same sorted order as before, and every sum is
+  // accumulated in the order in which the samples are visited.
+  std::unordered_set<std::uint64_t> graph;
+  std::vector<char> group(mesh.nmb_total,0);
   if (p.UsesMultirate()) stencil_terms_.assign(mesh.nmb_total, 0);
   std::vector<Row> rows;std::vector<Entry> entries;
   std::vector<bvals::DonorPoint> requests;
-  std::map<bvals::DonorPoint,std::vector<Transpose>> transpose;
-  // Volume is a lookup-only cache: hashing changes neither row order nor sums.
-  const auto hash=[](const bvals::DonorPoint &d) {
-    std::size_t h=(1469598103934665603ULL^static_cast<unsigned>(d.gid))*1099511628211ULL;
-    for(int v:{d.k,d.j,d.i})h=(h^static_cast<unsigned>(v))*1099511628211ULL;
-    return h;
+  // Storage index of a point in its block, or -1 outside the block storage.
+  const std::int64_t extent[3]={p.storage[0],p.storage[1],p.storage[2]};
+  const std::size_t block_size=extent[0]*extent[1]*extent[2];
+  const auto slot=[&](const bvals::DonorPoint &d)->std::int64_t {
+    if(d.gid<0 || d.gid>=mesh.nmb_total || d.i<0 || d.i>=extent[0] || d.j<0
+       || d.j>=extent[1] || d.k<0 || d.k>=extent[2])return -1;
+    return (d.k*extent[1]+d.j)*extent[0]+d.i;
   };
-  const auto equal=[](const bvals::DonorPoint &a,const bvals::DonorPoint &b) {
-    return a.gid==b.gid && a.k==b.k && a.j==b.j && a.i==b.i;
-  };
-  std::unordered_map<bvals::DonorPoint,Real,decltype(hash),decltype(equal)>
-      volumes(0,hash,equal);
-  std::map<bvals::DonorPoint,Real> bounds;
+  // Volume is a lookup-only cache; a valid volume is positive.
+  std::vector<std::vector<Real>> volumes(mesh.nmb_total);
   auto volume=[&](const bvals::DonorPoint &d) {
-    auto found=volumes.find(d);if(found!=volumes.end())return found->second;
-    return volumes.emplace(d,Volume(selector.Map(d.gid),n,d.i-o,d.j-o,d.k-o)).first->second;
+    const auto s=slot(d);
+    if(s<0)return Volume(selector.Map(d.gid),n,d.i-o,d.j-o,d.k-o);
+    auto &block=volumes[d.gid];
+    if(block.empty())block.assign(block_size,0);
+    if(block[s]==0)block[s]=Volume(selector.Map(d.gid),n,d.i-o,d.j-o,d.k-o);
+    return block[s];
   };
+  // Local recipients of the transpose in order of first appearance.
+  std::vector<std::vector<int>> recipient_slots(mesh.nmb_total);
+  std::vector<bvals::DonorPoint> recipients;
+  std::vector<std::vector<Transpose>> transpose;
+  std::vector<Real> bounds;
+  const auto recipient=[&](const bvals::DonorPoint &d) {
+    const auto s=slot(d);
+    if(s<0)throw std::logic_error("agreement recipient outside block storage");
+    auto &block=recipient_slots[d.gid];
+    if(block.empty())block.assign(block_size,-1);
+    if(block[s]<0) {
+      block[s]=static_cast<int>(recipients.size());
+      recipients.push_back(d);transpose.emplace_back();bounds.push_back(0);
+    }
+    return block[s];
+  };
+  // A set kept as a list that is sorted and stripped of repeats as it grows.
+  struct PointList {
+    std::vector<bvals::DonorPoint> points;
+    std::size_t limit=1<<16;
+    void Compact() {
+      std::sort(points.begin(),points.end());
+      points.erase(std::unique(points.begin(),points.end(),
+          [](const bvals::DonorPoint &a,const bvals::DonorPoint &b) {
+            return !(a<b) && !(b<a);
+          }),points.end());
+      limit=std::max<std::size_t>(1<<16,2*points.size());
+    }
+    void Add(const bvals::DonorPoint &d) {
+      points.push_back(d);
+      if(points.size()>=limit)Compact();
+    }
+  };
+  std::map<int,PointList> multirate_lists;
   int global_rows=0;std::size_t owner_rows=0,owner_entries=0;
   int cartesian_samples=0,spherical_samples=0;
   int balanced_samples=0;
   Real min_radius=std::numeric_limits<Real>::infinity(),max_radius=0;
-  std::set<bvals::DonorPoint> owner_remote;
+  PointList owner_remote;
+  std::vector<int> row_blocks;
   const auto add_row=[&](const std::vector<WeightedDonor> &row,
                          const bvals::DonorPoint &sample,Real w) {
     if (p.UsesMultirate()) {
-      std::set<int> row_blocks;
+      row_blocks.clear();
       // Attribute one forward stencil to its sample and the transpose to its
       // recipients. This counts mathematical work independently of MPI placement.
       stencil_terms_[sample.gid] += row.size();
       for (const auto &d : row) {
         ++stencil_terms_[d.point.gid];
-        if (d.weight != 0) row_blocks.insert(d.point.gid);
+        if (d.weight != 0 && (row_blocks.empty() || row_blocks.back() != d.point.gid))
+          row_blocks.push_back(d.point.gid);
       }
-      group.insert(row_blocks.begin(),row_blocks.end());
+      std::sort(row_blocks.begin(),row_blocks.end());
+      row_blocks.erase(std::unique(row_blocks.begin(),row_blocks.end()),row_blocks.end());
       for(int a:row_blocks) {
-        for(int b:row_blocks)if(a<b)graph.emplace(a,b);
+        group[a]=1;
+        for(int b:row_blocks)if(a<b)
+          graph.insert((static_cast<std::uint64_t>(a)<<32)|static_cast<std::uint32_t>(b));
         if(mesh.rank_eachmb[a]!=global_variable::my_rank)continue;
-        for(const auto &d:row)if(d.point.gid!=a && d.weight!=0)multirate_donors_[a].insert(d.point);
+        auto &list=multirate_lists[a];
+        for(const auto &d:row)if(d.point.gid!=a && d.weight!=0)list.Add(d.point);
       }
     }
     Real norm=0;bool needed=false;
@@ -171,7 +216,7 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
     if(owned) {
       ++owner_rows;owner_entries+=row.size();
       for(const auto &d:row)if(mesh.rank_eachmb[d.point.gid]!=global_variable::my_rank)
-        owner_remote.insert(d.point);
+        owner_remote.Add(d.point);
     }
     const int id=rows.size();
     Row device_row{static_cast<int>(entries.size()),0,w,
@@ -181,8 +226,9 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
       entries.push_back({static_cast<int>(requests.size()),d.weight});requests.push_back(d.point);
       if(mesh.rank_eachmb[d.point.gid]==global_variable::my_rank) {
         const Real coefficient=w*d.weight/volume(d.point);
-        transpose[d.point].push_back({id,coefficient});
-        bounds[d.point]+=std::abs(coefficient)*norm;
+        const int target=recipient(d.point);
+        transpose[target].push_back({id,coefficient});
+        bounds[target]+=std::abs(coefficient)*norm;
       }
     }
     device_row.end=entries.size();rows.push_back(device_row);
@@ -207,11 +253,21 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
       add_row(row,sample,sample_weight);
   });
   phases.Mark("stencils");
-  dependency_edges_.assign(graph.begin(),graph.end());
-  agreement_blocks_.assign(group.begin(),group.end());
+  for(const auto key:graph)
+    dependency_edges_.emplace_back(static_cast<int>(key>>32),
+                                   static_cast<int>(key&0xffffffffu));
+  std::sort(dependency_edges_.begin(),dependency_edges_.end());
+  for(int gid=0;gid<mesh.nmb_total;++gid)if(group[gid])agreement_blocks_.push_back(gid);
+  for(auto &list:multirate_lists) {
+    if(list.second.points.empty())continue;
+    list.second.Compact();
+    auto &donors=multirate_donors_[list.first];
+    for(const auto &d:list.second.points)donors.insert(donors.end(),d);
+  }
+  owner_remote.Compact();
   if(!global_rows)throw std::runtime_error("full overlap contains no samples");
   rate_bound_=0;
-  for(const auto &b:bounds)rate_bound_=std::max(rate_bound_,kappa_*b.second);
+  for(const Real b:bounds)rate_bound_=std::max(rate_bound_,kappa_*b);
 #if MPI_PARALLEL_ENABLED
   MPI_Allreduce(MPI_IN_PLACE,&rate_bound_,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
 #endif
@@ -226,11 +282,18 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   phases.Mark("exchange");
   for(auto &e:entries)e.ordinal=exchange_.RequestOrdinals()[e.ordinal];
   std::vector<Target> targets;std::vector<Transpose> adjacency;
-  for(const auto &item:transpose) {
-    const auto &d=item.first;const auto &map=selector.Map(d.gid);
+  // Recipients in ascending donor order, as an ordered map would list them.
+  std::vector<int> recipient_order(recipients.size());
+  std::iota(recipient_order.begin(),recipient_order.end(),0);
+  std::sort(recipient_order.begin(),recipient_order.end(),[&](int a,int b) {
+    return recipients[a]<recipients[b];
+  });
+  for(const int index:recipient_order) {
+    const auto &d=recipients[index];const auto &map=selector.Map(d.gid);
+    const auto &list=transpose[index];
     const Real q[3]={(d.i-o+map.node_offset[0])/n,(d.j-o+map.node_offset[1])/n,
                      (d.k-o+map.node_offset[2])/n};Real x[3];map.Forward(q,x);
-    const int begin=adjacency.size();adjacency.insert(adjacency.end(),item.second.begin(),item.second.end());
+    const int begin=adjacency.size();adjacency.insert(adjacency.end(),list.begin(),list.end());
     targets.push_back({{pack->LocalId(d.gid),d.k,d.j,d.i},begin,static_cast<int>(adjacency.size()),
                        p.parameters.residual_weight.Value(x)});
   }
@@ -269,8 +332,8 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
     <<" entries="<<entries.size()<<" recipients="<<targets.size()
     <<" receive_donors="<<exchange_.RemoteDonors()<<" send_donors="<<exchange_.SendDonors()
     <<" owner_once_rows="<<owner_rows<<" owner_once_entries="<<owner_entries
-    <<" owner_once_remote_gather="<<owner_remote.size()
-    <<" owner_once_remote_return="<<owner_remote.size()
+    <<" owner_once_remote_gather="<<owner_remote.points.size()
+    <<" owner_once_remote_return="<<owner_remote.points.size()
     <<" kappa="<<kappa_<<" rate_bound="<<rate_bound_<<" dt="<<p.requested_dt
     <<" build_seconds="<<build_timer.seconds()<<'\n';
 
