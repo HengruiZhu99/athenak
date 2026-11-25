@@ -1,11 +1,13 @@
 """Reduce saved geometry to separately qualified two-branch and strict-trapping results."""
 
 import numpy as np
+from scipy.optimize import least_squares
 from formation_branches import (
     Curve,
     NativePatch,
     LocalPolynomial,
     fit_curve,
+    measure,
     leg,
     read_binary,
 )
@@ -35,6 +37,44 @@ def fit_seed(file, context, seed, factor, label):
     return row if row["accepted"] else None
 
 
+def barriers(context, row):
+    """Require a strictly trapped surface inside and positive outgoing expansion outside."""
+    _, curve, interps = context
+    center = np.array(row["coeff"])
+    bounds = {}
+    for side, sign in (("inside", -1), ("outside", 1)):
+        for target in (0.001, 0.003, 0.006):
+            a = least_squares(
+                lambda x: curve.operator(x) - sign * target * curve.weight,
+                center[::2],
+                jac=curve.jacobian,
+                max_nfev=45,
+                ftol=1e-11,
+                xtol=1e-11,
+            ).x
+            coeff = np.zeros_like(center)
+            coeff[::2] = a
+            gap = min(sign * leg.legval(np.cos(CHECK), coeff - center))
+            if gap <= 0:
+                continue
+            extrema = []
+            for geometry in interps:
+                h, outgoing, ingoing, _, _ = measure(geometry, coeff, CHECK)
+                extrema.append(
+                    [float(min(sign * h * outgoing)), float(max(h * ingoing))]
+                )
+            if min(r[0] for r in extrema) > 0 and max(r[1] for r in extrema) < 0:
+                bounds[side] = dict(
+                    min_gap=gap,
+                    min_signed_outgoing=min(r[0] for r in extrema),
+                    max_ingoing=max(r[1] for r in extrema),
+                )
+                break
+        if side not in bounds:
+            return None
+    return bounds
+
+
 def continued_outer(file, seed):
     """Follow the stable branch independently once a pair ceases to resolve."""
     high = geometry(file, 48)
@@ -47,7 +87,13 @@ def continued_outer(file, seed):
             continue
         diff = leg.legval(np.cos(CHECK), leg.legsub(row["coeff"], low["coeff"]))
         if max(abs(diff)) <= high[1].patch.dx:
-            return row
+            try:
+                check = barriers(high, row)
+            except (ValueError, np.linalg.LinAlgError):
+                check = None
+            if check:
+                row["barriers"] = check
+                return row
     return None
 
 

@@ -95,6 +95,15 @@ def export(
                 record["status"] = "not_searched"
             if surface:
                 record.update(measurements(surface, mass))
+                if surface.get("barriers"):
+                    record["strict_witness"] = True
+                    b = surface["barriers"]
+                    record["inside_max_hTheta_plus"] = -b["inside"][
+                        "min_signed_outgoing"
+                    ]
+                    record["outside_min_hTheta_plus"] = b["outside"][
+                        "min_signed_outgoing"
+                    ]
             history.append(record)
     cols = [
         "source",
@@ -112,6 +121,8 @@ def export(
         "lambda0_Madm2",
         "max_abs_hTheta_plus",
         "max_hTheta_minus",
+        "inside_max_hTheta_plus",
+        "outside_min_hTheta_plus",
     ]
     path = directory / "horizon-history.csv"
     temp = path.with_suffix(".tmp")
@@ -123,6 +134,14 @@ def export(
     variants = turning.get("variants", [])
     fold = variants[0].get("fold") if variants else None
     return dict(
+        first_strict_outer=next(
+            (
+                r
+                for r in history
+                if r["branch"] == "outer" and r["strict_witness"] is True
+            ),
+            None,
+        ),
         first_resolved_outer=next(
             (
                 r

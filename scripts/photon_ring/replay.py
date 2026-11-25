@@ -292,6 +292,12 @@ def main(case, source):
     result["formation_history"] = export(
         work, mass, dense, found, strict, rows, turning, effective
     )
+    earliest = result["formation_history"]["first_strict_outer"]
+    if earliest and (strict is None or earliest["t_M"] < strict["t_M"]):
+        # The pair-based spin/error estimate would rank a later surface.
+        result.update(
+            status="needs_review", reason="strict outer bracket precedes verified pair"
+        )
     save(work / "result.json", result)
 
 

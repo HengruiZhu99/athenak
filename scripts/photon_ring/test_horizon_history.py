@@ -7,9 +7,21 @@ import unittest
 from unittest.mock import patch
 
 from horizon_history import export
+from onset import continued_outer
+from types import SimpleNamespace
 
 
 class HistoryTest(unittest.TestCase):
+    def test_positive_eigenvalue_without_sign_bracket(self):
+        candidate = {"min_cells": 30.0, "lambda0": 1.0e-6, "coeff": [1.0]}
+        context = (None, SimpleNamespace(patch=SimpleNamespace(dx=0.0625)), [])
+        with (
+            patch("onset.geometry", return_value=context),
+            patch("onset.fit_seed", return_value=candidate),
+            patch("onset.barriers", return_value=None),
+        ):
+            self.assertIsNone(continued_outer(Path("near-fold"), [1.0]))
+
     def test_unresolved_partner_and_production_handoff(self):
         outer = dict(
             area=12.0,
