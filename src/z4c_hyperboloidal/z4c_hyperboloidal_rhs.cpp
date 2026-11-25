@@ -18,6 +18,9 @@
 namespace z4c_hyperboloidal {
 
 namespace {
+// Each field stores its value, three gradients, nine Hessian entries and transport.
+constexpr int components_per_jet = 14;
+
 template <class... T>
 KOKKOS_INLINE_FUNCTION void Capture(const T &...) {}
 
@@ -36,12 +39,12 @@ void EvaluateBlocks(const Policy &bulk_policy, const DvceArray1D<int> &selected,
                     const DvceArray5D<Real> &delta, const DvceArray5D<Real> &output,
                     const DvceArray2D<Real> &scratch, const DvceArray1D<int> &statuses,
                     const DvceArray1D<Real> &gaps, const DvceArray1D<Real> &cfls, Real dt,
-                    int count, int nvar, int components_per_jet) {
+                    int count) {
   Kokkos::parallel_for(
       "hyperboloidal block RHS", bulk_policy, KOKKOS_LAMBDA(int index) {
         // nvcc cannot first-capture a variable inside a constexpr-if branch.
         Capture(blocks, surface, refs, sources, weights, omega, params, scratch, statuses,
-                output, nvar, components_per_jet);
+                output);
         const int p = selected(index);
         const auto c = cells(p);
         const auto map = maps(p);
@@ -56,7 +59,7 @@ void EvaluateBlocks(const Policy &bulk_policy, const DvceArray1D<int> &selected,
             return;
           }
           PointForcing forcing;
-          for (int f = 0; f < nvar; ++f)
+          for (int f = 0; f < Fields::count; ++f)
             forcing.dissipation[f] = output(c.m, f, c.k, c.j, c.i);
           const bool endpoint = with_radial_rows && surface.HasRadialRow(p);
           const auto load = [&](int f, bool second) {
@@ -103,7 +106,7 @@ void EvaluateBlocks(const Policy &bulk_policy, const DvceArray1D<int> &selected,
           statuses(p) = static_cast<int>(state.status);
           if (state.status != PointStatus::success) return;
           PointForcing forcing;
-          for (int f = 0; f < nvar; ++f) {
+          for (int f = 0; f < Fields::count; ++f) {
             forcing.transport[f] = state.transport[f];
             forcing.dissipation[f] = output(c.m, f, c.k, c.j, c.i);
           }
@@ -115,7 +118,7 @@ void EvaluateBlocks(const Policy &bulk_policy, const DvceArray1D<int> &selected,
         cfls(p) = dt * count * (result.speed[0] + result.speed[1] + result.speed[2]);
         if (dt / fmin(params.tau, Real(InnerTelegrapher::tau)) > .25)
           statuses(p) = static_cast<int>(PointStatus::cfl_exceeded);
-        for (int f = 0; f < nvar; ++f) output(c.m, f, c.k, c.j, c.i) = result.rate[f];
+        for (int f = 0; f < Fields::count; ++f) output(c.m, f, c.k, c.j, c.i) = result.rate[f];
       });
 }
 }  // namespace
@@ -163,8 +166,6 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
   const int selected_count = selected.extent_int(0);
   // Keep each subset's halo dependencies. RHS storage holds KO only until the
   // point kernel loads all fields, including Lambda's contribution to D.
-  // Each field stores its value, three gradients, nine Hessian entries and transport.
-  constexpr int components_per_jet = 14;
   constexpr int shift_start = components_per_jet * Fields::independent_count;
   const bool precompute_jets = split_bulk_jets_;
   if (precompute_jets && selected_count > residual_jet_scratch_.extent_int(1)) {
@@ -252,8 +253,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
   const auto evaluate = [&](auto radial_rows, auto precomputed) {
     EvaluateBlocks<decltype(radial_rows)::value, decltype(precomputed)::value>(
         bulk_policy, selected, cells, blocks, surface, maps, refs, sources, weights,
-        omega, params, delta, output, scratch, statuses, gaps, cfls, dt, count, nvar,
-        components_per_jet);
+        omega, params, delta, output, scratch, statuses, gaps, cfls, dt, count);
   };
   if (radial && precompute_jets) {
     evaluate(std::true_type{}, std::true_type{});
