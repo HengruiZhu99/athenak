@@ -76,7 +76,7 @@ class Z4cHyperboloidal {
   int nblocks, nfaces, npoints, nsurface_points;
   Real ko, chi_floor, penalty, requested_dt, dtnew;
   AngularKOFloor ko_angular;
-  bool restart_with_new_dissipation=false;
+  bool ko_shell_residual=false, restart_with_new_dissipation=false;
   ActivityPolicy activity;
   AgreementParameters agreement;
   std::array<Real,12> AgreementHistorySums();

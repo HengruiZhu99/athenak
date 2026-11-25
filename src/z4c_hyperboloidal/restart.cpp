@@ -151,6 +151,7 @@ std::string Identity(const Z4cHyperboloidal &p) {
     HYP_ID(p.ko_angular.strength); HYP_ID(p.ko_angular.begin); HYP_ID(p.ko_angular.full);
     HYP_ID(p.ko_angular.fade); HYP_ID(p.ko_angular.end);
   }
+  if (p.ko_shell_residual) HYP_ID(p.ko_shell_residual);
   HYP_ID(p.chi_floor); HYP_ID(p.penalty); HYP_ID(p.requested_dt);
 
   s << ";agreement=full-unmasked-union-evolved-cube-taper-rowmass-v1;H=coordinate-volume";
@@ -180,7 +181,7 @@ std::string Identity(const Z4cHyperboloidal &p) {
 }
 
 std::string WithoutDissipation(std::string identity) {
-  for (const char *key:{";p.ko=",";p.ko_angular."}) {
+  for (const char *key:{";p.ko=",";p.ko_angular.",";p.ko_shell_residual="}) {
     for (auto at=identity.find(key);at!=std::string::npos;at=identity.find(key)) {
       const auto end=identity.find(';',at+1);
       identity.erase(at,end==std::string::npos ? end : end-at);

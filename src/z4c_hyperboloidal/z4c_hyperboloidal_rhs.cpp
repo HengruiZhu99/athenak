@@ -54,6 +54,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
       radial ? surface_exchange_->PrepareRadialJets()
              : SurfaceExchange::CachedKernel{surface_exchange_->BindKernel(),
                                              DvceArray2D<mapped::Jet>()};
+  const bool shell_residual = ko_shell_residual;
   const Real epsilon = ko, dt = active_step_dt > 0 ? active_step_dt : pmy_pack->pmesh->dt;
   const int count = n[0];
   const int selected_count = selected.extent_int(0);
@@ -78,8 +79,19 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
         const int f = static_cast<int>(task / selected_count);
         const int p = selected(index);
         const auto c = cells(p);
-        output(c.m, f, c.k, c.j, c.i) =
-            dissipation.Evaluate(p, f, {physical, c.m, c.k, c.j, c.i}, epsilon);
+        // Shell lines stay in evolved storage, where the residual is u-reference
+        // with chi divided by its weight. Constrained components keep the field.
+        if (shell_residual && blocks(c.m).face >= 0 && Fields::Independent(f)) {
+          const Real scale = f != Fields::chi ? 1
+                             : params.residual_weight.Regular()
+                                   ? weights(p).f
+                                   : params.residual_weight.Value(maps(p).x);
+          output(c.m, f, c.k, c.j, c.i) =
+              scale * dissipation.Evaluate(p, f, {delta, c.m, c.k, c.j, c.i}, epsilon);
+        } else {
+          output(c.m, f, c.k, c.j, c.i) =
+              dissipation.Evaluate(p, f, {physical, c.m, c.k, c.j, c.i}, epsilon);
+        }
         if (precompute_jets && f == 0) {
           const auto &map = maps(p);
           const BlockPointReader reader{delta, c.m, c.k, c.j, c.i};

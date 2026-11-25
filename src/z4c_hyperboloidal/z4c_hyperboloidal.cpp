@@ -76,8 +76,10 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
     ko_angular.fade=pin->GetOrAddReal("z4c_hyperboloidal","ko_angular_fade",.91);
     ko_angular.end=pin->GetOrAddReal("z4c_hyperboloidal","ko_angular_end",.96);
   }
+  // The reference then leaves no KO rate of its own in the shells or beside scri.
+  ko_shell_residual=pin->GetOrAddBoolean("z4c_hyperboloidal","ko_shell_residual",false);
   // A checkpoint stores no dissipation state. This admits a restart whose
-  // only identity difference is the KO strength or the angular floor.
+  // only identity difference is the KO strength, floor or differenced field.
   restart_with_new_dissipation=pin->GetOrAddBoolean("z4c_hyperboloidal",
       "restart_with_new_dissipation",false);
   if (!ko_angular.Valid())
