@@ -573,9 +573,22 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
     Row row;row.target=c;
     // Coalesce repeated donor coordinates in stable native GID/index order.
     // All retained rows read evolved state; ghosts are never interpolation donors.
-    std::map<bvals::DonorPoint,Real> weights;
-    for (const auto &d:selector.Interpolate(x)) weights[d.point]+=d.weight;
-    for (const auto &[point,weight]:weights) if (weight!=0) {
+    auto donors=selector.Interpolate(x);
+    // Tensor stencils already arrive in ascending donor order without repeats.
+    // Otherwise order by donor, keeping repeats in their order of appearance.
+    bool ascending=true;
+    for (std::size_t d=1;ascending&&d<donors.size();++d)
+      ascending=donors[d-1].point<donors[d].point;
+    if (!ascending) std::stable_sort(donors.begin(),donors.end(),
+        [](const WeightedDonor &a,const WeightedDonor &b) {return a.point<b.point;});
+    row.donors.reserve(donors.size());
+    for (std::size_t first=0;first<donors.size();) {
+      const auto point=donors[first].point;
+      Real weight=0;
+      std::size_t next=first;
+      for (;next<donors.size()&&!(point<donors[next].point);++next) weight+=donors[next].weight;
+      first=next;
+      if (weight==0) continue;
       if (!selector.IsEvolved(point)) throw std::runtime_error("unevolved mapped halo donor");
       row.donors.push_back({point,weight});requests.push_back(point);
       row.remote=row.remote||mesh->rank_eachmb[point.gid]!=global_variable::my_rank;

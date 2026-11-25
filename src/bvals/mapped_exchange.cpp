@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
+#include <unordered_map>
 #include <vector>
 
 #include "bvals/mapped_exchange.hpp"
@@ -189,7 +190,19 @@ void MappedExchange::Rebuild(const std::vector<int> &local_ids,
   fields_host_ = fields;
   unique_donors_.clear();
   request_ordinals_.clear();
-  std::map<DonorPoint,int> ordinals;
+  // Ordinals follow first appearance in the request list, so the container
+  // that finds an earlier appearance does not affect them.
+  const auto hash = [](const DonorPoint &d) {
+    std::size_t h = (1469598103934665603ULL^static_cast<unsigned>(d.gid))*1099511628211ULL;
+    for (int v : {d.k,d.j,d.i}) h = (h^static_cast<unsigned>(v))*1099511628211ULL;
+    return h;
+  };
+  const auto equal = [](const DonorPoint &a, const DonorPoint &b) {
+    return a.gid==b.gid && a.k==b.k && a.j==b.j && a.i==b.i;
+  };
+  std::unordered_map<DonorPoint,int,decltype(hash),decltype(equal)>
+      ordinals(requested.size()/8+16,hash,equal);
+  request_ordinals_.reserve(requested.size());
   for (const auto &point : requested) {
     auto result = ordinals.emplace(point,CheckedCount(unique_donors_.size()));
     if (result.second) unique_donors_.push_back(point);
