@@ -228,6 +228,7 @@ struct MultirateEvolution::Impl {
   DvceArray1D<NativePoint> native;
   StageTable<Combination> reconstruction_rows, donor_rows;
   StageTable<RecordDestination> destinations;
+  StageTable<Combination> final_rows;
   struct GatherPlan {
     DvceArray1D<int> index, fields;
     DvceArray2D<Real> buffer;
@@ -1497,7 +1498,7 @@ void MultirateEvolution::Impl::CompleteInterval(Driver* driver) {
             ->Data({pack->GlobalId(m), static_cast<std::uint32_t>(steps[pack->GlobalId(m)]), -1})
             .data();
   // Copy the already accepted records exactly, without re-applying a floor ledger update.
-  const auto final_d = Device(final, "multirate final records");
+  const auto final_d = final_rows.Upload(final, "multirate final records");
   const auto points = native;
   const auto state = p.u0;
   const auto edge = p.s0;
