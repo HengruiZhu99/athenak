@@ -6,9 +6,13 @@ from pathlib import Path
 
 
 def read_header(path):
+    return parse_header(path.read_text())
+
+
+def parse_header(text):
     blocks = {}
     current = None
-    for line in path.read_text().splitlines():
+    for line in text.splitlines():
         line = line.split("#", 1)[0].strip()
         if line.startswith("<"):
             current = line.strip("<>")
