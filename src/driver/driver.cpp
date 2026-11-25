@@ -29,6 +29,7 @@
 #include "driver.hpp"
 #include "gravity/gravity.hpp"
 #include "utils/utils.hpp"
+#include "utils/phase_timer.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -489,9 +490,12 @@ void Driver::ExecuteTaskList(Mesh *pm, std::string tl, int stage) {
 
 void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool res_flag) {
   //---- Step 1.  Set conserved variables in ghost zones for all physics
+  PhaseTimer phases("driver_initialize", pmesh->ncycle);
   InitBoundaryValuesAndPrimitives(pmesh);
+  phases.Mark("boundary_values");
 
   if (UsesMultirate()) pmesh->pmb_pack->pz4c_hyperboloidal->InitializeMultirate(this);
+  phases.Mark("multirate");
 
   //---- Step 2.  Compute time step (if problem involves time evolution)
   hydro::Hydro *phydro = pmesh->pmb_pack->phydro;
@@ -518,6 +522,7 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
     pmesh->NewTimeStep(tlim);
     RefreshSTSCycleState(pmesh);
   }
+  phases.Mark("timestep");
 
   //---- Step 3.  Cycle through output Types and load data / write files.
   if (!res_flag) { // only write outputs at the beginning of the run
@@ -526,6 +531,8 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
       out->WriteOutputFile(pmesh, pin);
     }
   }
+  phases.Mark("initial_outputs");
+  phases.Report();
 
   //---- Step 4.  Initialize various counters, timers, etc.
   run_time_.reset();

@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "mesh/mesh.hpp"
+#include "utils/phase_timer.hpp"
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "z4c_hyperboloidal/central_z4c_configuration.hpp"
@@ -207,14 +208,20 @@ void Z4cHyperboloidal::ResetMeshStorage() {
   spatial_omega = {};
   chi_records=DvceArray1D<ChiRecord>(); surface_chi_records=DvceArray1D<ChiRecord>();
   nblocks=pmy_pack->nmb_thispack;
+  PhaseTimer phases("mesh_storage",pmy_pack->pmesh->ncycle);
   BuildLocalWorkLists();
+  phases.Mark("work_lists");
   AllocateStorage();
+  phases.Mark("allocate");
   BuildReferenceCache();
+  phases.Mark("reference_cache");
   const Real poison=std::numeric_limits<Real>::quiet_NaN();
   Kokkos::deep_copy(s0,poison);
   const ChiRecord empty{poison,poison,poison,poison,poison,poison,poison,poison};
   Kokkos::deep_copy(chi_records,empty);
   Kokkos::deep_copy(surface_chi_records,empty);
+  phases.Mark("poison");
+  phases.Report();
   // Install must explicitly populate every evolved field and every record,
   // including defaults for new points with no inherited history packet.
 }
@@ -222,11 +229,15 @@ void Z4cHyperboloidal::ResetMeshStorage() {
 void Z4cHyperboloidal::BuildStagePlans() {
   if (!initialized_) throw std::logic_error("Stage plans require initialized geometry");
   plans_ready_=false;
+  PhaseTimer phases("stage_plans",pmy_pack->pmesh->ncycle);
   mapped_halo_=std::make_unique<MappedHalo>();
   mapped_halo_->Rebuild(pmy_pack,origin,activity);
+  phases.Mark("mapped_halo");
   surface_exchange_=std::make_unique<SurfaceExchange>(pmy_pack,this);
+  phases.Mark("surface_exchange");
   dissipation_plan_=std::make_unique<DissipationPlan>();
   dissipation_plan_->Rebuild(*pmy_pack,*this);
+  phases.Mark("dissipation");
   std::vector<int> lookup(nblocks*storage[0]*storage[1]*storage[2],-1);
   const auto index=[&](int m,int k,int j,int i) {
     return ((m*storage[2]+k)*storage[1]+j)*storage[0]+i;
@@ -267,9 +278,12 @@ void Z4cHyperboloidal::BuildStagePlans() {
   Kokkos::realloc(rhs_status,npoints);
   Kokkos::realloc(rhs_gap,npoints);
   Kokkos::realloc(rhs_cfl,npoints);
+  phases.Mark("rhs_batches");
 
   agreement_plan_=std::make_unique<OverlapAgreementPlan>();
   agreement_plan_->Rebuild(pmy_pack,*this);
+  phases.Mark("agreement");
+  phases.Report();
 
   plans_ready_=true;
 }

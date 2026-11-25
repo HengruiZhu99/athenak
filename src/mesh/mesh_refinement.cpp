@@ -38,6 +38,7 @@
 #include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "prolongation.hpp"
 #include "restriction.hpp"
+#include "utils/phase_timer.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -225,9 +226,12 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
   auto *phyper=pmy_mesh->pmb_pack->pz4c_hyperboloidal;
   const bool refresh=phyper!=nullptr &&
       pmy_mesh->ncycle%ncyc_check_amr==0 && pmrc->NeedsAcceptedHalos();
+  PhaseTimer phases("amr_regrid",pmy_mesh->ncycle);
   if (refresh) pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
+  phases.Mark("refresh_halos");
   // first check refinement criteria
   CheckForRefinement(pmy_mesh->pmb_pack);
+  phases.Mark("criteria");
 
   // then update mesh tree if MeshBlock anywhere (on any rank) is flagged for refinement
   // indicated by the refine_flag[m] value being true (1) for any m.
@@ -258,7 +262,9 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
       staged=!std::equal(owners.begin(),owners.end(),pmy_mesh->rank_eachmb);
       if (staged) {
         pmy_mesh->RedistributeStaticBlocks(owners);
+        phases.Mark("contiguous_layout");
         pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
+        phases.Mark("contiguous_halos");
       }
     } else {
       // Flag collection below uses contiguous ownership; there is no admissible
@@ -267,6 +273,7 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     }
   }
   UpdateMeshBlockTree(nnew, ndel);
+  phases.Mark("tree_update");
 
   // Refine/derefine mesh and evolved data, set boundary conditions/timestep on new mesh
   if (nnew != 0 || ndel != 0) { // at least one (de)refinement flagged
@@ -275,13 +282,17 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     if (phyper!=nullptr && !refresh)
       pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
     if (pmy_mesh->pzoom != nullptr) pmy_mesh->pzoom->StoreZoomRegion();
+    phases.Mark("transfer_halos");
     RedistAndRefineMeshBlocks(pin, nnew, ndel);
+    phases.Mark("transfer");
 
     // Mark one mesh-topology update event (AMR and any resulting load balancing).
     pmy_mesh->MarkMeshUpdated();
 
     if (phyper!=nullptr) pmrc->SetRefinementData(pmy_mesh->pmb_pack,false,false);
+    phases.Mark("refinement_data");
     pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
+    phases.Mark("new_mesh_halos");
     if (pmy_mesh->pzoom != nullptr) pmy_mesh->pzoom->ApplyZoomRegion(pdriver);
 
     MeshBlockPack* pmbp = pmy_mesh->pmb_pack;
@@ -312,6 +323,10 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     nmb_deleted += ndel;
   }
   if (multirate && (staged || nnew || ndel)) phyper->InitializeMultirate(pdriver,true);
+  if (staged || nnew || ndel) {
+    phases.Mark("multirate");
+    phases.Report();
+  }
   if (phyper && (staged || nnew || ndel) && global_variable::my_rank==0) {
     std::cout<<(multirate ? "MULTIRATE_REGRID" : "SCHEME_A_REGRID")
              <<" cycle="<<pmy_mesh->ncycle<<" created="<<nnew
@@ -577,6 +592,7 @@ void MeshRefinement::UpdateMeshBlockTree(int &nnew, int &ndel) {
 void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, int ndel) {
   if (!pmy_mesh->pmb_pack->Contiguous())
     throw std::logic_error("Adaptive topology changes require contiguous ownership");
+  PhaseTimer phases("amr_transfer",pmy_mesh->ncycle);
   Mesh* pm = pmy_mesh;
   int old_nmb = pm->nmb_total;
   int new_nmb = old_nmb + nnew - ndel;
@@ -666,11 +682,13 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
   adm::ADM* padm = pm->pmb_pack->padm;
   auto *phyper=pm->pmb_pack->pz4c_hyperboloidal;
+  phases.Mark("new_layout");
   if (phyper!=nullptr) {
     // Preserve old owned fields/maps before the native migration starts. Only
     // standard-origin nominal-core staging enters the ordinary CC operators;
     // evolved overlap and shell/scri points are installed by the remesh owner.
     phyper->PrepareRemesh(*this);
+    phases.Mark("prepare_remesh");
     RegisterCC("hyperboloidal_nominal",phyper->RemeshNominal(),
                 phyper->RemeshCoarse(),true);
   }
@@ -804,6 +822,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   Kokkos::realloc(ncyc_since_ref, new_nmb_total);
   Kokkos::deep_copy(ncyc_since_ref, new_ncyc_since_ref);
 
+  phases.Mark("restrict_move_prolong");
   // Update data in Mesh/MeshBlockPack/MeshBlock classes with new grid properties
   delete [] pm->lloc_eachmb;
   delete [] pm->rank_eachmb;
@@ -830,10 +849,13 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   pm->pmb_pack->AddCoordinates(pin);
   pm->pmb_pack->pmb->SetNeighbors(pm->ptree, pm->rank_eachmb);
 
+  phases.Mark("new_blocks");
   if (phyper!=nullptr) {
     UnregisterCC("hyperboloidal_nominal");
     phyper->FinishRemesh(*this);
   }
+  phases.Mark("finish_remesh");
+  phases.Report();
 
   Kokkos::realloc(fc_amr_repair, new_nmb_total);
   for (int m=0; m<new_nmb_total; ++m) {

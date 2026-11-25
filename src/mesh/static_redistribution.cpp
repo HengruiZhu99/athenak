@@ -10,6 +10,7 @@
 #include "coordinates/coordinates.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/refinement_criteria.hpp"
+#include "utils/phase_timer.hpp"
 #include "z4c_hyperboloidal/restart.hpp"
 #include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 
@@ -86,8 +87,10 @@ void Mesh::RedistributeStaticBlocks(const std::vector<int> &owners) {
   for (int gid=0;gid<nmb_total;++gid) if (owners[gid]==rank) {
     new_slot[gid]=static_cast<int>(new_ids.size());new_ids.push_back(gid);
   }
+  PhaseTimer phases("static_redistribution",ncycle);
   HostArray2D<Real> old_records;
   z4c_hyperboloidal::restart::Pack(*state,old_records);
+  phases.Mark("pack");
   const auto scalars=old_records.extent(1);
   RequireRedistribution(scalars<=static_cast<std::size_t>(std::numeric_limits<int>::max()),
       "Static migration block record exceeds MPI count limit");
@@ -122,6 +125,7 @@ void Mesh::RedistributeStaticBlocks(const std::vector<int> &owners) {
   MPI_Waitall(static_cast<int>(requests.size()),requests.data(),MPI_STATUSES_IGNORE);
   MPI_Comm_free(&migration);
 #endif
+  phases.Mark("transfer");
   std::copy(owners.begin(),owners.end(),rank_eachmb);
   std::copy(counts.begin(),counts.end(),nmb_eachrank);
   std::fill(gids_eachrank,gids_eachrank+global_variable::nranks,nmb_total);
@@ -134,8 +138,12 @@ void Mesh::RedistributeStaticBlocks(const std::vector<int> &owners) {
   pack->AddMeshBlocks(parameter_input_);pack->AddCoordinates(parameter_input_);
   pack->pmb->SetNeighbors(ptree,rank_eachmb);
   MarkMeshUpdated();
+  phases.Mark("new_blocks");
   state->RebuildAfterRedistribution(new_records);
+  phases.Mark("rebuild_state");
   if (adaptive) pmr->pmrc->SetRefinementData(pack,false,false);
+  phases.Mark("refinement_data");
+  phases.Report();
   std::ostringstream saved;
   for (std::size_t gid=0;gid<owners.size();++gid) {if(gid)saved<<',';saved<<owners[gid];}
   parameter_input_->SetString("multirate","block_owners",saved.str());

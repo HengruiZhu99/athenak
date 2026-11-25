@@ -14,6 +14,7 @@
 #include <string>
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
+#include "utils/phase_timer.hpp"
 #include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 
 namespace z4c_hyperboloidal {
@@ -110,6 +111,7 @@ std::array<Real,6> VisitAgreementStencils(const Mesh &mesh,const NativeDonorSele
 void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p) {
   batches_.clear();
   Kokkos::Timer build_timer;
+  PhaseTimer phases("agreement_plan",pack->pmesh->ncycle);
   const auto &mesh=*pack->pmesh;const int n=p.n[0],o=p.origin;
   kappa_=p.agreement.kappa;
   NativeDonorSelector selector(mesh,o,p.activity);
@@ -204,6 +206,7 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
 
       add_row(row,sample,sample_weight);
   });
+  phases.Mark("stencils");
   dependency_edges_.assign(graph.begin(),graph.end());
   agreement_blocks_.assign(group.begin(),group.end());
   if(!global_rows)throw std::runtime_error("full overlap contains no samples");
@@ -220,6 +223,7 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   std::vector<int> fields;for(int f=0;f<Fields::count;++f)
     if(Fields::Independent(f))fields.push_back(f);
   exchange_.Rebuild(pack,requests,fields);
+  phases.Mark("exchange");
   for(auto &e:entries)e.ordinal=exchange_.RequestOrdinals()[e.ordinal];
   std::vector<Target> targets;std::vector<Transpose> adjacency;
   for(const auto &item:transpose) {
@@ -253,6 +257,8 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   Copy(targets,targets_,"agreement recipients");Copy(adjacency,transpose_,"agreement transpose");
   Copy(fields,fields_,"agreement fields");
   discrepancy_ = DvceArray2D<Real>("agreement discrepancies", rows.size(), 32);
+  phases.Mark("transpose_device");
+  phases.Report();
   // Initialization/rebuild receipt, never a stage collective or device fence.
   std::ostringstream receipt;receipt<<std::setprecision(17)
     <<"AGREEMENT_PLAN rank="<<global_variable::my_rank<<" active_points="<<p.npoints

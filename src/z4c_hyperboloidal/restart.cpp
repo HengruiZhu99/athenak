@@ -19,6 +19,7 @@
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/chart_atlas.hpp"
+#include "utils/phase_timer.hpp"
 #include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 
 namespace z4c_hyperboloidal {
@@ -345,6 +346,7 @@ void ReadRecords(IOWrapper &file, Mesh &mesh, IOWrapperSizeT offset,
                  IOWrapperSizeT stride, bool per_rank) {
   auto &p=*mesh.pmb_pack->pz4c_hyperboloidal;
   const auto count=RecordScalars(p);
+  PhaseTimer phases("restart_read",mesh.ncycle);
   HostArray2D<Real> host("hyperboloidal restart input",p.nblocks,count);
   int minimum=mesh.nmb_eachrank[0], maximum=minimum;
   for (int r=1;r<global_variable::nranks;++r) {
@@ -365,8 +367,12 @@ void ReadRecords(IOWrapper &file, Mesh &mesh, IOWrapperSizeT offset,
   RequireAll(good,"truncated or unreadable block payload");
   // References are established before restoring state; no reference initializer is
   // allowed to run after unpacking the accepted solution and cumulative records.
+  phases.Mark("read_records");
   p.InitializeReference();
+  phases.Mark("reference");
   Unpack(p,host);
+  phases.Mark("unpack");
+  phases.Report();
 }
 }  // namespace restart
 }  // namespace z4c_hyperboloidal

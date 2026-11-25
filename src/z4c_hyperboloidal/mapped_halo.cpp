@@ -22,6 +22,7 @@
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
+#include "utils/phase_timer.hpp"
 #include "z4c_hyperboloidal/fields.hpp"
 
 namespace z4c_hyperboloidal {
@@ -380,7 +381,7 @@ std::vector<WeightedDonor> NativeDonorSelector::Spherical(const Real x[3],int wi
 }
 
 void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
-                          std::vector<bvals::DonorPoint> &requests) {
+                          std::vector<bvals::DonorPoint> &requests,PhaseTimer &phases) {
   NativeDonorSelector selector(*pack->pmesh,origin,activity_);
   auto *mesh=pack->pmesh;const int ng=mesh->mb_indcs.ng,n=selector.Cells();
   if (ng!=4) throw std::invalid_argument("mapped halo requires four difference ghosts");
@@ -408,6 +409,7 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
           }
         }
   }
+  phases.Mark("stencil_scan");
   for (auto &[key,dependency]:dependencies) {
     const auto c=Point(key);const int gid=pack->GlobalId(c.m);const auto &map=selector.Map(gid);
     const Real q[3]={(c.i-origin+map.node_offset[0])/n,
@@ -432,6 +434,7 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
     if (TensorAxes(row, selector, x, axes)) tensor_weights_.emplace(rows_.size(), axes);
     dependency=row.remote?2:1;rows_.push_back(std::move(row));
   }
+  phases.Mark("donor_rows");
   for (auto c:evolved) {
     int dependency=0;
     for (const auto &d:offsets) {
@@ -443,6 +446,7 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
     else if (dependency&1) local_points_.push_back(c);
     else interior_points_.push_back(c);
   }
+  phases.Mark("classify");
   if (requests.size()>std::size_t(std::numeric_limits<int>::max())
       ||rows_.size()>std::size_t(std::numeric_limits<int>::max()/Fields::count))
     throw std::overflow_error("mapped halo plan exceeds device integer indexing");
@@ -453,10 +457,11 @@ void MappedHalo::Rebuild(MeshBlockPack *pack,int origin,ActivityPolicy activity)
   ready_=false;
   std::vector<bvals::DonorPoint> requests;
   std::string error;
+  PhaseTimer phases("mapped_halo",pack && pack->pmesh ? pack->pmesh->ncycle : 0);
   try {
     if (pack==nullptr || pack->pmesh==nullptr)
       throw std::invalid_argument("mapped halo requires a native MeshBlockPack");
-    BuildRows(pack,origin,requests);
+    BuildRows(pack,origin,requests,phases);
   } catch (const std::exception &e) {error=e.what();}
   int failed=!error.empty();
 #if MPI_PARALLEL_ENABLED
@@ -471,8 +476,10 @@ void MappedHalo::Rebuild(MeshBlockPack *pack,int origin,ActivityPolicy activity)
   std::vector<int> fields;
   for (int f=0;f<Fields::count;++f) if (Fields::Independent(f)) fields.push_back(f);
   residual_exchange_.Rebuild(pack,requests,fields);
+  phases.Mark("residual_exchange");
   std::vector<int> physical_fields(Fields::count);std::iota(physical_fields.begin(),physical_fields.end(),0);
   physical_exchange_.Rebuild(pack,requests,physical_fields);
+  phases.Mark("physical_exchange");
   if (residual_exchange_.RequestOrdinals()!=physical_exchange_.RequestOrdinals())
     throw std::logic_error("mapped residual/physical donor ordinals disagree");
   std::vector<DeviceRow> local_rows,remote_rows;std::vector<DeviceEntry> entries;
@@ -499,6 +506,8 @@ void MappedHalo::Rebuild(MeshBlockPack *pack,int origin,ActivityPolicy activity)
   CopyDevice(local_rows,local_rows_,"mapped_local_rows");
   CopyDevice(remote_rows,remote_rows_,"mapped_remote_rows");
   CopyDevice(entries,entries_,"mapped_halo_entries");
+  phases.Mark("device_rows");
+  phases.Report();
   packed_=received_=false;
   ready_=true;
 }

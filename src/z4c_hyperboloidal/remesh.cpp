@@ -16,6 +16,7 @@
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
+#include "utils/phase_timer.hpp"
 #include "z4c_hyperboloidal/cartesian_algebraic_chart.hpp"
 #include "z4c_hyperboloidal/mapped_halo.hpp"
 #include "z4c_hyperboloidal/surface_remesh.hpp"
@@ -483,15 +484,25 @@ void Z4cHyperboloidal::PrepareRemesh(MeshRefinement &refinement) {
   remesh_->Prepare(*pmy_pack,*this,refinement);
 }
 void Z4cHyperboloidal::RebuildAfterRedistribution(const HostArray2D<Real> &records) {
+  PhaseTimer phases("redistribution_state",pmy_pack->pmesh->ncycle);
   ClearActiveBlocks();
   ResetMeshStorage();
+  phases.Mark("mesh_storage");
   restart::Unpack(*this,records);
+  phases.Mark("unpack");
   initialized_=true;
   BuildStagePlans();
+  phases.Mark("stage_plans");
+  phases.Report();
 }
 void Z4cHyperboloidal::FinishRemesh(MeshRefinement &) {
   RequireAll(bool(remesh_),"remesh finish has no prepared state");
-  ResetMeshStorage();remesh_->Install(*this);initialized_=true;remesh_.reset();
+  PhaseTimer phases("finish_remesh",pmy_pack->pmesh->ncycle);
+  ResetMeshStorage();
+  phases.Mark("mesh_storage");
+  remesh_->Install(*this);initialized_=true;remesh_.reset();
+  phases.Mark("install");
+  phases.Report();
 }
 DvceArray5D<Real> &Z4cHyperboloidal::RemeshNominal() {
   if(!remesh_)throw std::logic_error("no native nominal transfer staging");

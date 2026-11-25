@@ -40,6 +40,7 @@
 #include "outputs/outputs.hpp"
 #include "driver/driver.hpp"
 #include "utils/utils.hpp"
+#include "utils/phase_timer.hpp"
 
 // MPI/OpenMP headers
 #if MPI_PARALLEL_ENABLED
@@ -238,6 +239,7 @@ int main(int argc, char *argv[]) {
   // Start the wall clock timer. This is done here rather than in the Driver to ensure
   // that the time taken in ProblemGenerator is also captured.
   Kokkos::Timer timer;
+  PhaseTimer startup("startup", 0);
 
   //--- Step 3. --------------------------------------------------------------------------
   // Construct ParameterInput object and load data either from restart or input file.
@@ -326,6 +328,7 @@ int main(int argc, char *argv[]) {
     pinput->SetString("mesh_refinement", "refinement", "none");
   }
 
+  startup.Mark("input");
   Mesh* pmesh = new Mesh(pinput);
   if (!res_flag) {
     pmesh->BuildTreeFromScratch(pinput);
@@ -333,6 +336,7 @@ int main(int argc, char *argv[]) {
     pmesh->BuildTreeFromRestart(pinput, restartfile, single_file_per_rank,
                                 restart_location_version);
   }
+  startup.Mark("mesh_tree");
 
   //  If code was run with -m option, write mesh structure to file and quit.
   if (marg_flag) {
@@ -361,6 +365,7 @@ int main(int argc, char *argv[]) {
     // Initialize cyclic zoom data only if enabled
     pmesh->AddCyclicZoom(pinput);
   }
+  startup.Mark("physics");
 
   if (!res_flag) {
     // set ICs using ProblemGenerator constructor for new runs
@@ -373,6 +378,7 @@ int main(int argc, char *argv[]) {
                                                      single_file_per_rank);
     restartfile.Close(single_file_per_rank);
   }
+  startup.Mark(res_flag ? "restart_read" : "initial_data");
 
   //--- Step 6. --------------------------------------------------------------------------
   // Construct Driver and Outputs. Actual outputs (including initial conditions) are made
@@ -408,7 +414,10 @@ int main(int argc, char *argv[]) {
   // Optionally start the WatchDog
 
   if (wdog_flag) WatchDog(wdog_timeout);
+  startup.Mark("driver_outputs");
   pdriver->Initialize(pmesh, pinput, pout, res_flag);
+  startup.Mark("driver_initialize");
+  startup.Report();
   pdriver->Execute(pmesh, pinput, pout, wdog_flag);
   pdriver->Finalize(pmesh, pinput, pout);
 

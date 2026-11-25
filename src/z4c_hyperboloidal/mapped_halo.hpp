@@ -16,6 +16,7 @@
 
 class Mesh;
 class MeshBlockPack;
+class PhaseTimer;
 
 namespace z4c_hyperboloidal {
 
@@ -135,7 +136,7 @@ class MappedHalo {
   DvceArray1D<DeviceEntry> entries_;
   bool ready_=false, packed_=false, received_=false;
   void BuildRows(MeshBlockPack *pack, int origin,
-                 std::vector<bvals::DonorPoint> &requests);
+                 std::vector<bvals::DonorPoint> &requests, PhaseTimer &phases);
  public:  // nvcc requires public access for device-lambda types and functions
   void Fill(const DvceArray1D<DeviceRow> &rows, const DvceArray5D<Real> &residual,
             const DvceArray5D<Real> &physical,

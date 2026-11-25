@@ -19,6 +19,7 @@
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/multirate_load_balance.hpp"
+#include "utils/phase_timer.hpp"
 #include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "z4c_hyperboloidal/mapped_halo.hpp"
 #include "z4c_hyperboloidal/surface_exchange.hpp"
@@ -286,8 +287,11 @@ struct MultirateEvolution::Impl {
     policy.review_interval = pin->GetInteger("multirate", "review_interval");
     replay_path = pin->GetString("multirate", "replay_file");
     log_path = pin->GetString("multirate", "partition_log");
+    PhaseTimer phases("multirate_init", mesh->ncycle);
     BuildGraphAndLevels();
+    phases.Mark("graph_levels");
     BuildCostGraph();
+    phases.Mark("cost_graph");
     if (balance == "auto" && schedule->MaxLevel() > 0 &&
         global_variable::nranks % options.ranks_per_gpu == 0) {
       int fine_blocks = 0;
@@ -342,13 +346,18 @@ struct MultirateEvolution::Impl {
         std::cout << "MULTIRATE_PARTITION cycle=" << mesh->ncycle << " candidate=" << initial.selected_candidate
                   << " predicted_seconds=" << initial.score.seconds << "\n";
     }
+    phases.Mark("partition");
     if (owner != Owners()) {
       const auto start = Clock::now();
       mesh->RedistributeStaticBlocks(owner);
       migration_cost = Seconds(start);
+      phases.Mark("migration");
       p.InitializeBoundaryValues(driver);
+      phases.Mark("boundary_values");
     }
     BuildLocal();
+    phases.Mark("local_plan");
+    phases.Report();
     pin->SetString("multirate", "block_owners", Csv(owner));
     if (balance == "auto")
       pin->SetInteger("multirate", "partition_ranks", global_variable::nranks);
@@ -427,6 +436,7 @@ void MultirateEvolution::Impl::BuildGraphAndLevels() {
     blocks[g] = {g,       m.face < 0, mesh->lloc_eachmb[g].level - mesh->root_level,
                  m.layer, -1,         m.outer_surface ? 0 : -1};
   }
+  PhaseTimer phases("multirate_graph", mesh->ncycle);
   std::map<std::pair<int, int>, std::set<Point>> dependencies;
   std::set<int> scri_support;
   auto add = [&](int recipient, const bvals::DonorPoint& point, int kind) {
@@ -440,6 +450,7 @@ void MultirateEvolution::Impl::BuildGraphAndLevels() {
   };
   for (const auto& r : p.mapped_halo_->Rows())
     for (const auto& d : r.donors) add(pack->GlobalId(r.target.m), d.point, 0);
+  phases.Mark("halo_donors");
   const auto rows =
       Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), p.surface_exchange_->Rows());
   const auto terms =
@@ -475,8 +486,10 @@ void MultirateEvolution::Impl::BuildGraphAndLevels() {
           scri_support.insert(d.gid);
         }
     }
+  phases.Mark("surface_donors");
   for (const auto& recipient : p.agreement_plan_->MultirateDonors())
     for (const auto& donor : recipient.second) add(recipient.first, donor, 0);
+  phases.Mark("agreement_donors");
   std::vector<int> local;
   for (const auto& entry : dependencies)
     local.insert(local.end(),
@@ -492,6 +505,7 @@ void MultirateEvolution::Impl::BuildGraphAndLevels() {
   const auto support = AllIntegers(std::vector<int>(scri_support.begin(), scri_support.end()));
   for (int g : support) blocks[g].scri_group = 0;
   for (int gid : p.agreement_plan_->AgreementBlocks()) blocks.at(gid).agreement_group = 0;
+  phases.Mark("gather_edges");
   const bool uniform = pin->GetOrAddBoolean("multirate", "uniform_reference", false);
   auto input = pin->GetOrAddString("multirate", "spherical_levels", "auto");
   std::vector<int> spherical(regions);
@@ -543,6 +557,7 @@ void MultirateEvolution::Impl::BuildGraphAndLevels() {
   MPI_Allreduce(MPI_IN_PLACE, rates.data(), total, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
 #endif
   if (invalid) throw std::runtime_error("Invalid multirate characteristic bound on accepted mesh");
+  phases.Mark("stability_rates");
   auto required = [&](int gid) {
     const double ratio =
         std::max(p.requested_dt * rates[gid] / max_cfl,
@@ -644,6 +659,8 @@ void MultirateEvolution::Impl::BuildGraphAndLevels() {
     std::cout << "Multirate agreement participants=" << p.agreement_plan_->AgreementBlocks().size()
               << " Cartesian promotions=" << assignment.agreement_promotions.size()
               << " spherical levels=" << Csv(spherical) << "\n";
+  phases.Mark("levels");
+  phases.Report();
 }
 
 void MultirateEvolution::Impl::BuildCostGraph() {
@@ -760,6 +777,7 @@ void MultirateEvolution::Impl::SetPhaseCosts(const bal::BatchCostModel& profile)
   }
 }
 void MultirateEvolution::Impl::BuildLocal() {
+  PhaseTimer phases("multirate_local", mesh->ncycle);
   peer_profile_pending = pin->GetBoolean("multirate", "profile_peer_bytes");
   active_layouts.clear();
   active_native_indices = {};
@@ -803,7 +821,9 @@ void MultirateEvolution::Impl::BuildLocal() {
     donor_physical=scratch("multirate donor physical");
     donor_residual=scratch("multirate donor residual");
   }
+  phases.Mark("requests");
   exchange = std::make_unique<transport::RecordExchange>(pack, owned, requested, Fields::count);
+  phases.Mark("record_exchange");
   for (int q = 0; q < p.npoints; ++q) {
     const auto c = p.points.h_view(q);
     const Point point{pack->GlobalId(c.m), c.k, c.j, c.i, 0};
@@ -843,6 +863,7 @@ void MultirateEvolution::Impl::BuildLocal() {
     donor_host.push_back(meta);
   }
   donors = Device(donor_host, "multirate donor geometry");
+  phases.Mark("donor_geometry");
   for (int m = 0; m < p.nblocks; ++m) {
     const int gid = pack->GlobalId(m);
     auto coupled = neighbors[gid];
@@ -889,8 +910,12 @@ void MultirateEvolution::Impl::BuildLocal() {
     for (const auto& block : graph.blocks)
       groups[block.gid] = block.time_level;
   }
+  phases.Mark("tasks");
   exchange->CompileReceives(consumers, groups);
+  phases.Mark("compile_receives");
   exchange->PreparePublicationBuffers();
+  phases.Mark("publication_buffers");
+  phases.Report();
 }
 Combination MultirateEvolution::Impl::Combine(size_t stage, int gid) const {
   const auto& r = schedule->Row(stage, levels[gid]);

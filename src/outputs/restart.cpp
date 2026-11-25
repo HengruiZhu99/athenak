@@ -34,6 +34,7 @@
 #include "z4c/horizon_dump.hpp"
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
+#include "utils/phase_timer.hpp"
 //#include "outputs.hpp"
 
 //----------------------------------------------------------------------------------------
@@ -175,6 +176,7 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     nadm = padm->nadm;
   }
   bool single_file_per_rank = out_params.single_file_per_rank;
+  PhaseTimer phases("restart_write", pm->ncycle);
   std::string fname;
   if (single_file_per_rank) {
     // Generate a directory and filename for each rank
@@ -681,10 +683,12 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     myoffset = offset_myrank;
   }
 
+  phases.Mark("header");
   if (phyper != nullptr) {
     z4c_hyperboloidal::restart::WriteRecords(resfile,*pm,hyperboloidal_records,
         offset_myrank,data_size,single_file_per_rank);
   }
+  phases.Mark("hyperboloidal_records");
 
   //--- STEP 5.  Write cyclic zoom restart data if enabled
   if (pm->pzoom != nullptr && pm->pzoom->write_rst) {
@@ -696,6 +700,8 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
 
   // close file, clean up
   resfile.Close(single_file_per_rank);
+  phases.Mark("close");
+  phases.Report();
 
   return;
 }
