@@ -262,8 +262,7 @@ target_include_directories(athena PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 # The pinned N12 campaign disables fused multiply-add contraction. Preserve
 # that arithmetic for the migrated equations, initialization and mapped plans;
 # leave existing AthenaK physics compilation unchanged.
-if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
-  set_source_files_properties(
+set(HYPERBOLOIDAL_PINNED_SOURCES
       outputs/scri.cpp
       mesh/chart_atlas.cpp
       driver/multirate.cpp
@@ -284,6 +283,13 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
         z4c_hyperboloidal/overlap_agreement.cpp
       z4c_hyperboloidal/surface_exchange.cpp
       z4c_hyperboloidal/remesh.cpp
-      z4c_hyperboloidal/surface_remesh.cpp
+      z4c_hyperboloidal/surface_remesh.cpp)
+if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
+  set_source_files_properties(${HYPERBOLOIDAL_PINNED_SOURCES}
       PROPERTIES COMPILE_OPTIONS "-ffp-contract=off")
+endif()
+# nvcc contracts device arithmetic separately from its host compiler.
+if(Kokkos_ENABLE_CUDA)
+  set_property(SOURCE ${HYPERBOLOIDAL_PINNED_SOURCES}
+      APPEND PROPERTY COMPILE_OPTIONS "--fmad=false")
 endif()
