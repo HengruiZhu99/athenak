@@ -69,9 +69,14 @@ class RecordExchange {
   using Publication = std::pair<RecordKey,DvceArray1D<Real>>;
   // Pack into individually owned GPU-aware MPI buffers for the destination peers.
   void PublishBatch(const std::vector<Publication> &batch);
-  // Reuse completed sends of the same length up to a rank-local byte budget.
+  // Send packets are spans of grow-only device arenas; a span is reused when its
+  // send completes. The byte count is the size of each added arena; zero selects
+  // one allocation per packet.
   void SetSendCacheBytes(std::size_t bytes);
-  // Reuse posted-receive allocations only after MPI and all record aliases release them.
+  // Posted receives fill grow-only device slabs; a slab is reused only after MPI
+  // and all record aliases release it. The byte budget sets the slab size; zero
+  // selects one allocation per packet. Arenas and slabs persist for the process:
+  // an exchange built later adopts them.
   void SetReceiveCacheBytes(std::size_t bytes);
   bool Has(const RecordKey &key) const;
   DvceArray1D<Real> Data(const RecordKey &key) const;

@@ -59,6 +59,34 @@ std::vector<int> ExchangeRequests(const std::vector<std::vector<int>>& requests,
            "multirate sparse request exchange failed");
   return receive;
 }
+// Device chunks that back MPI packets outlive the exchange that allocated them. An
+// exchange rebuilt after a regrid or a block migration adopts the chunks of its
+// predecessor, so that a GPU-aware MPI keeps seeing the same few address ranges.
+std::vector<DvceArray1D<Real>>& ChunkStash() {
+  static std::vector<DvceArray1D<Real>> stash;
+  static bool hooked = false;
+  if (!hooked) {
+    Kokkos::push_finalize_hook([]() { stash.clear(); });
+    hooked = true;
+  }
+  return stash;
+}
+// Smallest idle stashed chunk that holds the request, else a new allocation.
+DvceArray1D<Real> TakeChunk(std::size_t required, std::size_t preferred, const char *label) {
+  auto& stash = ChunkStash();
+  auto best = stash.end();
+  for (auto it = stash.begin(); it != stash.end(); ++it)
+    if (it->use_count() == 1 && it->extent(0) >= required &&
+        (best == stash.end() || it->extent(0) < best->extent(0))) best = it;
+  if (best != stash.end()) {
+    auto chunk = *best;
+    stash.erase(best);
+    return chunk;
+  }
+  return DvceArray1D<Real>(
+      Kokkos::view_alloc(Kokkos::WithoutInitializing, std::string(label)),
+      std::max(required, preferred));
+}
 #endif
 }  // namespace
 
@@ -77,6 +105,8 @@ struct RecordExchange::Impl {
   // Independent allocation trackers allow different donors to release their
   // records separately. Two base slots cover the old and newly accepted state.
   std::map<int, std::array<DvceArray1D<Real>, 6>> publication_buffers;
+  // Grow-only spares for records whose previous publication is still held.
+  std::map<int, std::array<std::vector<DvceArray1D<Real>>, 6>> publication_spares;
   int Width(const RecordKey &key) const { return key.stage<0 ? fields : slope_fields; }
   std::vector<int> owners, steps;
   std::map<int,std::vector<Point>> owned, layout;
@@ -86,6 +116,7 @@ struct RecordExchange::Impl {
   std::set<RecordKey> published, received;
   std::uint64_t epoch = 0;
   bool active = false, finished = true, used_epoch = false;
+  int finished_epochs = 0;
   std::size_t expected_receives = 0, completed_receives = 0, expected_publications = 0;
   RecordExchange::Statistics stats;
   std::uint64_t record_bytes=0, packet_bytes=0;
@@ -109,8 +140,9 @@ struct RecordExchange::Impl {
     std::size_t scalars = 0;
   };
   static constexpr auto separate_allocation = std::numeric_limits<std::size_t>::max();
+  static constexpr int stash_trim_epochs = 8;
   struct Pending {
-    std::size_t send_offset = separate_allocation;
+    std::size_t send_offset = separate_allocation, send_arena = 0;
     MPI_Request request = MPI_REQUEST_NULL;
     DvceArray1D<Real> packet;
     int peer = 0, tag = 0;
@@ -121,21 +153,38 @@ struct RecordExchange::Impl {
   std::vector<DvceArray1D<Real>> pack_sources;
   // Subviews keep a stable device allocation behind sends of different sizes.
   // MPI may cache the allocation's device handle across packets and peers.
-  DvceArray1D<Real> send_arena;
-  std::map<std::size_t, std::size_t> free_spans;
-  std::size_t used_end = 0;
+  // The arenas only grow: a packet that fits no free span adds an arena, so
+  // steady intervals neither allocate nor free device memory.
+  struct SendArena {
+    DvceArray1D<Real> data;
+    std::map<std::size_t, std::size_t> free_spans;
+    std::size_t used_end = 0;
+  };
+  std::vector<SendArena> send_arenas;
+  std::size_t send_arena_scalars = 0;  // growth quantum; zero disables the arenas
   void AllocateSend(Pending& send, std::size_t size) {
-    for (auto it = free_spans.begin(); it != free_spans.end(); ++it) {
-      if (it->second < size) continue;
-      const auto offset = it->first;
-      const auto remaining = it->second - size;
-      free_spans.erase(it);
-      if (remaining) free_spans.emplace(offset + size, remaining);
-      send.send_offset = offset;
-      send.packet = Kokkos::subview(send_arena, std::make_pair(offset, offset + size));
-      if (offset + size <= used_end) ++stats.reused_send_packets;
-      used_end = std::max(used_end, offset + size);
-      return;
+    for (std::size_t attempt = 0; attempt < 2; ++attempt) {
+      for (std::size_t a = 0; a < send_arenas.size(); ++a) {
+        auto& arena = send_arenas[a];
+        for (auto it = arena.free_spans.begin(); it != arena.free_spans.end(); ++it) {
+          if (it->second < size) continue;
+          const auto offset = it->first;
+          const auto remaining = it->second - size;
+          arena.free_spans.erase(it);
+          if (remaining) arena.free_spans.emplace(offset + size, remaining);
+          send.send_offset = offset;
+          send.send_arena = a;
+          send.packet = Kokkos::subview(arena.data, std::make_pair(offset, offset + size));
+          if (offset + size <= arena.used_end) ++stats.reused_send_packets;
+          arena.used_end = std::max(arena.used_end, offset + size);
+          return;
+        }
+      }
+      if (!send_arena_scalars || !size) break;
+      SendArena arena;
+      arena.data = TakeChunk(size, send_arena_scalars, "multirate send arena");
+      arena.free_spans.emplace(0, arena.data.extent(0));
+      send_arenas.push_back(std::move(arena));
     }
     send.packet = DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
                                                        "multirate send packet"), size);
@@ -143,6 +192,7 @@ struct RecordExchange::Impl {
   // A span can be written again as soon as its nonblocking send completes.
   void RetireSend(const Pending& send) {
     if (send.send_offset == separate_allocation) return;
+    auto& free_spans = send_arenas[send.send_arena].free_spans;
     auto offset = send.send_offset;
     auto size = send.packet.extent(0);
     auto next = free_spans.lower_bound(offset);
@@ -161,45 +211,52 @@ struct RecordExchange::Impl {
   }
   // A completed receive becomes a zero-copy record. A managed View or slice
   // held by any consumer keeps the allocation busy, even across an epoch.
+  // Packets fill successive slices of a slab; a slab is rewound only when all
+  // MPI packets, stage records and external views let go. The slab set only
+  // grows: a packet that fits no idle slab adds one, so steady intervals
+  // neither allocate nor free device memory. Records of one lifetime class
+  // (the donor's step count) share slabs, so short-lived fine-level records
+  // do not wait for a coarse record that stays live for the whole interval.
   struct ReceiveSlab {
     DvceArray1D<Real> data;
     std::size_t next = 0, used_end = 0;
+    int lifetime = -1;
   };
   std::vector<ReceiveSlab> receive_slabs;
-  std::size_t current_slab = 0;
-  // Unplanned packets keep the individual allocation cache.
-  std::map<std::size_t,std::vector<DvceArray1D<Real>>> receive_buffers;
-  std::size_t receive_cache_limit=0, receive_cache_bytes=0;
-  DvceArray1D<Real> ReceiveBuffer(std::size_t size) {
-    for (std::size_t attempt = 0; attempt < receive_slabs.size(); ++attempt) {
-      auto& slab = receive_slabs[current_slab];
-      if (slab.data.use_count() == 1) slab.next = 0;
-      if (size <= slab.data.extent(0) - slab.next) {
-        const auto offset = slab.next;
-        slab.next += size;
-        if (offset < slab.used_end) ++stats.reused_receive_packets;
-        slab.used_end = std::max(slab.used_end, slab.next);
-        return Kokkos::subview(slab.data, std::make_pair(offset, slab.next));
-      }
-      current_slab = (current_slab + 1) % receive_slabs.size();
-    }
-    if (receive_cache_limit && !planned) {
-      auto found=receive_buffers.find(size);
-      if (found!=receive_buffers.end()) {
-        for (const auto& buffer:found->second) if (buffer.use_count()==1) {
-          ++stats.reused_receive_packets;
-          return buffer;
-        }
+  std::map<int, std::size_t> current_slab;  // by lifetime class
+  std::size_t receive_cache_limit = 0;
+  std::size_t receive_slab_scalars = 0;  // growth quantum; zero disables the slabs
+  DvceArray1D<Real> ReceiveBuffer(std::size_t size, int lifetime) {
+    if (!receive_slab_scalars || !size)
+      return DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
+          "multirate posted donor record"), size);
+    auto slice = [&](ReceiveSlab& slab) {
+      const auto offset = slab.next;
+      slab.next += size;
+      if (offset < slab.used_end) ++stats.reused_receive_packets;
+      slab.used_end = std::max(slab.used_end, slab.next);
+      return DvceArray1D<Real>(Kokkos::subview(slab.data, std::make_pair(offset, slab.next)));
+    };
+    const auto current = current_slab.find(lifetime);
+    if (current != current_slab.end()) {
+      auto& slab = receive_slabs[current->second];
+      if (slab.lifetime == lifetime) {
+        if (slab.data.use_count() == 1) slab.next = 0;
+        if (size <= slab.data.extent(0) - slab.next) return slice(slab);
       }
     }
-    DvceArray1D<Real> buffer(Kokkos::view_alloc(Kokkos::WithoutInitializing,
-        "multirate posted donor record"),size);
-    const auto bytes=size*sizeof(Real);
-    if (!planned && bytes && bytes<=receive_cache_limit-receive_cache_bytes) {
-      receive_buffers[size].push_back(buffer);
-      receive_cache_bytes+=bytes;
+    for (std::size_t i = 0; i < receive_slabs.size(); ++i) {
+      auto& slab = receive_slabs[i];
+      if (slab.data.use_count() != 1 || size > slab.data.extent(0)) continue;
+      slab.next = 0;
+      slab.lifetime = lifetime;
+      current_slab[lifetime] = i;
+      return slice(slab);
     }
-    return buffer;
+    receive_slabs.push_back({TakeChunk(size, receive_slab_scalars, "multirate receive slab")});
+    receive_slabs.back().lifetime = lifetime;
+    current_slab[lifetime] = receive_slabs.size() - 1;
+    return slice(receive_slabs.back());
   }
   // Each MPI source/destination pair has a dense tag namespace. Two banks
   // distinguish adjacent epochs without copying a header back from the GPU.
@@ -238,12 +295,12 @@ struct RecordExchange::Impl {
   };
   struct OpenPacket { Pending send; PacketGather gather; std::size_t written=0; };
   std::map<std::pair<int,int>,OpenPacket> open_packets;
-  // Neighbor messages have a static layout, but different receiving records
-  // can stay live across stages. Fill successive slices of a slab, then reuse
-  // the slab only when all MPI packets, stage records and external views let go.
+  // Neighbor messages have a static layout. The receive budget sets the slab
+  // size: the largest packet, or the budget shared by two outstanding receives
+  // per peer when that is larger.
   void PrepareReceiveSlabs() {
     const std::size_t capacity = receive_cache_limit / sizeof(Real);
-    if (!receive_slabs.empty() || !capacity || windows.empty()) return;
+    if (receive_slab_scalars || !capacity) return;
     std::size_t total = 0, largest = 0;
     std::set<int> peers;
     for (const auto& [channel, window] : windows) {
@@ -253,17 +310,10 @@ struct RecordExchange::Impl {
         largest = std::max(largest, slot.scalars);
       }
     }
-    // Two receives can be outstanding per communication channel. Size the
-    // backing storage for the largest packet and two slabs per peer
-    // when the budget permits. Oversized packets use independent allocations.
-    const auto slab_size = std::max(std::min(largest, total),
+    // Probed packets have no static layout.
+    if (peers.empty()) { receive_slab_scalars = (capacity + 7)/8; return; }
+    receive_slab_scalars = std::max(std::min(largest, total),
                                     (total + 2*peers.size() - 1)/(2*peers.size()));
-    while (total) {
-      const auto size = std::min(total, slab_size);
-      receive_slabs.push_back({DvceArray1D<Real>(Kokkos::view_alloc(
-          Kokkos::WithoutInitializing, "multirate receive slab"), size)});
-      total -= size;
-    }
   }
   void PostNext(Channel channel) {
     auto &window=windows.at(channel);
@@ -273,13 +323,28 @@ struct RecordExchange::Impl {
     pending.receive_slot=&slot; pending.channel=channel; pending.peer=channel.first;
     pending.tag=slot.tag+static_cast<int>(epoch%2)*tag_stride;
     const auto scalars=slot.scalars;
-    pending.packet=ReceiveBuffer(scalars);
+    pending.packet=ReceiveBuffer(scalars,slot.keys.empty() ? 0 : steps[slot.keys.front().gid]);
     AllocatePacket(scalars); stats.received_bytes+=scalars*sizeof(Real);
     CheckMPI(MPI_Irecv(pending.packet.data(),Count(scalars),MPI_ATHENA_REAL,pending.peer,
                        pending.tag,comm,&pending.request),"multirate preposted receive failed");
     receives.push_back(std::move(pending));
   }
 
+#endif
+
+#if MPI_PARALLEL_ENABLED
+  // Hand the chunks to the next exchange. A retiring exchange first frees the
+  // chunks that its predecessor left behind and that it never adopted.
+  void ReleaseChunks(bool retire = false) {
+    if (!Kokkos::is_initialized() || Kokkos::is_finalized()) return;
+    auto& stash = ChunkStash();
+    if (retire) stash.clear();
+    for (auto& arena : send_arenas) stash.push_back(std::move(arena.data));
+    for (auto& slab : receive_slabs) stash.push_back(std::move(slab.data));
+    send_arenas.clear();
+    receive_slabs.clear();
+    current_slab.clear();
+  }
 #endif
 
   ~Impl() {
@@ -298,6 +363,7 @@ struct RecordExchange::Impl {
         DevExeSpace().fence("multirate unpublished pack cleanup");
       MPI_Comm_free(&comm);
     }
+    ReleaseChunks(true);
 #endif
   }
 
@@ -415,6 +481,7 @@ RecordExchange::~RecordExchange() = default;
 void RecordExchange::PreparePublicationBuffers() {
   auto& p = *impl_;
   if (p.used_epoch) throw std::logic_error("prepare publication buffers before Begin");
+  p.publication_spares.clear();
   for (const auto& [gid, points] : p.owned) {
     auto& buffers = p.publication_buffers[gid];
     for (int s = 0; s < 6; ++s) {
@@ -433,8 +500,11 @@ DvceArray1D<Real> RecordExchange::PublicationBuffer(const RecordKey& key) {
   const auto& buffer = p.publication_buffers.at(key.gid)[slot];
   if (buffer.use_count() == 1) return buffer;
   // A slower consumer or pending packet still owns the previous record.
-  return DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
+  auto& spares = p.publication_spares[key.gid][slot];
+  for (const auto& spare : spares) if (spare.use_count() == 1) return spare;
+  spares.emplace_back(Kokkos::view_alloc(Kokkos::WithoutInitializing,
       "multirate overlapping publication"), buffer.extent(0));
+  return spares.back();
 }
 
 const std::vector<Point> &RecordExchange::OwnedPoints(int gid) const {
@@ -533,8 +603,8 @@ void RecordExchange::Begin(std::uint64_t epoch, const std::vector<int> &steps,
   for (const auto &entry : p.owned)
     p.expected_publications += 5*std::size_t(steps[entry.first])+1;
 #if MPI_PARALLEL_ENABLED
+  p.PrepareReceiveSlabs();
   if (p.planned) {
-    p.PrepareReceiveSlabs();
     for (auto &[channel,window]:p.windows) {
       window.next=0;
       for (const auto& slot:window.slots) p.expected_receives+=slot.keys.size();
@@ -633,18 +703,9 @@ void RecordExchange::Publish(const RecordKey &key, const DvceArray1D<Real> &valu
 void RecordExchange::SetSendCacheBytes(std::size_t bytes) {
   if (!impl_->finished) throw std::logic_error("Resize send cache only at synchronized endpoints");
 #if MPI_PARALLEL_ENABLED
-  const auto scalars = bytes / sizeof(Real);
-  impl_->free_spans.clear();
-  impl_->used_end = 0;
-  impl_->send_arena = {};
-  const bool has_exports = std::any_of(
-      impl_->exports.begin(), impl_->exports.end(),
-      [](const auto& entry) { return !entry.second.empty(); });
-  if (scalars && has_exports) {
-    impl_->send_arena = DvceArray1D<Real>(
-        Kokkos::view_alloc(Kokkos::WithoutInitializing, "multirate send arena"), scalars);
-    impl_->free_spans.emplace(0, scalars);
-  }
+  if (!impl_->sends.empty()) throw std::logic_error("Resize send cache without pending sends");
+  impl_->ReleaseChunks();
+  impl_->send_arena_scalars = bytes / sizeof(Real);
 #else
   (void)bytes;
 #endif
@@ -653,10 +714,8 @@ void RecordExchange::SetSendCacheBytes(std::size_t bytes) {
 void RecordExchange::SetReceiveCacheBytes(std::size_t bytes) {
   if (!impl_->finished) throw std::logic_error("Resize receive cache only at synchronized endpoints");
 #if MPI_PARALLEL_ENABLED
-  impl_->receive_slabs.clear();
-  impl_->current_slab = 0;
-  impl_->receive_buffers.clear();
-  impl_->receive_cache_bytes=0;
+  impl_->ReleaseChunks();
+  impl_->receive_slab_scalars = 0;
   impl_->receive_cache_limit=bytes;
 #else
   (void)bytes;
@@ -705,7 +764,7 @@ bool RecordExchange::Poll() {
     if (count < static_cast<int>(kHeader)) throw std::runtime_error("truncated multirate packet");
     Impl::Pending pending;
     pending.peer = status.MPI_SOURCE;
-    pending.packet = DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,"multirate incoming record"),count);
+    pending.packet = p.ReceiveBuffer(count,0);
     p.AllocatePacket(count);p.stats.received_bytes+=std::uint64_t(count)*sizeof(Real);
     CheckMPI(MPI_Irecv(pending.packet.data(),count,MPI_ATHENA_REAL,pending.peer,p.epoch_tag,p.comm,&pending.request),
              "multirate record receive failed");
@@ -783,6 +842,11 @@ bool RecordExchange::Finish() {
   if (!p.receives.empty() || !p.sends.empty()) return false;
 #endif
   p.finished = true;
+#if MPI_PARALLEL_ENABLED
+  // The pools have reached their working size. Free what a predecessor left
+  // behind and this layout did not need.
+  if (++p.finished_epochs == Impl::stash_trim_epochs) ChunkStash().clear();
+#endif
   return true;
 }
 std::size_t RecordExchange::ExpectedReceives() const { return impl_->expected_receives; }
