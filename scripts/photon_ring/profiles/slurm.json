@@ -1,0 +1,10 @@
+{
+  "executable": "athena",
+  "launcher": ["srun", "--ntasks=4", "--gpus-per-task=1", "--gpu-bind=single:1"],
+  "slurm": {
+    "common": ["--nodes=1"],
+    "evolve": ["--ntasks=4", "--gpus-per-task=1", "--cpus-per-task=2", "--time=12:00:00"],
+    "fit": ["--ntasks=1", "--cpus-per-task=2", "--time=08:00:00"],
+    "calibrate": ["--ntasks=1", "--time=00:30:00"]
+  }
+}

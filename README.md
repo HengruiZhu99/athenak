@@ -52,3 +52,7 @@ For more details on the features and algorithms implemented in AthenaK, see the 
 - [Fields at al. (2024)](https://ui.adsabs.harvard.edu/abs/2024arXiv240910384F/abstract): GR hydro and MHD solver in dynamical spacetimes
 
 Please reference these papers as appropriate for any publications that use AthenaK.
+
+## Photon-ring surveys
+
+[Build and launch a width or ADM spin scan](scripts/photon_ring/README.md) with restartable threshold bisection, onset-spin search, and dense horizon replay.

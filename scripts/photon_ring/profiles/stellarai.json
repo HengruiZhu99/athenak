@@ -1,0 +1,10 @@
+{
+  "executable": "centered-finder/athena",
+  "launcher": ["srun", "--exact", "-N1", "-n8", "-c4", "--gres=gpu:8", "--gpu-bind=mask_gpu:0xff", "--cpu-bind=none", "--mpi=pmix", "--kill-on-bad-exit=1", "python3", "{source}/tst/unit/boltzmann/stellar_photon_rank.py"],
+  "slurm": {
+    "common": ["--account=fpretori", "--nodes=1"],
+    "evolve": ["--partition=gpu", "--ntasks-per-node=8", "--cpus-per-task=4", "--gres=gpu:8", "--mem=240G", "--time=1-00:00:00"],
+    "fit": ["--partition=cpu", "--ntasks=1", "--cpus-per-task=2", "--mem=8G", "--time=08:00:00"],
+    "calibrate": ["--partition=cpu", "--ntasks=1", "--mem=4G", "--time=00:30:00"]
+  }
+}

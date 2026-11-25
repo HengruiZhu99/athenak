@@ -1,0 +1,128 @@
+# File path is relative to the run directory. Use an absolute path with -d.
+<job>
+basename = torus
+
+<mesh>
+nghost = 4
+nx1 = 72
+x1min = 0
+x1max = 288
+ix1_bc = axis
+ox1_bc = outflow
+nx2 = 72
+x2min = 0
+x2max = 288
+ix2_bc = reflect
+ox2_bc = outflow
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 36
+nx2 = 36
+nx3 = 1
+
+<time>
+evolution = dynamic
+integrator = ssprk104
+cfl_number = 0.7
+tlim = 151
+nlim = -1
+ndiag = 50
+
+<z4c>
+damp_kappa1 = 0.02
+damp_kappa2 = 0.0
+lapse_harmonic = 1
+lapse_oplog = 0
+shift_eta = 0.4
+shift_Gamma = 1.0
+grid_centering = vertex
+symmetry = cartoon_so2
+coordinate_map = half_rho_z_suppressed_y_v2
+symmetry_schema = 2
+spatial_order = 4
+lean_runtime = true
+admissibility_checks = consume_and_accept
+vertex_axis_regularity_audit = false
+vc_single_rank_device_sync = true
+vc_sync_postcondition = false
+timestep_structural_shortcuts = true
+timestep_contract_diagnostic = true
+diss = 0.1
+
+<boltzmann>
+source_order = 4
+transport_order = 4
+nmu_half = 24
+npsi = 48
+sign = prograde
+backreaction = true
+fixed_metric = false
+
+<problem>
+pgen_name = photon_torus
+torus_file = ring.adm
+torus_audit_prefix =
+user_hist = true
+
+<output1>
+file_type = hst
+data_format = %24.16e
+dcycle = 20
+
+<fastflow>
+cartoon_native_geometry = true
+cartoon_search_offcenter_0 = false
+lmax = 24
+ntheta = 56
+num_horizons = 1
+find_interval_0 = 50
+start_time_0 = 0
+initial_radius_0 = 3.6
+cartoon_inner_target_0 = -0.006
+cartoon_direct_residual_tol_0 = 0.006
+dimensionless_hrms_tol_0 = 0.006
+
+<output2>
+file_type = bin
+variable = tmunu
+dcycle = 50
+
+<output3>
+file_type = bin
+variable = adm
+dcycle = 50
+
+<output4>
+file_type = bin
+variable = con
+dcycle = 50
+
+<mesh_refinement>
+refinement = static
+num_levels = 7
+max_nmb_per_rank = 80
+ncycle_check = 64
+refinement_interval = 96
+
+<refined_region1>
+level = 5
+x1min = 0
+x1max = 11.9
+x2min = 0
+x2max = 5.6
+
+<refined_region2>
+level = 6
+x1min = 0
+x1max = 8.96875
+x2min = 0
+x2max = 8.96875
+
+<output5>
+file_type = rst
+dcycle = 2400
