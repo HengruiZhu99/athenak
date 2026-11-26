@@ -58,7 +58,7 @@ void Mesh::ConfigureStaticOwnership(ParameterInput *pin) {
       throw std::invalid_argument("Static multirate ownership requires at least one block per MPI rank");
 }
 
-void Mesh::RedistributeStaticBlocks(const std::vector<int> &owners) {
+void Mesh::RedistributeStaticBlocks(const std::vector<int> &owners, bool transient) {
   auto *pack=pmb_pack;
   auto *state=pack?pack->pz4c_hyperboloidal:nullptr;
   RequireRedistribution(state && state->IsInitialized() && (!adaptive || state->UsesMultirate()) && !pzoom &&
@@ -139,7 +139,7 @@ void Mesh::RedistributeStaticBlocks(const std::vector<int> &owners) {
   pack->pmb->SetNeighbors(ptree,rank_eachmb);
   MarkMeshUpdated();
   phases.Mark("new_blocks");
-  state->RebuildAfterRedistribution(new_records);
+  state->RebuildAfterRedistribution(new_records,transient);
   phases.Mark("rebuild_state");
   if (adaptive) pmr->pmrc->SetRefinementData(pack,false,false);
   phases.Mark("refinement_data");

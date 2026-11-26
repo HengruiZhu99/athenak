@@ -261,7 +261,9 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
       pmy_mesh->LoadBalance(costs.data(),owners.data(),first.data(),counts.data(),total);
       staged=!std::equal(owners.begin(),owners.end(),pmy_mesh->rank_eachmb);
       if (staged) {
-        pmy_mesh->RedistributeStaticBlocks(owners);
+        // This layout lasts until the transfer below. Nothing before it reads
+        // the overlap agreement plan, so leave that plan to its first use.
+        pmy_mesh->RedistributeStaticBlocks(owners,true);
         phases.Mark("contiguous_layout");
         pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
         phases.Mark("contiguous_halos");

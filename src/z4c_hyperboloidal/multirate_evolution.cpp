@@ -1710,6 +1710,7 @@ void Z4cHyperboloidal::InitializeMultirate(Driver* driver, bool rebuilt) {
       pmy_pack->tl_map["multirate_interval"] = std::move(list);
     }
     multirate_.reset();
+    EnsureAgreementPlan();
     multirate_ = std::make_unique<MultirateEvolution>(*this, driver, rebuilt);
   }
 }

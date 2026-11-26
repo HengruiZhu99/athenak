@@ -124,7 +124,10 @@ class Z4cHyperboloidal {
   void InitializeMultirate(Driver *driver, bool rebuilt=false);
   TaskStatus AdvanceMultirate(Driver *driver, int stage);
   std::string MultirateIdentity() const;
-  void RebuildAfterRedistribution(const HostArray2D<Real> &records);
+  // A transient layout only stages halo fills for an AMR transfer and is
+  // discarded by it; its overlap agreement plan is built only if still needed.
+  void RebuildAfterRedistribution(const HostArray2D<Real> &records, bool transient=false);
+  void EnsureAgreementPlan();
   // Empty mask is the legacy/all-block path; active masks affect every stage operation.
   DvceArray1D<int> active_blocks;
   std::array<DvceArray1D<int>,5> active_rhs_points;
@@ -149,7 +152,7 @@ class Z4cHyperboloidal {
   void EnforceAlgebraicConstraints();
   TaskStatus CopyU(Driver *driver, int stage);
   TaskStatus ExpRKUpdate(Driver *driver, int stage);
-  void BuildStagePlans();
+  void BuildStagePlans(bool with_agreement=true);
   void QueueZ4cHyperboloidalTasks();
   TaskStatus InitRecv(Driver *driver, int stage);
   TaskStatus PrepareStage(Driver *driver, int stage);

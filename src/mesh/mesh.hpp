@@ -159,7 +159,7 @@ class Mesh {
   void NewTimeStep(const Real tlim);
   // Collective, static-topology permutation of accepted native Scheme A state.
   // Caller must be at a common synchronized endpoint with all stage work retired.
-  void RedistributeStaticBlocks(const std::vector<int> &owners);
+  void RedistributeStaticBlocks(const std::vector<int> &owners, bool transient=false);
   void RefreshSTSParabolicTimeStep();
   void AddCoordinatesAndPhysics(ParameterInput *pinput);
   void AddCyclicZoom(ParameterInput *pin);

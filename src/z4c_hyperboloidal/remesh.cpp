@@ -483,7 +483,8 @@ void Z4cHyperboloidal::PrepareRemesh(MeshRefinement &refinement) {
   remesh_=std::make_unique<RemeshState>();
   remesh_->Prepare(*pmy_pack,*this,refinement);
 }
-void Z4cHyperboloidal::RebuildAfterRedistribution(const HostArray2D<Real> &records) {
+void Z4cHyperboloidal::RebuildAfterRedistribution(const HostArray2D<Real> &records,
+                                                  bool transient) {
   PhaseTimer phases("redistribution_state",pmy_pack->pmesh->ncycle);
   ClearActiveBlocks();
   ResetMeshStorage();
@@ -491,7 +492,7 @@ void Z4cHyperboloidal::RebuildAfterRedistribution(const HostArray2D<Real> &recor
   restart::Unpack(*this,records);
   phases.Mark("unpack");
   initialized_=true;
-  BuildStagePlans();
+  BuildStagePlans(!transient);
   phases.Mark("stage_plans");
   phases.Report();
 }

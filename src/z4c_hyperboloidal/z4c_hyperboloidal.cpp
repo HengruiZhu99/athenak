@@ -226,7 +226,7 @@ void Z4cHyperboloidal::ResetMeshStorage() {
   // including defaults for new points with no inherited history packet.
 }
 
-void Z4cHyperboloidal::BuildStagePlans() {
+void Z4cHyperboloidal::BuildStagePlans(bool with_agreement) {
   if (!initialized_) throw std::logic_error("Stage plans require initialized geometry");
   plans_ready_=false;
   PhaseTimer phases("stage_plans",pmy_pack->pmesh->ncycle);
@@ -280,12 +280,21 @@ void Z4cHyperboloidal::BuildStagePlans() {
   Kokkos::realloc(rhs_cfl,npoints);
   phases.Mark("rhs_batches");
 
-  agreement_plan_=std::make_unique<OverlapAgreementPlan>();
-  agreement_plan_->Rebuild(pmy_pack,*this);
+  if (with_agreement) {
+    agreement_plan_=std::make_unique<OverlapAgreementPlan>();
+    agreement_plan_->Rebuild(pmy_pack,*this);
+  }
   phases.Mark("agreement");
   phases.Report();
 
   plans_ready_=true;
+}
+
+void Z4cHyperboloidal::EnsureAgreementPlan() {
+  if (!plans_ready_) throw std::logic_error("Agreement plan requires stage plans");
+  if (agreement_plan_) return;
+  agreement_plan_=std::make_unique<OverlapAgreementPlan>();
+  agreement_plan_->Rebuild(pmy_pack,*this);
 }
 
 void Z4cHyperboloidal::BuildLocalWorkLists() {
