@@ -98,13 +98,22 @@ std::array<Real,10> Z4cHyperboloidal::DiagnosticHistorySums() {
 std::array<Real,10> Z4cHyperboloidal::DiagnosticShellSums(int band) {
   return GetDiagnostics().ShellSums(band);
 }
+std::array<Real,10> Z4cHyperboloidal::DiagnosticBandSums(Real inner,Real outer) {
+  return GetDiagnostics().BandSums(inner,outer);
+}
 std::array<Real,10> Diagnostics::ShellSums(int band) {
   if(band<0 || band>=4)throw std::invalid_argument("invalid scri diagnostic band");
-  Refresh();const Real edges[5]={.80,.88,.94,.97,1.};auto &p=*module_;
+  const Real edges[5]={.80,.88,.94,.97,1.};
+  return BandSums(edges[band],edges[band+1]);
+}
+// Sums over every evolved point with compact radius in [inner,outer), inside
+// the horizons included.
+std::array<Real,10> Diagnostics::BandSums(Real inner,Real outer) {
+  Refresh();auto &p=*module_;
   SumShell::value_type result;
   Kokkos::parallel_reduce("fixed physical compact shell diagnostics",
     Kokkos::RangePolicy<>(0,p.npoints),SumShell{points_,weights_,p.geometry,p.reference,
-      p.points.d_view,p.u0,edges[band],edges[band+1]},result);
+      p.points.d_view,p.u0,inner,outer},result);
   std::array<Real,10> out;for(int i=0;i<10;++i)out[i]=result.sum[i];return out;
 }
 

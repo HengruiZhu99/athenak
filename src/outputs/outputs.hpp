@@ -303,6 +303,8 @@ class HistoryOutput : public BaseTypeOutput {
 
   // vector of length [# of physics modules] containing hdata arrays
   std::vector<HistoryData> hist_data;
+  // Edges in compact radius of the optional hyperboloidal radial-profile bands.
+  std::vector<Real> radial_edges;
 
   void LoadOutputData(Mesh *pm) override;
   void LoadHydroHistoryData(HistoryData *pdata, Mesh *pm);

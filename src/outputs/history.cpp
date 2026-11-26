@@ -69,6 +69,20 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
         hist_data.back().scri_group=band;
       }
     }
+    // Optional radial profile: one history file per band [edge_i,edge_{i+1}) in
+    // compact radius, with the columns of the scri-shell bands.
+    if(pin->DoesParameterExist(op.block_name,"hyperboloidal_radial_edges")) {
+      std::stringstream list(pin->GetString(op.block_name,"hyperboloidal_radial_edges"));
+      for(std::string item;std::getline(list,item,',');)radial_edges.push_back(std::stod(item));
+      bool valid=radial_edges.size()>=2 && radial_edges.front()>=0 && radial_edges.back()<=1;
+      for(std::size_t i=1;i<radial_edges.size();++i)valid&=radial_edges[i]>radial_edges[i-1];
+      if(!valid)throw std::invalid_argument(
+          "hyperboloidal_radial_edges must increase strictly within [0,1]");
+      for(std::size_t band=0;band+1<radial_edges.size();++band) {
+        hist_data.emplace_back(PhysicsModule::HyperboloidalRadialProfile);
+        hist_data.back().scri_group=static_cast<int>(band);
+      }
+    }
   }
 }
 
@@ -103,8 +117,12 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
       for(int n=0;n<data.nhist;++n) {
         data.label[n]=H::Label(begin+n);data.hdata[n]=values[begin+n];
       }
-    } else if(data.physics==PhysicsModule::HyperboloidalShellDiagnostics) {
-      const auto values=pm->pmb_pack->pz4c_hyperboloidal->DiagnosticShellSums(data.scri_group);
+    } else if(data.physics==PhysicsModule::HyperboloidalShellDiagnostics ||
+              data.physics==PhysicsModule::HyperboloidalRadialProfile) {
+      const bool radial=data.physics==PhysicsModule::HyperboloidalRadialProfile;
+      auto *module=pm->pmb_pack->pz4c_hyperboloidal;
+      const auto values=radial ? module->DiagnosticBandSums(radial_edges[data.scri_group],
+          radial_edges[data.scri_group+1]) : module->DiagnosticShellSums(data.scri_group);
       constexpr const char *labels[]={"Volume","H-rms","M-rms","Theta-rms","Z-rms",
         "dchi-rms","dalp-rms","dbetn-rms","dchi-mean","dalp-mean"};
       data.nhist=10;for(int n=0;n<10;++n){data.label[n]=labels[n];data.hdata[n]=values[n];}
@@ -480,6 +498,22 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
         for(int i=8;i<10;++i)data.hdata[i]/=data.hdata[0];
       }
     }
+    if(data.physics==PhysicsModule::HyperboloidalRadialProfile) {
+      // A narrow band may hold no grid point; it is then reported with zero volume.
+      int invalid=0;
+      if(global_variable::my_rank==0) {
+        for(int i=0;i<10;++i)invalid|=!std::isfinite(data.hdata[i]);
+        for(int i=0;i<8;++i)invalid|=data.hdata[i]<0;
+      }
+#if MPI_PARALLEL_ENABLED
+      MPI_Bcast(&invalid,1,MPI_INT,0,MPI_COMM_WORLD);
+#endif
+      if(invalid)throw std::runtime_error("Invalid radial profile integrals");
+      if(global_variable::my_rank==0 && data.hdata[0]>0) {
+        for(int i=1;i<8;++i)data.hdata[i]=std::sqrt(data.hdata[i]/data.hdata[0]);
+        for(int i=8;i<10;++i)data.hdata[i]/=data.hdata[0];
+      }
+    }
     if (data.physics==PhysicsModule::HyperboloidalSpaceTimeDynamics) {
       // MPI sums raw volume and squared-constraint integrals. Averaging local
       // RMS values would give the wrong weighting, including on empty ranks.
@@ -546,6 +580,11 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
         case PhysicsModule::HyperboloidalScriInvestigation:
           fname.append(".scri-investigation-"+std::to_string(data.scri_group));
           break;
+        case PhysicsModule::HyperboloidalRadialProfile: {
+          char index[8];std::snprintf(index,sizeof(index),"%03d",data.scri_group);
+          fname.append(".radial-"+std::string(index));
+          break;
+        }
         default:
           break;
       }
@@ -572,6 +611,8 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
           constexpr Real edges[5]={.80,.88,.94,.97,1.};
           std::fprintf(pfile,"# Compact radius band [%g,%g). Coordinate-volume weighted native-unit RMS and signed means; field differences from initial reference.\n",edges[data.scri_group],edges[data.scri_group+1]);
         }
+        if(data.physics==PhysicsModule::HyperboloidalRadialProfile)
+          std::fprintf(pfile,"# Compact radius band [%.17g,%.17g), all points including horizon interiors. Coordinate-volume weighted native-unit RMS and signed means; field differences from initial reference. Zero volume marks a band without grid points.\n",radial_edges[data.scri_group],radial_edges[data.scri_group+1]);
         if(data.physics==PhysicsModule::HyperboloidalScriInvestigation)
           std::fprintf(pfile,"# Signed min/max or absolute maxima over all scri nodes and RK stages since the previous dump. Native units; combinations formed pointwise. Hessians include the existing adjacent bulk support.\n");
         std::fprintf(pfile,"#  [%d]=time      ", iout++);

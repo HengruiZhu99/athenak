@@ -112,6 +112,7 @@ class Z4cHyperboloidal {
   Diagnostics &GetDiagnostics();
   std::array<Real,10> DiagnosticHistorySums();
   std::array<Real,10> DiagnosticShellSums(int band);
+  std::array<Real,10> DiagnosticBandSums(Real inner,Real outer);
   void InitializeReference();
   void InitializeBinary(ParameterInput *pin);
   std::string initial_data_identity;

@@ -43,6 +43,7 @@ class Diagnostics {
   const std::vector<FastFlowSurface> &ComponentSurfaces() const {return surfaces_;}
   std::array<Real,10> HistorySums();
   std::array<Real,10> ShellSums(int band);
+  std::array<Real,10> BandSums(Real inner,Real outer);
   const DvceArray1D<ConstraintPoint> &Points() const {return points_;}
   const DvceArray1D<Real> &Weights() const {return weights_;}
   const DvceArray1D<int> &ExteriorMask() const {return exterior_;}
