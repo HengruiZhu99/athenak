@@ -644,7 +644,7 @@ void RegisterDiagnosticSurfaces(ProblemGenerator* pgen, ParameterInput* pin, Mes
     Kokkos::abort("Transfer inventories require a transfer sphere and modeled horizon per hole");
   const Real base_channels = (nr + extra + h1 + h2 + horizons) * kSurfaceChannels +
       (monitor_ct ? 6 : 0) + (shells ? 45 * nr : 0) + 3 +
-      (8 + (inventory ? 8 : 0)) * horizons +
+      (8 + (inventory ? 10 : 0)) * horizons +
       (pin->GetOrAddBoolean("problem", "flux_budget", false)
            ? (bbh.single_black_hole ? 66 : 88) : 0);
   const int transport_channels = (HorizonChannelCount + 4) * horizons;
@@ -1883,8 +1883,9 @@ void TorusHistory(HistoryData* pdata, Mesh* pm) {
         v[1] += v[0];
         v[0] = 0;
       }
-      const bool valid = v[0] > 0 && v[1] == 0 && std::isfinite(v[0]) &&
-                         std::isfinite(v[2]) && std::isfinite(v[3]);
+      const bool sampled = v[0] > 0 && std::isfinite(v[0]) &&
+                           std::isfinite(v[2]) && std::isfinite(v[3]);
+      const bool valid = sampled && v[1] == 0;
       const auto& a = results.at(transfer[h]);
       const auto& b = results.at(horizon[h]);
       const std::string prefix = "inventory_" + outer.Label() + "_";
@@ -1893,6 +1894,8 @@ void TorusHistory(HistoryData* pdata, Mesh* pm) {
       add(prefix + "storage_valid", valid);
       add(prefix + "M0_stored", valid ? v[2] : NAN);
       add(prefix + "Jz_stored", valid ? v[3] : NAN);
+      add(prefix + "M0_partial_stored", sampled ? v[2] : NAN);
+      add(prefix + "Jz_partial_stored", sampled ? v[3] : NAN);
       add(prefix + "M0_boundary_in", a.values[17] - b.values[17]);
       add(prefix + "Jz_f_boundary_in", a.values[30] - b.values[30]);
       add(prefix + "Jz_em_boundary_in", a.values[33] - b.values[33]);

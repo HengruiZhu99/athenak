@@ -277,6 +277,9 @@ class Lifecycle(unittest.TestCase):
                 self.assertTrue((np.abs(got-control) < np.abs(low-control)).all())
                 np.testing.assert_array_equal(full[prefix+"storage_valid"], 1)
                 np.testing.assert_array_equal(full[prefix+"rejected_volume"], 0)
+                for field in ("M0", "Jz"):
+                    np.testing.assert_array_equal(full[prefix+field+"_partial_stored"],
+                                                  full[prefix+field+"_stored"])
                 for field, flux in (("M0", "M0_net"), ("Jz_f", "Jz_f"), ("Jz_em", "Jz_em")):
                     outer = full[f"{flux}_in_moving_H{h}"]
                     inner = full[f"{flux}_in_moving_BH{h}_Kerr"]
@@ -321,7 +324,8 @@ class Lifecycle(unittest.TestCase):
                 prefix = f"inventory_H{h}_"
                 self.assertEqual(stopped[prefix+"storage_valid"][0], 0)
                 self.assertGreater(stopped[prefix+"rejected_volume"][0], 0)
-                for field in ("M0_stored", "Jz_stored"):
+                self.assertEqual(stopped[prefix+"sampled_volume"][0], 0)
+                for field in ("M0_stored", "Jz_stored", "M0_partial_stored", "Jz_partial_stored"):
                     self.assertTrue(np.isnan(stopped[prefix+field][0]))
                 for key in full:
                     if key.startswith(prefix):
@@ -354,8 +358,14 @@ class Lifecycle(unittest.TestCase):
             self.assertTrue(rejected.any())
             self.assertTrue((~rejected[1:] & rejected[:-1]).any())
             np.testing.assert_array_equal(h[prefix+"storage_valid"], ~rejected)
-            for field in ("M0_stored", "Jz_stored"):
-                np.testing.assert_array_equal(np.isnan(h[prefix+field]), rejected)
+            sampled = h[prefix+"sampled_volume"] > 0
+            self.assertTrue((sampled & rejected).any())
+            for field in ("M0", "Jz"):
+                whole = h[prefix+field+"_stored"]
+                partial = h[prefix+field+"_partial_stored"]
+                np.testing.assert_array_equal(np.isnan(whole), rejected)
+                np.testing.assert_array_equal(np.isfinite(partial), sampled)
+                np.testing.assert_array_equal(partial[~rejected], whole[~rejected])
             for field in ("M0", "Jz_f", "Jz_em"):
                 self.assertTrue(np.isnan(h[prefix+field+"_boundary_in"][rejected]).all())
 
