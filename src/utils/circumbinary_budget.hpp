@@ -88,6 +88,32 @@ struct HorizonShell {
     }
     return fmax(0.0, length);
   }
+  // Coordinate volume and horizontal first moments in the shell's coordinate system.
+  KOKKOS_INLINE_FUNCTION Real CellMoments(const Real center[3], const Real dx[3],
+                                          Real first[3]) const {
+    int n = subcells;
+    first[0] = first[1] = 0;
+    Real area = dx[0] * dx[1] / (n * n), volume = 0;
+    Real lo = center[2] - 0.5 * dx[2], hi = center[2] + 0.5 * dx[2];
+    int coverage = CellCoverage(center, dx);
+    if (coverage == 0) return 0;
+    if (coverage == 1) {
+      volume = dx[0] * dx[1] * dx[2];
+      first[0] = center[0] * volume;
+      first[1] = center[1] * volume;
+    } else {
+      for (int a = 0; a < n; ++a)
+        for (int b = 0; b < n; ++b) {
+          Real x = center[0] + dx[0] * ((a + 0.5) / n - 0.5);
+          Real y = center[1] + dx[1] * ((b + 0.5) / n - 0.5);
+          Real dv = area * ColumnLength(x, y, lo, hi);
+          volume += dv;
+          first[0] += x * dv;
+          first[1] += y * dv;
+        }
+    }
+    return volume;
+  }
 };
 struct ShellMoments {
   Real stored[4] = {}, source[4] = {}, sampled = 0, rejected = 0;
@@ -130,4 +156,8 @@ circumbinary::RegionMoments ReduceBinaryRegions(MeshBlockPack*,
                                                 bool with_torque = false);
 circumbinary::ShellMoments ReduceHorizonShell(MeshBlockPack*, circumbinary::HorizonShell,
                                               bool with_sources = true);
+// Global inventory between a component-centered coordinate sphere and its horizon.
+// Values are accepted volume, rejected volume, baryon mass and barycentric Jz.
+void MeasureTransferInventory(MeshBlockPack*, const Real origin[3],
+                              circumbinary::HorizonShell, Real values[4]);
 #endif  // UTILS_CIRCUMBINARY_BUDGET_HPP_

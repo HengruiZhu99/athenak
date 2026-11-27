@@ -41,6 +41,49 @@ Invalid metric or primitive data, nonfinite contributions, contaminated interpol
 
 The [extended refinement and MPI audit](circumbinary-convergence.md) tests ten spatial resolutions and the production metric-update path.
 
+## Accretion and angular momentum from history alone
+
+`flux_horizon_transport` accumulates eight quantities per modeled component horizon. It defaults on when the requested columns fit in the history schema. Set it explicitly to require the complete ledger. Each Runge–Kutta stage reuses the surface flux already evaluated for net rest mass. The ledger commits a step only when all stages and its endpoint qualify. The sign is positive into the moving surface.
+
+| Quantity prefix | Meaning of its cumulative change |
+|---|---|
+| `M0_in`, `M0_out` | Gross inward and outward baryon mass, each positive. Their difference is the net baryon delivery over the same qualified steps. |
+| `E_inertial_f`, `E_inertial_em` | Fluid energy (including rest mass) and electromagnetic energy with respect to inertial coordinate time. In the rotating frame the inward current is $\dot E_{\rm rot}+\Omega_{\rm frame}\dot J_z$. |
+| `Jz_orbit_f`, `Jz_orbit_em` | Angular momentum carried by the inward linear momentum, with lever arm from the barycenter to the hole center $\mathbf C$, $(\mathbf C\times\dot{\mathbf P})_z$. |
+| `Jz_center_f`, `Jz_center_em` | Remaining inward axial angular momentum about the hole center. Adding the centered and orbital terms recovers the inward barycentric angular momentum for each stress component. |
+
+For example, `E_inertial_em_qualified_cumulative_BH1_Kerr` gives the signed electromagnetic contribution integrated since `transport_epoch_start_BH1_Kerr`. To measure a mean rate, difference two cumulative values in the same epoch and divide by the change in `transport_covered_duration_BH1_Kerr`. Report the covered fraction of the elapsed interval alongside the mean. A frozen or underresolved horizon increases `transport_unavailable_duration_BH1_Kerr` and leaves the totals fixed. Using sparse history output preserves the stage-integrated measurement. Restarting an older checkpoint preserves its accumulated net baryon mass and starts the new channels at the restart time.
+
+For a fixed circular binary, the same columns give the energy delivered with respect to the instantaneous component boost on the inertial slice. For each stress component and each hole $h$,
+
+$$
+\Delta E_{\rm boost,h}=\gamma_h\left(\Delta E_{\rm inertial,h}-
+  \Omega_{\rm bin}\,\Delta J_{z,\rm orbit,h}\right),\qquad
+\gamma_h=[1-(\Omega_{\rm bin} R_h)^2]^{-1/2}.
+$$
+
+Here $R_h$ is the barycentric orbital radius, $\Omega_{\rm bin}=a^{-3/2}$ in the prescribed $M=1$ orbit, and $R_1=a q/(1+q)$, $R_2=a/(1+q)$ with $q=m_2/m_1$. This follows from $\mathbf v_h\cdot\dot{\mathbf P}=\Omega_{\rm bin}(\mathbf C\times\dot{\mathbf P})_z$. It is a matter-plus-field accretion proxy in the simulation's density units. The simulation prescribes the component masses and spins. A geometric horizon mass or spin measurement requires separate horizon geometry and gravitational flux information. [Dynamical horizon balance laws](https://doi.org/10.1103/PhysRevLett.89.261101)
+
+### Material between a 5M transfer sphere and its horizon
+
+To measure how much gas and angular momentum accumulate between each 5M sphere and its component horizon, add these settings to `<problem>` and enable user history. For an older checkpoint, an input overlay passed with `-i` can introduce the new parameters.
+
+```ini
+flux_modeled_horizons = true
+flux_horizon_transport = true
+flux_horizon1 = true
+flux_horizon2 = true
+flux_radius1 = 5
+flux_radius2 = 5
+flux_transfer_inventory = true
+```
+
+At history cadence, `inventory_H1_M0_stored` integrates conserved baryon density between H1 and its boosted Kerr surface. `inventory_H1_Jz_stored` integrates barycentric $xS_y-yS_x$ with densitized momenta and cut-cell first moments. H2 has equivalent columns. Each transfer sphere must enclose its horizon and fit inside the mesh, and the two spheres must be disjoint. The reduction visits only blocks overlapping each sphere's bounding box. The inventory defaults off and requires no volumetric output.
+
+`M0_boundary_in`, `Jz_f_boundary_in`, and `Jz_em_boundary_in` with the same inventory prefix are instantaneous outer-minus-horizon inward rates. A positive `M0_boundary_in` means that more baryons are entering through the transfer sphere than are crossing the horizon at that instant. Gravity also exerts a volume torque, and floors or mesh changes can affect storage. Use the shell source and remap histories above when evaluating a full balance. `sampled_volume`, `rejected_volume`, and `storage_valid` qualify the stored quantities. A rejected cell or an immediate restart sample with unknown reset provenance makes the whole storage measurement unavailable. Each boundary rate retains the qualification of both surface integrals.
+
+The unequal-mass control compares the inventory to an independent $24^3$-voxel integration of each intersecting cell in a conserved-variable dump. With eight transverse samples per cell, maximum differences over both holes were 0.0066% for stored baryon mass, 0.0204% for stored angular momentum and 0.0113% against the analytic sphere-minus-ellipsoid volume. On refining the evolution mesh from $96^3$ to $128^3$, stored mass changed by at most 0.063% and stored angular momentum by 0.158%. Net mass supply through the two boundaries changed by 2.94% on the primary and 0.102% on the secondary. The difference of two surface fluxes can converge nonmonotonically. These are short controls with magnetized inflow. [Regression tests and mesh settings](../tst/diagnostics/test_lifecycle.py)
+
 ## Verification on StellarAI
 
 The manufactured pressure test applies the divergence theorem independently to a sphere containing two unequal, off-center, obliquely boosted, tilted Kerr ellipsoids. Its nonzero $P_x,P_y,P_z,J_z$ fluxes agree with analytic volume and first-moment results to relative tolerances of $10^{-4}$ on the surface and $8\times10^{-4}$ in the volume. A second check inverts the rest-frame Cartesian Kerr radius at sampled points on each quadric. It covers the horizon, two other radii and three spin/boost configurations with a $5\times10^{-14}$ absolute tolerance. The field and area quadratures have their own discretization errors. [Production-helper tests](../tst/diagnostics/helpers.cpp)

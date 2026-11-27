@@ -6,6 +6,7 @@
 #endif
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
@@ -506,10 +507,68 @@ struct ShellInterval {
   bool inherited_unavailable = false;
   Real grid_jump[4] = {}, grid_before[4] = {}, missed_grid_events = 0;
 };
+// All rates share one accepted-step quality mask. Transform the already integrated
+// covector currents at the stage geometry, before any time integration.
+enum HorizonChannel {
+  GrossIn, GrossOut, EnergyFluid, EnergyEM, CenterJFluid, CenterJEM,
+  OrbitalJFluid, OrbitalJEM, HorizonChannelCount
+};
+constexpr std::array<const char*, HorizonChannelCount> horizon_channels = {
+    "M0_in", "M0_out", "E_inertial_f", "E_inertial_em", "Jz_center_f", "Jz_center_em",
+    "Jz_orbit_f", "Jz_orbit_em"};
+
+struct HorizonTransport {
+  std::array<Real, HorizonChannelCount> total{}, trial{};
+  Real start = 0, covered = 0, unavailable = 0;
+  bool valid = false;
+
+  void Begin() {
+    trial.fill(0);
+    valid = true;
+  }
+  void Stage(Real gam0, Real beta_dt, const SurfaceFluxResult& flux, const Real* center,
+             Real omega) {
+    valid &= flux.valid;
+    if (!valid) return;
+    const auto& v = flux.values;
+    std::array<Real, HorizonChannelCount> rate{};
+    rate[GrossIn] = v[18];
+    rate[GrossOut] = v[19];
+    for (int part = 0; part < 2; ++part) {
+      const int px = 22 + 3 * part;
+      const Real orbital = center[0] * v[px + 1] - center[1] * v[px];
+      const Real jz = v[30 + 3 * part];
+      rate[OrbitalJFluid + part] = orbital;
+      rate[CenterJFluid + part] = jz - orbital;
+      // -T.t_inertial = -T.t_rot + Omega T.phi, including surface motion.
+      rate[EnergyFluid + part] = v[34 + part] + omega * jz;
+    }
+    for (int k = 0; k < HorizonChannelCount; ++k) {
+      trial[k] = gam0 * trial[k] + beta_dt * rate[k];
+      valid &= std::isfinite(trial[k]);
+    }
+  }
+  void Commit(Real elapsed, bool endpoint_valid) {
+    valid &= endpoint_valid;
+    for (int k = 0; k < HorizonChannelCount; ++k) {
+      valid &= std::isfinite(total[k] + trial[k]);
+    }
+    if (valid) {
+      for (int k = 0; k < HorizonChannelCount; ++k) total[k] += trial[k];
+      covered += elapsed;
+    } else {
+      unavailable += elapsed;
+    }
+  }
+};
+
 struct BinaryDiagnosticState {
   std::vector<ShellInterval> shells;
   std::vector<circumbinary::QualifiedMass> mass;
   std::vector<std::string> labels;
+  std::vector<HorizonTransport> transport;
+  int inventory_subcells = 0;
+  bool inventory_needs_recovery = false;
   std::string identity;
   BinaryBudgetState budget;
   Real state_time = 0.0;
@@ -529,6 +588,9 @@ void RegisterDiagnosticSurfaces(ProblemGenerator* pgen, ParameterInput* pin, Mes
                    pin->GetOrAddBoolean("problem", "flux_modeled_horizons", false) ||
                    pin->GetOrAddBoolean("problem", "flux_budget", false) ||
                    pin->GetOrAddBoolean("problem", "flux_shell_budget", false) ||
+                   pin->GetOrAddBoolean("problem", "flux_transfer_inventory", false) ||
+                   (pin->DoesParameterExist("problem", "flux_horizon_transport") &&
+                    pin->GetBoolean("problem", "flux_horizon_transport")) ||
                    pin->GetOrAddReal("problem", "flux_ks_radius1", 0.0) != 0 ||
                    pin->GetOrAddReal("problem", "flux_ks_radius2", 0.0) != 0;
   monitor_ct = pin->GetOrAddBoolean("problem", "flux_monitor_ct", false);
@@ -576,14 +638,20 @@ void RegisterDiagnosticSurfaces(ProblemGenerator* pgen, ParameterInput* pin, Mes
   if (shells && (!bh || pack->pdynrad || pack->pz4c))
     Kokkos::abort(
         "Horizon-exterior shell budgets require modeled horizons and prescribed GRMHD");
-  if (nr > NHISTORY_VARIABLES / kSurfaceChannels ||
-      (nr + extra + h1 + h2 + (bh ? (bbh.single_black_hole ? 1 : 2) : 0)) *
-              kSurfaceChannels >
-          NHISTORY_VARIABLES - ((monitor_ct ? 6 : 0) + (shells ? 45 * nr : 0) + 3 +
-                                8 * (bh ? (bbh.single_black_hole ? 1 : 2) : 0) +
-                                (pin->GetOrAddBoolean("problem", "flux_budget", false)
-                                     ? (bbh.single_black_hole ? 66 : 88)
-                                     : 0))) {
+  const int horizons = bh ? (bbh.single_black_hole ? 1 : 2) : 0;
+  const bool inventory = pin->GetOrAddBoolean("problem", "flux_transfer_inventory", false);
+  if (inventory && (!bh || !h1 || (!bbh.single_black_hole && !h2)))
+    Kokkos::abort("Transfer inventories require a transfer sphere and modeled horizon per hole");
+  const Real base_channels = (nr + extra + h1 + h2 + horizons) * kSurfaceChannels +
+      (monitor_ct ? 6 : 0) + (shells ? 45 * nr : 0) + 3 +
+      (8 + (inventory ? 8 : 0)) * horizons +
+      (pin->GetOrAddBoolean("problem", "flux_budget", false)
+           ? (bbh.single_black_hole ? 66 : 88) : 0);
+  const int transport_channels = (HorizonChannelCount + 4) * horizons;
+  const bool transport = pin->GetOrAddBoolean("problem", "flux_horizon_transport",
+      bh && base_channels + transport_channels <= NHISTORY_VARIABLES);
+  if (transport && !bh) Kokkos::abort("flux_horizon_transport requires flux_modeled_horizons");
+  if (base_channels + (transport ? transport_channels : 0) > NHISTORY_VARIABLES) {
     Kokkos::abort("Full requested diagnostic schema exceeds history capacity");
   }
   std::set<std::string> identifiers;
@@ -807,13 +875,15 @@ void PrepareBinaryBudget(BinaryBudgetState& b, Mesh* pm) {
   }
 }
 
-void SetShellGeometry(circumbinary::HorizonShell& shell, Real time) {
+// For a component inventory the shell origin is the moving hole center.
+void SetShellGeometry(circumbinary::HorizonShell& shell, Real time, int component = -1) {
   if (!shell.holes) return;
   Real tr[NTRAJ], extent[2] = {};
   find_traj_t(bbh.corotating ? 0.0 : time, tr);
   for (int h = 0; h < shell.holes; ++h) {
-    Real m = tr[h ? M2T : M1T];
-    Real *chi = &tr[h ? AX2 : AX1], *v = &tr[h ? VX2 : VX1];
+    const int hole = component < 0 ? h : component;
+    Real m = tr[hole ? M2T : M1T];
+    Real *chi = &tr[hole ? AX2 : AX1], *v = &tr[hole ? VX2 : VX1];
     Real chi2 = SQR(chi[0]) + SQR(chi[1]) + SQR(chi[2]);
     if (!(m > 0 && chi2 <= 1 && SQR(v[0]) + SQR(v[1]) + SQR(v[2]) < 1))
       Kokkos::abort("Invalid component Kerr shell geometry");
@@ -825,7 +895,7 @@ void SetShellGeometry(circumbinary::HorizonShell& shell, Real time) {
     shell.inscribed[h] = rplus * sqrt(1 - SQR(v[0]) - SQR(v[1]) - SQR(v[2]));
     Real c2 = 0;
     for (int d = 0; d < 3; ++d) {
-      shell.center[h][d] = tr[(h ? X2 : X1) + d];
+      shell.center[h][d] = component < 0 ? tr[(hole ? X2 : X1) + d] : 0;
       c2 += SQR(shell.center[h][d]);
     }
     if (!(sqrt(c2) + extent[h] < shell.outer))
@@ -1129,6 +1199,7 @@ void ClearInheritedProvenance(ProblemGenerator* pgen) {
   if (pgen->user_diagnostic_data) {
     auto state =
         std::static_pointer_cast<BinaryDiagnosticState>(pgen->user_diagnostic_data);
+    state->inventory_needs_recovery = false;
     for (const auto& s : state->budget.excision) {
       s->inherited_stencil_reason = 0;
     }
@@ -1144,6 +1215,12 @@ void InitializeBinaryDiagnostics(ProblemGenerator* pgen, ParameterInput* pin, Me
   pin->GetOrAddBoolean("problem", "flux_new_epoch", false);
   auto state = std::make_shared<BinaryDiagnosticState>();
   InitializeBinaryBudget(state->budget, pin, pm, pgen);
+  if (pin->GetBoolean("problem", "flux_transfer_inventory")) {
+    state->inventory_subcells = pin->GetOrAddInteger("problem", "shell_subcells", 8);
+    if (state->inventory_subcells < 1 || state->inventory_subcells > 8)
+      Kokkos::abort("shell_subcells must be 1..8");
+    state->inventory_needs_recovery = restart;
+  }
   if (pin->GetOrAddBoolean("problem", "flux_shell_budget", false)) {
     int n = pin->GetOrAddInteger("problem", "shell_subcells", 8);
     if (n < 1 || n > 8) Kokkos::abort("shell_subcells must be 1..8");
@@ -1200,6 +1277,9 @@ void InitializeBinaryDiagnostics(ProblemGenerator* pgen, ParameterInput* pin, Me
       q.start = q.committed_time = pm->time;
       q.committed_cycle = pm->ncycle;
       state->mass.push_back(q);
+      if (pin->GetBoolean("problem", "flux_horizon_transport")) {
+        state->transport.emplace_back().start = pm->time;
+      }
     }
   }
   signature << ":budget:" << state->budget.enabled << ":" << state->budget.geometry.inner
@@ -1255,6 +1335,23 @@ void InitializeBinaryDiagnostics(ProblemGenerator* pgen, ParameterInput* pin, Me
             !(q.covered >= 0 && q.unavailable >= 0) ||
             std::abs(q.covered + q.unavailable - (pm->time - q.start)) > tol) {
           Kokkos::abort("Invalid committed diagnostic restart state");
+        }
+        const std::string key = id + "transport_v1";
+        if (!state->transport.empty() && pin->DoesParameterExist("cbd_diagnostics", key) &&
+            pin->GetString("cbd_diagnostics", key) != "disabled") {
+          auto v = LoadDiagnosticScalars(pin, key, 5 + HorizonChannelCount);
+          auto& t = state->transport[h];
+          t.start = v[0];
+          t.covered = v[1];
+          t.unavailable = v[2];
+          t.valid = v[3] == 1;
+          if (!std::all_of(v.begin(), v.end(), [](Real x) { return std::isfinite(x); }) ||
+              t.start > pm->time || t.covered < 0 || t.unavailable < 0 ||
+              std::abs(t.covered + t.unavailable - (pm->time - t.start)) > tol ||
+              (v[3] != 0 && v[3] != 1) || v[4] != pm->ncycle) {
+            Kokkos::abort("Invalid committed horizon transport restart state");
+          }
+          std::copy(v.begin() + 5, v.end(), t.total.begin());
         }
       }
     }
@@ -1348,6 +1445,7 @@ void BinaryDiagnosticStep(Mesh* pm, Driver* driver, int stage) {
     for (auto& q : state->mass) {
       q.Begin();
     }
+    for (auto& t : state->transport) t.Begin();
     state->state_time = pm->time;
     for (auto& shell : state->shells) {
       auto m = MeasureShell(pm, shell, pm->time, true, true);
@@ -1371,7 +1469,13 @@ void BinaryDiagnosticStep(Mesh* pm, Driver* driver, int stage) {
       bool horizon = s->surface_type == "modeled_component_Kerr";
       if (!horizon && (state->shells.empty() || s->Label()[0] != 'R')) continue;
       auto f = IntegrateSurface(pm->pmb_pack, s.get());
-      if (horizon) state->mass[h++].Stage(g, bdt, f.values[17], f.valid, f.reason);
+      if (horizon) {
+        state->mass[h].Stage(g, bdt, f.values[17], f.valid, f.reason);
+        if (!state->transport.empty()) {
+          state->transport[h].Stage(g, bdt, f, s->Center(), bbh.frame_omega);
+        }
+        ++h;
+      }
       if (!state->shells.empty()) fluxes[i] = f;
     }
     for (auto& shell : state->shells) {
@@ -1405,7 +1509,11 @@ void BinaryDiagnosticStep(Mesh* pm, Driver* driver, int stage) {
       auto f = IntegrateSurface(pm->pmb_pack, s.get());
       if (!endpoint.empty()) endpoint[i] = f;
       if (horizon) {
-        auto& q = state->mass[h++];
+        auto& q = state->mass[h];
+        if (!state->transport.empty() && pm->ncycle + 1 > q.committed_cycle) {
+          state->transport[h].Commit(pm->time + pm->dt - q.committed_time, f.valid);
+        }
+        ++h;
         q.interval_valid &= f.valid;
         q.reason |= f.reason;
         q.Commit(pm->ncycle + 1, pm->time + pm->dt, pm->dt);
@@ -1533,6 +1641,18 @@ void ExportBinaryDiagnostics(Mesh* pm, ParameterInput* pin) {
     pin->SetInteger("cbd_diagnostics", id + "cycle", q.committed_cycle);
     pin->SetBoolean("cbd_diagnostics", id + "valid", q.interval_valid);
     pin->SetInteger("cbd_diagnostics", id + "reason", q.reason);
+    const std::string key = id + "transport_v1";
+    if (!state->transport.empty()) {
+      const auto& t = state->transport[h];
+      std::ostringstream packed;
+      packed << std::setprecision(std::numeric_limits<Real>::max_digits10)
+             << t.start << ',' << t.covered << ',' << t.unavailable << ','
+             << static_cast<int>(t.valid) << ',' << q.committed_cycle;
+      for (Real x : t.total) packed << ',' << x;
+      pin->SetString("cbd_diagnostics", key, packed.str());
+    } else if (pin->DoesParameterExist("cbd_diagnostics", key)) {
+      pin->SetString("cbd_diagnostics", key, "disabled");
+    }
   }
   if (state->budget.enabled) {
     const auto& b = state->budget;
@@ -1599,7 +1719,8 @@ void TorusHistory(HistoryData* pdata, Mesh* pm) {
       std::static_pointer_cast<BinaryDiagnosticState>(pgen->user_diagnostic_data);
   std::vector<SurfaceFluxResult> results;
   TorusFluxes_General(pdata, pmbp, surf_raw_ptrs,
-                      diagnostics && !diagnostics->shells.empty() ? &results : nullptr);
+                      diagnostics && (!diagnostics->shells.empty() || diagnostics->inventory_subcells)
+                          ? &results : nullptr);
   std::ostringstream meta;
   meta << "cbd_schema=2 frame=" << (bbh.corotating ? "corotating" : "inertial")
        << " frame_omega=" << bbh.frame_omega
@@ -1709,6 +1830,74 @@ void TorusHistory(HistoryData* pdata, Mesh* pm) {
     }
   }
   BinaryBudgetHistory(pdata, pm);
+  if (diagnostics && !diagnostics->transport.empty()) {
+    pdata->metadata += " horizon_transport=v1,inward,moving,RK_qualified"
+                       " E_inertial=Et+Omega*Jz Jz_orbit=(C_cross_P)z"
+                       " Jz_center=Jz-Jz_orbit";
+    for (std::size_t h = 0; h < diagnostics->transport.size(); ++h) {
+      const auto& t = diagnostics->transport[h];
+      const auto& id = diagnostics->labels[h];
+      for (int k = 0; k < HorizonChannelCount; ++k) {
+        add(std::string(horizon_channels[k]) + "_qualified_cumulative_" + id, t.total[k]);
+      }
+      add("transport_epoch_start_" + id, t.start);
+      add("transport_covered_duration_" + id, t.covered);
+      add("transport_unavailable_duration_" + id, t.unavailable);
+      add("transport_interval_valid_" + id, t.valid ? 1 : 0);
+    }
+  }
+  if (diagnostics && diagnostics->inventory_subcells) {
+    pdata->metadata += " transfer_inventory=coordinate_sphere_minus_modeled_horizon"
+                       " inventory_Jz=barycentric inventory_boundary=outer_in_minus_horizon_in";
+    const int holes = bbh.single_black_hole ? 1 : 2;
+    int transfer[2] = {-1, -1}, horizon[2] = {-1, -1};
+    for (size_t i = 0; i < surf_raw_ptrs.size(); ++i) {
+      const auto& face = *surf_raw_ptrs[i];
+      if (face.Label() == "H1") transfer[0] = i;
+      if (face.Label() == "H2") transfer[1] = i;
+      if (face.surface_type == "modeled_component_Kerr") horizon[face.component] = i;
+    }
+    for (int h = 0; h < holes; ++h) {
+      auto& outer = *surf_raw_ptrs.at(transfer[h]);
+      auto origin = outer.Center();
+      circumbinary::HorizonShell shell;
+      shell.outer = outer.Radius().h_view(0);
+      shell.holes = 1;
+      shell.subcells = diagnostics->inventory_subcells;
+      SetShellGeometry(shell, pm->time, h);
+      const auto& box = pm->mesh_size;
+      if (shell.outer > std::min({origin[0] - box.x1min, box.x1max - origin[0],
+                                  origin[1] - box.x2min, box.x2max - origin[1],
+                                  origin[2] - box.x3min, box.x3max - origin[2]}))
+        Kokkos::abort("Transfer inventory must fit inside the mesh");
+      if (holes == 2) {
+        auto& other = *surf_raw_ptrs.at(transfer[1 - h]);
+        Real d2 = 0;
+        for (int d = 0; d < 3; ++d) d2 += SQR(origin[d] - other.Center()[d]);
+        if (SQR(shell.outer + other.Radius().h_view(0)) > d2)
+          Kokkos::abort("Transfer inventories require disjoint spheres");
+      }
+      Real v[4] = {};
+      MeasureTransferInventory(pmbp, origin, shell, v);
+      if (diagnostics->inventory_needs_recovery) {
+        v[1] += v[0];
+        v[0] = 0;
+      }
+      const bool valid = v[0] > 0 && v[1] == 0 && std::isfinite(v[0]) &&
+                         std::isfinite(v[2]) && std::isfinite(v[3]);
+      const auto& a = results.at(transfer[h]);
+      const auto& b = results.at(horizon[h]);
+      const std::string prefix = "inventory_" + outer.Label() + "_";
+      add(prefix + "sampled_volume", v[0]);
+      add(prefix + "rejected_volume", v[1]);
+      add(prefix + "storage_valid", valid);
+      add(prefix + "M0_stored", valid ? v[2] : NAN);
+      add(prefix + "Jz_stored", valid ? v[3] : NAN);
+      add(prefix + "M0_boundary_in", a.values[17] - b.values[17]);
+      add(prefix + "Jz_f_boundary_in", a.values[30] - b.values[30]);
+      add(prefix + "Jz_em_boundary_in", a.values[33] - b.values[33]);
+    }
+  }
 }
 
 KOKKOS_INLINE_FUNCTION

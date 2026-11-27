@@ -1,11 +1,73 @@
 """Actual patched executable lifecycle checks. Set ATHENA_DIAGNOSTICS_EXE to run."""
 from pathlib import Path
-import os, subprocess, sys, tempfile, unittest
+import os, re, subprocess, sys, tempfile, unittest
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'vis/python'))
 import athena_read
 EXE=os.environ.get('ATHENA_DIAGNOSTICS_EXE')
 INPUT=Path(__file__).with_name('smoke.athinput')
+
+TRANSPORT_QUANTITIES = (
+    "M0_in", "M0_out", "E_inertial_f", "E_inertial_em",
+    "Jz_center_f", "Jz_center_em", "Jz_orbit_f", "Jz_orbit_em",
+)
+
+
+def transport_totals(face):
+    return [f"{quantity}_qualified_cumulative_{face}" for quantity in TRANSPORT_QUANTITIES]
+
+
+def transport_rates(h, face, x, omega, sample=0):
+    # The sampled centers are on the x axis of the circular-orbit fixture.
+    def rate(name):
+        return h[f"{name}_in_moving_{face}"][sample]
+    rates = {name: h[f"{name}_moving_{face}"][sample] for name in ("M0_in", "M0_out")}
+    for part in ("f", "em"):
+        jz = rate("Jz_" + part)
+        orbital = x * rate("Py_" + part)
+        rates["Jz_orbit_" + part] = orbital
+        rates["Jz_center_" + part] = jz - orbital
+        rates["E_inertial_" + part] = rate("Et_" + part) + omega * jz
+    return rates
+
+
+def inventory_from_dump(dump, center_x, axes, radius, subcells=24):
+    """Cartesian voxel control for an aligned, boosted horizon at orbital phase zero."""
+    import bin_convert
+
+    data = bin_convert.read_binary(str(dump))
+    offsets = (np.arange(subcells) + 0.5) / subcells - 0.5
+    total = np.zeros(3)
+    for block, bounds in enumerate(data["mb_geometry"]):
+        rho, px, py = (data["mb_data"][field][block] for field in ("dens", "mom1", "mom2"))
+        lower = bounds[::2].astype(float)
+        upper = bounds[1::2].astype(float)
+        center = np.array([center_x, 0, 0])
+        if np.any(upper < center - radius) or np.any(lower > center + radius):
+            continue
+        nx, ny, nz = rho.shape[::-1]
+        dx, dy, dz = spacing = (upper - lower) / [nx, ny, nz]
+        grid = [lower[d] + (np.arange(n) + 0.5) * spacing[d]
+                for d, n in enumerate((nx, ny, nz))]
+        z, y, x = np.meshgrid(*grid[::-1], indexing="ij")
+        keep = ((abs(x-center_x) <= radius+dx/2) & (abs(y) <= radius+dy/2) &
+                (abs(z) <= radius+dz/2))
+        x, y, z, rho, px, py = (v[keep] for v in (x, y, z, rho, px, py))
+        if not x.size:
+            continue
+        zsquared = (z[:, None] + dz * offsets)**2
+        for u in offsets:
+            xs = x + dx * u
+            xr2 = (xs-center_x)**2
+            for v in offsets:
+                ys = y + dy * v
+                outside_horizon = (zsquared / axes[2]**2 +
+                                   (xr2 / axes[0]**2 + ys**2 / axes[1]**2)[:, None]) >= 1
+                in_sphere = zsquared + (xr2 + ys**2)[:, None] <= radius**2
+                dv = (outside_horizon & in_sphere).sum(axis=1) * (dx*dy*dz/subcells**3)
+                total += [dv.sum(), (rho*dv).sum(), ((xs*py-ys*px)*dv).sum()]
+    return total
+
 
 @unittest.skipUnless(EXE,'set ATHENA_DIAGNOSTICS_EXE to test patched executable')
 class Lifecycle(unittest.TestCase):
@@ -42,6 +104,79 @@ class Lifecycle(unittest.TestCase):
                 changed=self.run_case(root/'changed','time/nlim=5',ranks=2,restart=rst)
                 np.testing.assert_allclose(mpi[key][-1],full[key][-1],rtol=2e-12)
                 np.testing.assert_allclose(changed[key][-1],full[key][-1],rtol=2e-12)
+
+            face = "BH1_Kerr"
+            for label in transport_totals(face):
+                for run in (resume, sparse):
+                    np.testing.assert_allclose(run[label][-1], full[label][-1], rtol=2e-11, atol=2e-13)
+                np.testing.assert_array_equal(missing[label], 0)
+                if os.environ.get("ATHENA_DIAGNOSTICS_MPI"):
+                    np.testing.assert_allclose(changed[label][-1], full[label][-1], rtol=2e-11, atol=2e-13)
+
+            # Adopt a checkpoint with the original M0 accumulator but without a
+            # transport ledger. Earlier rest mass survives; new integrals start here.
+            raw = rst.read_bytes()
+            end = raw.index(b"<par_end>\n") + len(b"<par_end>\n")
+            header, count = re.subn(rb"(?m)^BH1_Kerr_transport_v1\s*=[^\n]*\n", b"", raw[:end])
+            self.assertEqual(count, 1)
+            old = root / "mass-only.rst"
+            old.write_bytes(header + raw[end:])
+            adopted = self.run_case(root / "adopted", "time/nlim=5", restart=old)
+            self.assertEqual(adopted["transport_epoch_start_" + face][-1], split["time"][-1])
+            np.testing.assert_allclose(adopted[key][-1], full[key][-1], rtol=2e-12)
+            for label in transport_totals(face):
+                np.testing.assert_allclose(adopted[label][-1], full[label][-1] - split[label][-1],
+                                           rtol=2e-10, atol=2e-16, err_msg=label)
+            np.testing.assert_allclose(adopted["transport_covered_duration_" + face][-1],
+                                       full["time"][-1] - split["time"][-1])
+
+    def test_horizon_transport_frame_and_stage(self):
+        fixture = INPUT.with_name("binary_shell.athinput")
+        args = ["time/nlim=1", "time/cfl_number=0.10", "time/tlim=0.001",
+                "problem/b_inf=0.002", "problem/flux_shell_budget=false"]
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            rot = self.run_case(root / "rot", *args, "time/integrator=rk1", input_file=fixture)
+            inert = self.run_case(root / "inert", *args, "time/integrator=rk1",
+                                  "problem/corotating=false", "problem/frame_omega=0",
+                                  input_file=fixture)
+            rk2 = self.run_case(root / "rk2", *args, "time/integrator=rk2", input_file=fixture)
+            # r1 = q*a/(1+q) and r2 = -a/(1+q) in this unequal-mass test.
+            for face, x in (("BH1_Kerr", 4 * 0.75 / 1.75), ("BH2_Kerr", -4 / 1.75)):
+                for h, omega in ((rot, 0.125), (inert, 0)):
+                    rates = transport_rates(h, face, x, omega)
+                    for quantity, expected in rates.items():
+                        key = f"{quantity}_qualified_cumulative_{face}"
+                        np.testing.assert_allclose(h[key][-1] / h["time"][-1], expected,
+                                                   rtol=2e-10, atol=2e-12, err_msg=key)
+                        np.testing.assert_allclose(rot[key][-1], inert[key][-1],
+                                                   rtol=3e-9, atol=1e-14, err_msg=key)
+                # Independently contract the inertial RK1 currents with the
+                # component boost at phase zero, where v_y = Omega_bin * x.
+                omega_bin = 4.0**(-1.5)
+                vy = omega_bin * x
+                gamma = 1 / np.sqrt(1 - vy**2)
+                for part in ("f", "em"):
+                    energy_rate = inert[f"Et_{part}_in_moving_{face}"][0]
+                    momentum_rate = inert[f"Py_{part}_in_moving_{face}"][0]
+                    self.assertNotEqual(vy * momentum_rate, 0)
+                    boosted_rate = gamma * (energy_rate - vy * momentum_rate)
+                    for h in (inert, rot):
+                        dt = h["time"][-1] - h["time"][0]
+                        energy = np.diff(h[f"E_inertial_{part}_qualified_cumulative_{face}"])
+                        orbital = np.diff(h[f"Jz_orbit_{part}_qualified_cumulative_{face}"])
+                        np.testing.assert_allclose(gamma * (energy - omega_bin*orbital) / dt,
+                                                   boosted_rate, rtol=3e-9, atol=2e-12,
+                                                   err_msg=f"{face} {part} component boost")
+                # SSPRK2 evaluates stages at the initial state and the forward
+                # Euler state. In the stationary frame both sample the same surface.
+                stage1 = transport_rates(rot, face, x, 0.125)
+                stage2 = transport_rates(rot, face, x, 0.125, sample=-1)
+                for quantity in TRANSPORT_QUANTITIES:
+                    key = f"{quantity}_qualified_cumulative_{face}"
+                    expected = rk2["time"][-1] * (stage1[quantity] + stage2[quantity]) / 2
+                    np.testing.assert_allclose(rk2[key][-1], expected, rtol=3e-10,
+                                               atol=2e-15, err_msg=key)
 
     @unittest.skipUnless(os.environ.get("ATHENA_DIAGNOSTICS_MPI"), "requires MPI")
     def test_inertial_magnetic_flux_decomposition(self):
@@ -100,6 +235,94 @@ class Lifecycle(unittest.TestCase):
             for q in ("Px","Py","Pz","Jz"):
                 self.assertTrue(np.isnan(h["shell_R3.75_"+q+"_interval_residual"][-1]))
                 self.assertTrue(np.isfinite(h["shell_R4.25_"+q+"_interval_residual"][-1]))
+
+    def test_transfer_inventory_against_conserved_dump(self):
+        """The larger spatial control uses this same inertial input at time/nlim=0.
+
+        Use N=48,64,96,128 cells on each mesh axis, with 16-cell blocks for
+        N=48 and 32-cell blocks for the others. Set flux_ntheta=N/2, flux_nphi=N,
+        and shell_subcells=8. Keep only the history output and compare the initial
+        inventory_H1 and inventory_H2 storage, sampled volumes and boundary rates.
+        """
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            fixture = INPUT.with_name("binary_shell.athinput").read_text()
+            fixture = fixture.replace("<problem>", "<problem>\nflux_transfer_inventory=true"
+                                      "\nflux_horizon2=true\nflux_radius2=1.55")
+            fixture += "\n<output3>\nfile_type=bin\nvariable=mhd_u\ndcycle=2\n"
+            inp = root / "inventory.athinput"
+            inp.write_text(fixture)
+            args = ("problem/flux_horizon1=true", "problem/flux_radius1=1.55",
+                    "problem/b_inf=0.002", "problem/flux_shell_budget=false",
+                    "problem/corotating=false", "problem/frame_omega=0")
+            full = self.run_case(root/"full", "time/nlim=3", *args, input_file=inp)
+            coarse = self.run_case(root/"coarse", "time/nlim=0", "problem/shell_subcells=2",
+                                   *args, input_file=inp)
+            dump = root/"full/bin/matched_bondi.mhd_u.00000.bin"
+            # Mass ratio 0.75, separation 4, aligned spins. A boost in y contracts
+            # the equatorial y axis of the intrinsic Kerr-Schild ellipsoid.
+            for h, mass, chi, x in ((1, 4/7, 0.3, 12/7), (2, 3/7, 0.2, -16/7)):
+                polar = mass * (1 + np.sqrt(1-chi**2))
+                equatorial = np.hypot(polar, mass*chi)
+                axes = (equatorial, equatorial*np.sqrt(1-(x/8)**2), polar)
+                labels = ("sampled_volume", "M0_stored", "Jz_stored")
+                prefix = f"inventory_H{h}_"
+                got = [full[prefix + field][0] for field in labels]
+                exact = (4*np.pi/3) * (1.55**3 - np.prod(axes))
+                np.testing.assert_allclose(got[0], exact, rtol=5e-4)
+                control = inventory_from_dump(dump, x, axes, 1.55)
+                np.testing.assert_allclose(got, control, rtol=7e-4)
+                control[0] = exact
+                low = [coarse[prefix + field][0] for field in labels]
+                self.assertTrue((np.abs(got-control) < np.abs(low-control)).all())
+                np.testing.assert_array_equal(full[prefix+"storage_valid"], 1)
+                np.testing.assert_array_equal(full[prefix+"rejected_volume"], 0)
+                for field, flux in (("M0", "M0_net"), ("Jz_f", "Jz_f"), ("Jz_em", "Jz_em")):
+                    outer = full[f"{flux}_in_moving_H{h}"]
+                    inner = full[f"{flux}_in_moving_BH{h}_Kerr"]
+                    np.testing.assert_allclose(full[prefix+field+"_boundary_in"], outer-inner,
+                                               rtol=1e-12, atol=1e-14)
+                    self.assertGreater(np.max(np.abs(outer-inner)), 1e-7)
+            checkpoint = root/"full/rst/matched_bondi.00001.rst"
+            ranks = 2 if os.environ.get("ATHENA_DIAGNOSTICS_MPI") else 1
+            if ranks > 1:
+                parallel = self.run_case(root/"two_ranks", "time/nlim=0",
+                                         *args, ranks=ranks, input_file=inp)
+                for key in full:
+                    if key.startswith("inventory_"):
+                        np.testing.assert_allclose(full[key][0], parallel[key][0],
+                                                   rtol=1e-12, atol=1e-14, err_msg=key)
+            resumed = self.run_case(root/"resumed", "time/nlim=3", ranks=ranks, restart=checkpoint)
+            stopped = self.run_case(root/"stopped", "time/nlim=2", ranks=ranks, restart=checkpoint)
+            # Output at the checkpoint has no restored per-cell reset provenance.
+            # A subsequent accepted stage qualifies the new field.
+            for h in (1, 2):
+                prefix = f"inventory_H{h}_"
+                self.assertEqual(stopped[prefix+"storage_valid"][0], 0)
+                self.assertGreater(stopped[prefix+"rejected_volume"][0], 0)
+                for field in ("M0_stored", "Jz_stored"):
+                    self.assertTrue(np.isnan(stopped[prefix+field][0]))
+                for key in full:
+                    if key.startswith(prefix):
+                        np.testing.assert_allclose(full[key][-1], resumed[key][-1],
+                                                   rtol=5e-9, atol=2e-11, err_msg=key)
+
+    def test_transfer_inventory_zoom_gap(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            inp = root/"inventory_zoom.athinput"
+            fixture = INPUT.with_name("zoom_smoke.athinput").read_text()
+            inp.write_text(fixture.replace("<problem>", "<problem>\nflux_transfer_inventory=true"))
+            h = self.run_case(root/"zoom", input_file=inp)
+            prefix = "inventory_H1_"
+            rejected = h[prefix+"rejected_volume"] > 0
+            self.assertTrue(rejected.any())
+            self.assertTrue((~rejected[1:] & rejected[:-1]).any())
+            np.testing.assert_array_equal(h[prefix+"storage_valid"], ~rejected)
+            for field in ("M0_stored", "Jz_stored"):
+                np.testing.assert_array_equal(np.isnan(h[prefix+field]), rejected)
+            for field in ("M0", "Jz_f", "Jz_em"):
+                self.assertTrue(np.isnan(h[prefix+field+"_boundary_in"][rejected]).all())
 
     def test_regional_restart(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -202,6 +425,18 @@ class Lifecycle(unittest.TestCase):
             self.assertTrue((full['reason_BH1_Kerr'].astype(int)&32).any())
             np.testing.assert_allclose(full['M0_covered_duration_BH1_Kerr']+
                 full['M0_unavailable_duration_BH1_Kerr'],full['time'],atol=1e-13)
+
+            face = "BH1_Kerr"
+            missing = full["transport_interval_valid_" + face][1:] == 0
+            self.assertTrue(missing.any())
+            self.assertTrue((~missing).any())
+            for label in transport_totals(face):
+                np.testing.assert_array_equal(np.diff(full[label])[missing], 0)
+                np.testing.assert_allclose(resumed[label][-1], full[label][-1],
+                                           rtol=3e-10, atol=1e-12, err_msg=label)
+            np.testing.assert_allclose(full["transport_covered_duration_" + face] +
+                                       full["transport_unavailable_duration_" + face],
+                                       full["time"], atol=1e-13)
 
     def test_zoom_budget_jump_restart(self):
         with tempfile.TemporaryDirectory() as temp:

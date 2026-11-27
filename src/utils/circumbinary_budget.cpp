@@ -4,6 +4,10 @@
 // Licensed under the 3-clause BSD License (the "LICENSE")
 //========================================================================================
 #include "utils/circumbinary_budget.hpp"
+#include <vector>
+#if MPI_PARALLEL_ENABLED
+#include <mpi.h>
+#endif
 #include "mesh/mesh.hpp"
 #include "mhd/mhd.hpp"
 #include "coordinates/cell_locations.hpp"
@@ -125,27 +129,8 @@ circumbinary::ShellMoments ReduceHorizonShell(MeshBlockPack* pack,
                           CellCenterX(j - ind.js, ind.nx2, s.x2min, s.x2max),
                           CellCenterX(k - ind.ks, ind.nx3, s.x3min, s.x3max)};
         Real dx[3] = {s.dx1, s.dx2, s.dx3}, first[3] = {};
-        int n = shell.subcells;
-        Real area = dx[0] * dx[1] / (n * n), volume = 0;
+        Real volume = shell.CellMoments(center, dx, first);
         Real lo = center[2] - 0.5 * dx[2], hi = center[2] + 0.5 * dx[2];
-        int coverage = shell.CellCoverage(center, dx);
-        if (coverage == 0)
-          return;
-        if (coverage == 1) {
-          volume = dx[0] * dx[1] * dx[2];
-          first[0] = center[0] * volume;
-          first[1] = center[1] * volume;
-        } else {
-          for (int a = 0; a < n; ++a)
-            for (int b = 0; b < n; ++b) {
-              Real x = center[0] + dx[0] * ((a + 0.5) / n - 0.5);
-              Real y = center[1] + dx[1] * ((b + 0.5) / n - 0.5);
-              Real dv = area * shell.ColumnLength(x, y, lo, hi);
-              volume += dv;
-              first[0] += x * dv;
-              first[1] += y * dv;
-            }
-        }
         if (volume <= 0)
           return;
         bool contaminated =
@@ -200,4 +185,72 @@ circumbinary::ShellMoments ReduceHorizonShell(MeshBlockPack* pack,
       },
       Kokkos::Sum<circumbinary::ShellMoments>(result));
   return result;
+}
+
+void MeasureTransferInventory(MeshBlockPack* pack, const Real origin[3],
+                              circumbinary::HorizonShell shell, Real values[4]) {
+  // Only dispatch cells in local leaf blocks intersecting the sphere's bounding box.
+  const auto& size = pack->pmb->mb_size;
+  std::vector<int> candidates;
+  for (int m = 0; m < pack->nmb_thispack; ++m) {
+    const auto& b = size.h_view(m);
+    if (b.x1max > origin[0] - shell.outer && b.x1min < origin[0] + shell.outer &&
+        b.x2max > origin[1] - shell.outer && b.x2min < origin[1] + shell.outer &&
+        b.x3max > origin[2] - shell.outer && b.x3min < origin[2] + shell.outer)
+      candidates.push_back(m);
+  }
+  DvceArray1D<int> blocks("transfer_blocks", candidates.size());
+  auto mirror = Kokkos::create_mirror_view(blocks);
+  for (size_t i = 0; i < candidates.size(); ++i) mirror(i) = candidates[i];
+  Kokkos::deep_copy(blocks, mirror);
+  const auto sizes = size.d_view;
+  const auto ind = pack->pmesh->mb_indcs;
+  const int cells = ind.nx1 * ind.nx2 * ind.nx3;
+  const Real cx = origin[0], cy = origin[1], cz = origin[2];
+  auto u = pack->pmhd->u0;
+  auto reset = pack->pmhd->diagnostic_reset;
+  auto c = pack->pcoord;
+  auto floor = c->excision_floor, flux = c->excision_flux;
+  auto weight = c->excision_weight;
+  bool excise = c->coord_data.bh_excise, smooth = c->coord_data.smooth_excise;
+  auto zoom = pack->pmesh->pzoom;
+  bool frozen = zoom && zoom->zstate.zone > 0;
+  ZoomRegion region{};
+  if (frozen) region = zoom->zregion;
+  Kokkos::parallel_reduce("component_transfer_inventory",
+      Kokkos::RangePolicy<DevExeSpace>(0, candidates.size() * cells),
+      KOKKOS_LAMBDA(int n, Real& accepted, Real& rejected, Real& mass, Real& jz) {
+        int m = blocks(n / cells), cell = n % cells;
+        int i = ind.is + cell % ind.nx1, j = ind.js + (cell / ind.nx1) % ind.nx2;
+        int k = ind.ks + cell / (ind.nx1 * ind.nx2);
+        auto b = sizes(m);
+        Real x = CellCenterX(i - ind.is, ind.nx1, b.x1min, b.x1max);
+        Real y = CellCenterX(j - ind.js, ind.nx2, b.x2min, b.x2max);
+        Real z = CellCenterX(k - ind.ks, ind.nx3, b.x3min, b.x3max);
+        Real relative[3] = {x - cx, y - cy, z - cz}, dx[3] = {b.dx1, b.dx2, b.dx3}, first[3] = {};
+        Real dv = shell.CellMoments(relative, dx, first);
+        if (dv <= 0) return;
+        Real dm = u(m, IDN, k, j, i) * dv;
+        Real dj = (first[0] + cx * dv) * u(m, IM2, k, j, i) -
+                  (first[1] + cy * dv) * u(m, IM1, k, j, i);
+        const bool masked = reset(m, k, j, i) ||
+            (excise && (floor(m, k, j, i) || flux(m, k, j, i) ||
+                        (smooth && weight(m, k, j, i) > 0)));
+        const bool overlaps_frozen = frozen &&
+            region.Overlaps(x - 0.5 * b.dx1, x + 0.5 * b.dx1, y - 0.5 * b.dx2,
+                            y + 0.5 * b.dx2, z - 0.5 * b.dx3, z + 0.5 * b.dx3,
+                            region.radius);
+        if (masked || overlaps_frozen || !Kokkos::isfinite(dm) || dm <= 0 ||
+            !Kokkos::isfinite(dj)) {
+          rejected += dv;
+          return;
+        }
+        accepted += dv;
+        mass += dm;
+        jz += dj;
+      }, Kokkos::Sum<Real>(values[0]), Kokkos::Sum<Real>(values[1]),
+         Kokkos::Sum<Real>(values[2]), Kokkos::Sum<Real>(values[3]));
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, values, 4, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+#endif
 }
