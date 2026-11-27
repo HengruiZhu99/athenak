@@ -52,7 +52,7 @@ The [extended refinement and MPI audit](circumbinary-convergence.md) tests ten s
 | `Jz_orbit_f`, `Jz_orbit_em` | Angular momentum carried by the inward linear momentum, with lever arm from the barycenter to the hole center $\mathbf C$, $(\mathbf C\times\dot{\mathbf P})_z$. |
 | `Jz_center_f`, `Jz_center_em` | Remaining inward axial angular momentum about the hole center. Adding the centered and orbital terms recovers the inward barycentric angular momentum for each stress component. |
 
-For example, `E_inertial_em_qualified_cumulative_BH1_Kerr` gives the signed electromagnetic contribution integrated since `transport_epoch_start_BH1_Kerr`. To measure a mean rate, difference two cumulative values in the same epoch and divide by the change in `transport_covered_duration_BH1_Kerr`. Report the covered fraction of the elapsed interval alongside the mean. A frozen or underresolved horizon increases `transport_unavailable_duration_BH1_Kerr` and leaves the totals fixed. Using sparse history output preserves the stage-integrated measurement. Restarting an older checkpoint preserves its accumulated net baryon mass and starts the new channels at the restart time.
+For example, `E_inertial_em_qualified_cumulative_BH1_Kerr` gives the signed electromagnetic contribution integrated since `transport_epoch_start_BH1_Kerr`. To measure a mean rate, difference two cumulative values in the same epoch and divide by the change in `transport_covered_duration_BH1_Kerr`. Report the covered fraction of the elapsed interval alongside the mean. A frozen or underresolved horizon increases `transport_unavailable_duration_BH1_Kerr` and leaves the totals fixed. A mean from finest-grid visits describes those visits. A continuous finest-grid segment measures the intervening orbital phases as well. Using sparse history output preserves the stage-integrated measurement. Restarting an older checkpoint preserves its accumulated net baryon mass and starts the new channels at the restart time.
 
 For a fixed circular binary, the same columns give the energy delivered with respect to the instantaneous component boost on the inertial slice. For each stress component and each hole $h$,
 
@@ -80,7 +80,7 @@ flux_transfer_inventory = true
 
 At history cadence, `inventory_H1_M0_stored` integrates conserved baryon density between H1 and its boosted Kerr surface. `inventory_H1_Jz_stored` integrates barycentric $xS_y-yS_x$ with densitized momenta and cut-cell first moments. H2 has equivalent columns. Each transfer sphere must enclose its horizon and fit inside the mesh, and the two spheres must be disjoint. The reduction visits only blocks overlapping each sphere's bounding box. The inventory defaults off and requires no volumetric output.
 
-`M0_boundary_in`, `Jz_f_boundary_in`, and `Jz_em_boundary_in` with the same inventory prefix are instantaneous outer-minus-horizon inward rates. A positive `M0_boundary_in` means that more baryons are entering through the transfer sphere than are crossing the horizon at that instant. Gravity also exerts a volume torque, and floors or mesh changes can affect storage. Use the shell source and remap histories above when evaluating a full balance. `sampled_volume`, `rejected_volume`, and `storage_valid` qualify the stored quantities. A rejected cell or an immediate restart sample with unknown reset provenance makes the whole storage measurement unavailable. Each boundary rate retains the qualification of both surface integrals.
+`M0_boundary_in`, `Jz_f_boundary_in`, and `Jz_em_boundary_in` with the same inventory prefix are instantaneous outer-minus-horizon inward rates. A positive `M0_boundary_in` means that more baryons are entering through the transfer sphere than are crossing the horizon at that instant. Gravity also exerts a volume torque, and floors or mesh changes can affect storage. Use the shell source and remap histories above when evaluating a full balance. `sampled_volume`, `rejected_volume`, and `storage_valid` qualify the stored quantities. A rejected cell or an immediate restart sample with unknown reset provenance makes the whole storage measurement unavailable. `M0_partial_stored` and `Jz_partial_stored` retain the integral over accepted cells at their original volumes and report NaN when the accepted volume is zero. Estimating the missing mass or angular momentum also requires information about the rejected cells. Each boundary rate retains the qualification of both surface integrals.
 
 The unequal-mass control compares the inventory to an independent $24^3$-voxel integration of each intersecting cell in a conserved-variable dump. With eight transverse samples per cell, maximum differences over both holes were 0.0066% for stored baryon mass, 0.0204% for stored angular momentum and 0.0113% against the analytic sphere-minus-ellipsoid volume. On refining the evolution mesh from $96^3$ to $128^3$, stored mass changed by at most 0.063% and stored angular momentum by 0.158%. Net mass supply through the two boundaries changed by 2.94% on the primary and 0.102% on the secondary. The difference of two surface fluxes can converge nonmonotonically. These are short controls with magnetized inflow. [Regression tests and mesh settings](../tst/diagnostics/test_lifecycle.py)
 
@@ -116,6 +116,53 @@ The final B200 campaign was Slurm job 61229. Across all builds, failed trials an
 | Synchronized torque kernel for the full volume | 49.98 µs | 49.77 µs |
 
 The selected plane took 43% less kernel time, and the eight-cycle workload took 19% less time. Full-volume kernel timings were effectively tied. The three saved torque components matched the reference exactly at binary output precision. Adding the two fixed KS surfaces brought the median to 0.3928 s. Enabling the three shell budgets as well brought it to 0.4320 s, an additional 10.0% over those surfaces at this cadence. These timings include evolution and output on a $48^3$ mesh. The dedicated kernel timings include the synchronization performed by the probe.
+
+### GPU cost of the horizon histories
+
+A second campaign on StellarAI's B200 GPU test queue compared the horizon transport implementation against commit `780218d5`. Both builds use the same solver, double precision, $64\times128$ surface quadrature and matching outputs. The revised surface integrator caches mesh-dependent spacing, combines flux and coverage in one MPI sum, and skips interpolation on ranks without local quadrature points. It still checks evolved fields and stencil quality at each sample.
+
+The following are median wall seconds for 24 evolved steps of the magnetized binary control, across five interleaved repetitions after warmup. Each row includes the cost of the stated history cadence. The last column enables both transfer inventories in addition to the new horizon histories.
+
+| B200 GPUs | History every | Baseline (s) | Horizon histories (s) | With inventories (s) |
+|---:|---:|---:|---:|---:|
+| 1 | 1 step | 0.2300 | 0.2070 | 0.2124 |
+| 1 | 8 steps | 0.1908 | 0.1793 | 0.1801 |
+| 2 | 1 step | 0.21995 | 0.20291 | 0.20922 |
+| 2 | 8 steps | 0.18687 | 0.17468 | 0.17586 |
+
+The existing 417 columns and their availability masks matched the baseline exactly at each tested cadence. The final version also writes four partial-storage columns from the same reduced values. With both inventories enabled, all 461 columns and their availability masks agreed within $2.85\times10^{-14}$ between one and two GPU ranks over 41 samples. The maximum CPU–B200 absolute difference across those columns at nine common times was $2.51\times10^{-12}$. [Benchmark harness](../tst/diagnostics/bench_horizon_transport.py)
+
+On an allocation with one MPI rank bound to each GPU, the benchmark can repeat both cadences and compare two decompositions. `GPU_MAP` is the campaign's rank-to-GPU wrapper.
+
+```sh
+python3 tst/diagnostics/bench_horizon_transport.py "$BASELINE_EXE" "$EXE" one-b200
+python3 tst/diagnostics/bench_horizon_transport.py "$BASELINE_EXE" "$EXE" two-b200 \
+    --launcher "mpirun --bind-to none --map-by slot -np 2 $GPU_MAP" --compare-ranks one-b200
+```
+
+The production test replayed an immutable 25M checkpoint at orbit 69.62 on eight B200s of one node. It used 13,400 leaf blocks, the production two-mass-unit history cadence, and finest-grid zone 0. All 335 existing history columns matched exactly. The timed window comprises 64 steps after restart initialization, with three interleaved repetitions per configuration.
+
+| 25M production replay | Median seconds | Range in seconds |
+|---|---:|---:|
+| Baseline | 27.549 | 26.455–28.238 |
+| New horizon histories | 26.596 | 26.135–28.174 |
+| New horizon histories and two transfer inventories | 26.900 | 25.866–27.848 |
+
+The median throughput improvement was 3.6%, and the two inventories added 1.1% to median elapsed time. The ranges overlap. Long-run costs also depend on how much time each sequence spends in the other zoom zones, on remapping and on checkpoint I/O. [Raw timings and verification](circumbinary-horizon-transport-b200.json)
+
+The eight-rank 25M write/read test compared 40 persisted fields between the history immediately before writing, the decoded checkpoint, and the history at the same cycle after reload. All 40 matched exactly. After two further steps, the restarted and uninterrupted solutions differed by up to $3.04\times10^{-7}$ in the new cumulative transport fields, with a maximum relative difference of $4.74\times10^{-6}$. Running both trajectories with the baseline executable reproduced the differences in the legacy mass and flux histories. This distinguishes recovery of the cumulative quantities from the subsequent evolution of the restarted fluid.
+
+The 35M restart exposed an existing error at the frozen boundary in zone 2. On the old path, the two 5M spheres' net mass inflow and unsigned magnetic flux agreed to four parts per million between resumed and uninterrupted runs after two steps. The primary's small fluid $P_z$ rate differed by 0.01935 (35.8%), fluid $J_y$ by 0.341 (32.5%) and fluid $J_z$ by 0.00605 (0.0463%). The 40 persisted horizon fields recovered exactly, including unavailable time while the horizons were frozen.
+
+A zero-step checkpoint comparison found the entire 807,776,312-byte frozen-region cache intact, with equal active magnetic faces and conserved cells within 7M of the holes. The old evolution exchanged conserved variables before projecting the frozen cells. Between radii 3M and 4M, the vertical momenta in 9,664 ghost-cell copies disagreed with their active donors by more than $10^{-10}$. Reloading the checkpoint refreshed those copies. At $\Delta x=0.5M$ that discrepancy lies within reach of the WENO-Z reconstruction used at 5M.
+
+The correction projects the frozen primitives using synchronized magnetic faces, then sends the resulting conserved state into neighboring blocks. The production RK path reuses the receives already posted at stage start. Startup and configurations with a hook that can consume the earlier fluid state also preserve that earlier exchange. The corrected eight-rank replay matched all 20 tested 5M transfer rates exactly at both post-restart samples. On the 35M checkpoint, all 189,520 comparisons of the five conserved fields in ghost cells and their active donors between radii 3M and 6M returned identical values. The two-rank regression covers both the single-exchange path and a custom electric-field hook. Some rates at 84M differed by up to $7.17\times10^{-8}$ in absolute units. Existing histories retain the boundary treatment of the executable that generated them. A restart onto the corrected executable gives a natural boundary between segments when comparing transverse fluxes.
+
+The final frozen-zone implementation also reduces cost on the 35M production mesh. On eight B200s, 48 zone-2 steps took 12.236 seconds before the boundary correction and 11.043 seconds after it (medians of three interleaved comparisons). This is 9.7% less elapsed time, or 10.8% higher throughput. The separate two-exchange correction reached the same 379 history values as the single-exchange path and took 14.349 seconds in its own three-repeat control. The final magnetized zoom control completed two out-and-back cycles, matched one and two GPU ranks, and reached a maximum relative magnetic divergence of $5.72\times10^{-16}$.
+
+A production replay samples a concrete case in which partial storage matters. At $t=54683.2126M$ in the 25M binary, the primary's inventory rejected $0.001953125M^3$ of $520.54172M^3$, equal in volume to one finest cell. Its full storage is unavailable for that output. The accepted cells carried baryon mass 145.2371 and barycentric angular momentum 350.4251 in code units. Its horizon fluxes and the secondary's full storage still qualify. During the preceding $1.62386M$ of fully covered horizon time, the net boosted energy per unit of accreted baryon mass was 0.9663 and 0.9694 for the primary and secondary. These are measurements from one short finest-grid visit.
+
+The torque output comparison used all three saved Cartesian components. The plane, line and ghost-zone selections passed and the torque plane agreed exactly at output precision. Synchronized median kernel times were 26.81 and 27.26 µs for the plane (baseline and updated), and 48.90 and 48.78 µs for the full volume. The eight-cycle workload with a torque slice each step took 0.3728 and 0.3521 seconds respectively. The complete horizon-transport and frozen-boundary audit consumed 2,991 single-node allocation seconds (0.831 GPU-node-hours), including exploratory jobs and failed checks.
 
 ## Reproducing the runs
 
