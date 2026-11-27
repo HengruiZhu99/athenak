@@ -254,8 +254,8 @@ class Lifecycle(unittest.TestCase):
             inp.write_text(fixture)
             args = ("problem/flux_horizon1=true", "problem/flux_radius1=1.55",
                     "problem/b_inf=0.002", "problem/flux_shell_budget=false",
-                    "problem/corotating=false", "problem/frame_omega=0")
-            full = self.run_case(root/"full", "time/nlim=3", *args, input_file=inp)
+                    "problem/corotating=false", "problem/frame_omega=0", "time/tlim=0.00007")
+            full = self.run_case(root/"full", "time/nlim=4", *args, input_file=inp)
             coarse = self.run_case(root/"coarse", "time/nlim=0", "problem/shell_subcells=2",
                                    *args, input_file=inp)
             dump = root/"full/bin/matched_bondi.mhd_u.00000.bin"
@@ -292,7 +292,28 @@ class Lifecycle(unittest.TestCase):
                     if key.startswith("inventory_"):
                         np.testing.assert_allclose(full[key][0], parallel[key][0],
                                                    rtol=1e-12, atol=1e-14, err_msg=key)
-            resumed = self.run_case(root/"resumed", "time/nlim=3", ranks=ranks, restart=checkpoint)
+            # Production enables the inventory with a problem-only -i overlay on
+            # an existing -r checkpoint that already tracks the transfer surfaces.
+            before = self.run_case(root/"before", "time/nlim=2", *args,
+                                   "problem/flux_transfer_inventory=false", input_file=inp)
+            self.assertFalse(any(key.startswith("inventory_") for key in before))
+            overlay = root/"enable_inventory.athinput"
+            overlay.write_text("<problem>\nflux_transfer_inventory=true\n")
+            previous = root/"before/rst/matched_bondi.00001.rst"
+            with previous.open("rb") as stream:
+                header = stream.read(40 * 1024)
+            self.assertIn(b"<par_end>\n", header)
+            block = header.split(b"<cbd_diagnostics>\n", 1)[1].split(b"\n<", 1)[0]
+            values = [line.split(b"=", 1)[1].lstrip().split(b"#", 1)[0]
+                      for line in block.splitlines() if b"=" in line]
+            self.assertGreater(len(values), 2)
+            self.assertLessEqual(max(len(v) - len(v.rstrip()) for v in values), 2)
+            resumed = self.run_case(root/"resumed", "-i", str(overlay), "time/nlim=4",
+                                    ranks=ranks, restart=previous)
+            control = self.run_case(root/"control", "time/nlim=4", ranks=ranks, restart=checkpoint)
+            self.assertEqual(len(resumed["time"]), 2)
+            np.testing.assert_array_equal(resumed["time"], control["time"])
+            self.assertEqual(resumed["time"][-1], full["time"][-1])
             stopped = self.run_case(root/"stopped", "time/nlim=2", ranks=ranks, restart=checkpoint)
             # Output at the checkpoint has no restored per-cell reset provenance.
             # A subsequent accepted stage qualifies the new field.
@@ -304,8 +325,22 @@ class Lifecycle(unittest.TestCase):
                     self.assertTrue(np.isnan(stopped[prefix+field][0]))
                 for key in full:
                     if key.startswith(prefix):
+                        np.testing.assert_allclose(control[key], resumed[key],
+                                                   rtol=1e-12, atol=1e-14, err_msg=key)
                         np.testing.assert_allclose(full[key][-1], resumed[key][-1],
                                                    rtol=5e-9, atol=2e-11, err_msg=key)
+                face = f"BH{h}_Kerr"
+                keys = transport_totals(face) + [name + face for name in (
+                    "M0_qualified_cumulative_", "M0_epoch_start_", "M0_covered_duration_",
+                    "M0_unavailable_duration_", "M0_committed_cycle_", "transport_epoch_start_",
+                    "transport_covered_duration_", "transport_unavailable_duration_",
+                    "transport_interval_valid_")]
+                self.assertGreater(before["M0_qualified_cumulative_" + face][-1], 0)
+                for key in keys:
+                    np.testing.assert_allclose(before[key], full[key][:len(before[key])],
+                                               rtol=1e-12, atol=2e-15, err_msg=key)
+                    np.testing.assert_allclose(control[key], resumed[key],
+                                               rtol=1e-12, atol=2e-15, err_msg=key)
 
     def test_transfer_inventory_zoom_gap(self):
         with tempfile.TemporaryDirectory() as temp:

@@ -105,7 +105,7 @@ void ParameterInput::CheckBlockNames() {
     "comment", "job",
     "mesh", "meshblock", "mesh_refinement", "refined_region", "amr_criterion",
     "coord", "adm", "shearing_box", "cyclic_zoom",
-    "time", "problem", "output", "units",
+    "time", "problem", "output", "units", "cbd_diagnostics",
     "hydro", "mhd", "ion-neutral", "radiation", "dyn_radiation", "z4c", "z4c_amr", "cce",
     "rad_srcterms", "hydro_srcterms", "mhd_srcterms", "particles",
     "refinement", "turb_init", "turb_mhd"
@@ -779,8 +779,11 @@ void ParameterInput::ParameterDump(std::ostream& os) {
 
       len = itb->max_len_parname - param_name.length() + 1;
       param_name.append(len,' ');                         // pad name  to align vertically
-      len = itb->max_len_parvalue - param_value.length() + 1;
-      param_value.append(len,' ');                        // pad value to align vertically
+      // Diagnostic checkpoints mix short fields with packed ledgers. Padding every
+      // field to the longest ledger can exhaust the 40 KiB restart header.
+      len = itb->block_name == "cbd_diagnostics" ? 1 :
+            itb->max_len_parvalue - param_value.length() + 1;
+      param_value.append(len,' ');
 
       os<< param_name << "= " << param_value << itl->param_comment <<  std::endl;
     }
