@@ -44,7 +44,7 @@ void EvaluateBlocks(const Policy &bulk_policy, const DvceArray1D<int> &selected,
       "hyperboloidal block RHS", bulk_policy, KOKKOS_LAMBDA(int index) {
         // nvcc cannot first-capture a variable inside a constexpr-if branch.
         Capture(blocks, surface, refs, sources, weights, omega, params, scratch, statuses,
-                output);
+                output, ind);
         const int p = selected(index);
         const auto c = cells(p);
         const auto map = maps(p);
