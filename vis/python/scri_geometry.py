@@ -6,7 +6,7 @@ Array conventions: dg[..., derivative, a, b], ddg[..., d, e, a, b].
 """
 import math
 import numpy as np
-from scri_reader import constant, multiply, power, expand
+from scri_reader import constant, multiply, power, close_dependent
 
 
 def endpoint_jets(state, epoch):
@@ -22,7 +22,7 @@ retained native support. Use that independent check when admitting an archive.
     r2[:, [4, 8, 12]] = 2
     jets = sampled+ref
     jets[:, 0] = multiply(sampled[:, 0]+multiply(ref[:, 0], power(r2, -1)), r2)
-    jets = expand(jets)
+    jets = close_dependent(jets, sampled)
     lift = state['normal_lift_jets']
     jets[:, 22:25] += lift[:, :3]
     if lift.shape[1] == 4:

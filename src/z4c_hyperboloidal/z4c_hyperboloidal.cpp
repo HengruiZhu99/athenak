@@ -78,6 +78,7 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
   }
   // The reference then leaves no KO rate of its own in the shells or beside scri.
   ko_shell_residual=pin->GetOrAddBoolean("z4c_hyperboloidal","ko_shell_residual",false);
+  independent.all=pin->GetOrAddBoolean("z4c_hyperboloidal","evolve_all_components",false);
   // A checkpoint stores no dissipation state. This admits a restart whose
   // only identity difference is the KO strength, floor or differenced field.
   restart_with_new_dissipation=pin->GetOrAddBoolean("z4c_hyperboloidal",
@@ -223,7 +224,7 @@ void Z4cHyperboloidal::BuildStagePlans() {
   if (!initialized_) throw std::logic_error("Stage plans require initialized geometry");
   plans_ready_=false;
   mapped_halo_=std::make_unique<MappedHalo>();
-  mapped_halo_->Rebuild(pmy_pack,origin,activity);
+  mapped_halo_->Rebuild(pmy_pack,origin,activity,independent);
   surface_exchange_=std::make_unique<SurfaceExchange>(pmy_pack,this);
   dissipation_plan_=std::make_unique<DissipationPlan>();
   dissipation_plan_->Rebuild(*pmy_pack,*this);
@@ -393,13 +394,14 @@ void Z4cHyperboloidal::FormResidual() {
   const auto active=active_blocks;
   auto map=geometry; auto output=residual;
   const auto weight=parameters.residual_weight;
+  const auto ind=independent;
   Kokkos::parallel_for("hyperboloidal owned residual",Kokkos::RangePolicy<>(0,npoints),
     KOKKOS_LAMBDA(int p) {
       const auto c=list(p); if(active.extent(0) && !active(c.m))return;
       const auto &x=map(p).x;
       const Real r2=weight.Value(x);
       for (int f=0;f<nvar;++f) {
-        output(c.m,f,c.k,c.j,c.i)=Fields::Independent(f)
+        output(c.m,f,c.k,c.j,c.i)=ind.Has(f)
             ? (state(c.m,f,c.k,c.j,c.i)-ref(p)[f].f)/(f==0 ? r2 : 1) : 0;
       }
     });
@@ -411,6 +413,40 @@ void Z4cHyperboloidal::EnforceAlgebraicConstraints() {
   auto surf=surface_points.d_view; auto edge=s0;
   const auto active=active_blocks;const auto owners=face_blocks.d_view;
   int bad_bulk=0,bad_surface=0;
+  if (independent.all) {
+    // All twelve tensor components are stored state: project them, values only.
+    Real det=0,trace=0;
+    Kokkos::parallel_reduce("hyperboloidal bulk algebraic projection",
+      Kokkos::RangePolicy<>(0,npoints),
+      KOKKOS_LAMBDA(int p,int &bad,Real &max_det,Real &max_trace) {
+        const auto c=list(p); if(active.extent(0) && !active(c.m))return;
+        std::array<Real,Fields::count> values{};
+        for (int f=0;f<nvar;++f) values[f]=state(c.m,f,c.k,c.j,c.i);
+        Real inverse[3][3],violation[2];
+        if (!ProjectAlgebraicConstraints(values,inverse,violation)) {++bad; return;}
+        for (int f=1;f<13;++f) state(c.m,f,c.k,c.j,c.i)=values[f];
+        max_det=fmax(max_det,fabs(violation[0]));
+        max_trace=fmax(max_trace,fabs(violation[1]));
+      },bad_bulk,Kokkos::Max<Real>(det),Kokkos::Max<Real>(trace));
+    Real edge_det=0,edge_trace=0;
+    Kokkos::parallel_reduce("hyperboloidal scri algebraic projection",
+      Kokkos::RangePolicy<>(0,nsurface_points),
+      KOKKOS_LAMBDA(int p,int &bad,Real &max_det,Real &max_trace) {
+        const auto c=surf(p); if(active.extent(0) && !active(owners(c.face)))return;
+        std::array<Real,Fields::count> values{};
+        for (int f=0;f<nvar;++f) values[f]=edge(c.face,f,c.k,c.j);
+        Real inverse[3][3],violation[2];
+        if (!ProjectAlgebraicConstraints(values,inverse,violation)) {++bad; return;}
+        for (int f=1;f<13;++f) edge(c.face,f,c.k,c.j)=values[f];
+        max_det=fmax(max_det,fabs(violation[0]));
+        max_trace=fmax(max_trace,fabs(violation[1]));
+      },bad_surface,Kokkos::Max<Real>(edge_det),Kokkos::Max<Real>(edge_trace));
+    projection_violation[0]=fmax(projection_violation[0],fmax(det,edge_det));
+    projection_violation[1]=fmax(projection_violation[1],fmax(trace,edge_trace));
+    if (bad_bulk || bad_surface)
+      throw std::runtime_error("Invalid hyperboloidal metric in algebraic projection");
+    return;
+  }
   Kokkos::parallel_reduce("hyperboloidal bulk algebraic closure",
     Kokkos::RangePolicy<>(0,npoints),KOKKOS_LAMBDA(int p,int &bad) {
       const auto c=list(p); if(active.extent(0) && !active(c.m))return;

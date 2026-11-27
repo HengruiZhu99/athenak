@@ -133,6 +133,18 @@ void HistoryOutput::LoadHyperboloidalHistoryData(HistoryData *pdata, Mesh *pm) {
     pdata->label[n]=labels[n];
     pdata->hdata[n]=sums[n];
   }
+  // evolve_all_components: largest algebraic-constraint violations removed by the
+  // projections since the previous history record (maxima over points, not integrals).
+  auto &module=*pm->pmb_pack->pz4c_hyperboloidal;
+  if (module.independent.all) {
+    pdata->label[10]="max|detg-1|";
+    pdata->label[11]="max|trA|";
+    for (int n=0;n<2;++n) {
+      pdata->hdata[10+n]=module.projection_violation[n];
+      module.projection_violation[n]=0;
+    }
+    pdata->nhist=12;
+  }
 }
 
 //----------------------------------------------------------------------------------------
@@ -448,6 +460,14 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   for (auto &data : hist_data) {
     // Constraint histories sum integrals; scri histories reduce local maxima.
 #if MPI_PARALLEL_ENABLED
+    if (data.physics==PhysicsModule::HyperboloidalSpaceTimeDynamics && data.nhist==12) {
+      // The two projection maxima ride in a summed record: reduce them here and
+      // leave the result on the root rank alone.
+      Real maxima[2]={data.hdata[10],data.hdata[11]};
+      MPI_Allreduce(MPI_IN_PLACE,maxima,2,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+      for (int n=0;n<2;++n)
+        data.hdata[10+n]=global_variable::my_rank==0 ? maxima[n] : 0;
+    }
     const auto operation=(data.physics==PhysicsModule::HyperboloidalBoundaryDynamics ||
         data.physics==PhysicsModule::HyperboloidalScriInvestigation) ? MPI_MAX : MPI_SUM;
     if (global_variable::my_rank == 0) {
@@ -486,7 +506,7 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
       int invalid=0;
       int regions = 2;
       if (global_variable::my_rank==0) {
-        invalid=data.nhist!=10;
+        invalid=data.nhist!=10 && data.nhist!=12;
         // A missing component surface makes all five exterior integrals unavailable.
         bool missing_exterior = true;
         for (int n = 5; n < 10; ++n) missing_exterior &= std::isnan(data.hdata[n]);

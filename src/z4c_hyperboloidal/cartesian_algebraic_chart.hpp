@@ -95,5 +95,48 @@ inline void ExpandCartesianChart(double*v) {
   ExpandCartesianChart(j);v[6]=j[6].f;v[12]=j[12].f;
 }
 KOKKOS_INLINE_FUNCTION bool CartesianIndependent(int f){return f!=6 && f!=12 && f<28;}
+
+// Covariant enforcement of det(gamma)=1 and gamma^ij A_ij=0 on six stored components each:
+// gamma_ij -> det(gamma)^(-1/3) gamma_ij, then A_ij -> A_ij - gamma_ij gamma^kl A_kl / 3.
+// Values only. violation returns det(gamma)-1 and gamma^kl A_kl before the projection.
+KOKKOS_INLINE_FUNCTION bool ProjectAlgebraicConstraints(
+    std::array<Real, Fields::count>& fields, Real inverse[3][3],
+    Real violation[2] = nullptr) {
+  constexpr int ti[6] = {0, 0, 0, 1, 1, 2}, tj[6] = {0, 1, 2, 1, 2, 2};
+  Real g[3][3], determinant;
+  for (int t = 0; t < 6; ++t)
+    g[ti[t]][tj[t]] = g[tj[t]][ti[t]] = fields[1 + t] + (ti[t] == tj[t]);
+  if (!(g[0][0] > 0 && g[0][0] * g[1][1] - g[0][1] * g[0][1] > 0)) return false;
+  if (!InvertMetric(g, inverse, determinant) || !(determinant > 0)) return false;
+  const Real scale = Kokkos::cbrt(1 / determinant);
+  Real trace = 0;
+  for (int t = 0; t < 6; ++t)
+    trace += (ti[t] == tj[t] ? 1 : 2) * inverse[ti[t]][tj[t]] * fields[7 + t];
+  if (violation) {
+    violation[0] = determinant - 1;
+    violation[1] = trace;
+  }
+  // gamma^kl A_kl of the unscaled metric times gamma_ij is invariant under the rescaling.
+  for (int t = 0; t < 6; ++t) {
+    fields[7 + t] -= g[ti[t]][tj[t]] * trace / 3;
+    fields[1 + t] = scale * g[ti[t]][tj[t]] - (ti[t] == tj[t]);
+  }
+  for (int i = 0; i < 3; ++i)
+    for (int j = 0; j < 3; ++j) {
+      inverse[i][j] /= scale;
+      if (!Kokkos::isfinite(inverse[i][j])) return false;
+    }
+  return true;
+}
+
+// The algebraic closure of a stored point: expand the two dependent components, or
+// project all twelve when every component is evolved.
+KOKKOS_INLINE_FUNCTION bool CloseAlgebraicConstraints(
+    std::array<Real, Fields::count>& fields, Real inverse[3][3], bool evolve_all,
+    Real violation[2] = nullptr) {
+  if (evolve_all) return ProjectAlgebraicConstraints(fields, inverse, violation);
+  if (violation) violation[0] = violation[1] = 0;
+  return ProjectConstantChart(fields, inverse);
+}
 } // namespace z4c_hyperboloidal
 #endif

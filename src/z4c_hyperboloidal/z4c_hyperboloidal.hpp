@@ -77,6 +77,10 @@ class Z4cHyperboloidal {
   Real ko, chi_floor, penalty, requested_dt, dtnew;
   AngularKOFloor ko_angular;
   bool ko_shell_residual=false, restart_with_new_dissipation=false;
+  // evolve_all_components: gzz and Azz are evolved and the algebraic constraints projected.
+  IndependentFields independent;
+  // Largest |det(gamma)-1| and |gamma^ij A_ij| removed by the last projection of this rank.
+  Real projection_violation[2]={0,0};
   ActivityPolicy activity;
   AgreementParameters agreement;
   std::array<Real,12> AgreementHistorySums();

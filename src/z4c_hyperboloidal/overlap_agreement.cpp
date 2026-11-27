@@ -112,6 +112,7 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   Kokkos::Timer build_timer;
   const auto &mesh=*pack->pmesh;const int n=p.n[0],o=p.origin;
   kappa_=p.agreement.kappa;
+  independent_=p.independent;
   NativeDonorSelector selector(mesh,o,p.activity);
   dependency_edges_.clear();agreement_blocks_.clear();multirate_donors_.clear();
   std::set<std::pair<int,int>> graph;
@@ -218,7 +219,7 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
     throw std::invalid_argument("agreement timestep exceeds 2.5 / penalty rate bound: dt="
         +std::to_string(p.requested_dt)+", bound="+std::to_string(rate_bound_));
   std::vector<int> fields;for(int f=0;f<Fields::count;++f)
-    if(Fields::Independent(f))fields.push_back(f);
+    if(independent_.Has(f))fields.push_back(f);
   exchange_.Rebuild(pack,requests,fields);
   for(auto &e:entries)e.ordinal=exchange_.RequestOrdinals()[e.ordinal];
   std::vector<Target> targets;std::vector<Transpose> adjacency;
@@ -248,7 +249,7 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   Copy(segment_offsets, segment_offsets_, "agreement segment offsets");
   partials_ = DvceArray2D<Real>(
       Kokkos::view_alloc(Kokkos::WithoutInitializing, "agreement partial corrections"),
-      segments.size(), Fields::independent_count);
+      segments.size(), independent_.Count());
   Copy(rows,rows_,"agreement rows");Copy(entries,entries_,"agreement entries");
   Copy(targets,targets_,"agreement recipients");Copy(adjacency,transpose_,"agreement transpose");
   Copy(fields,fields_,"agreement fields");
@@ -330,10 +331,11 @@ void OverlapAgreementPlan::Evaluate(bvals::MappedExchange::ConstValues values,co
   const bool compact=batch!=nullptr;
   const auto selected=compact?batch->rows:DvceArray1D<int>{};
   const int count=compact?selected.extent_int(0):rows.extent_int(0);
+  const int nind=independent_.Count();
   Kokkos::parallel_for("overlap agreement discrepancy",
-    Kokkos::RangePolicy<>(0,count*Fields::independent_count),
+    Kokkos::RangePolicy<>(0,count*nind),
     KOKKOS_LAMBDA(int q) {
-      const int index=q/Fields::independent_count,f=q%Fields::independent_count;
+      const int index=q/nind,f=q%nind;
       const int r=compact?selected(index):index;
       const auto row=rows(r);Real sum=0;
       for(int e=row.begin;e<row.end;++e) {
@@ -353,7 +355,8 @@ void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p,const BatchRows *bat
   const auto fields=fields_;const auto rhs=p.u_rhs;const Real kappa=kappa_;
   const auto active=p.active_blocks;
   constexpr int lanes = 32;
-  static_assert(Fields::independent_count <= lanes);
+  static_assert(Fields::max_independent <= lanes);
+  const int nind=independent_.Count();
   if (!count) return;
   const auto segments = segments_;
   const auto offsets = segment_offsets_;
@@ -363,7 +366,7 @@ void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p,const BatchRows *bat
       Kokkos::RangePolicy<Kokkos::IndexType<std::int64_t>>(0, segments.extent(0) * lanes),
       KOKKOS_LAMBDA(std::int64_t q) {
         const int s = static_cast<int>(q / lanes), f = static_cast<int>(q % lanes);
-        if (f >= Fields::independent_count) return;
+        if (f >= nind) return;
         const auto segment = segments(s);
         if (active.extent(0) && !active(segment.block)) return;
         Real sum = 0;
@@ -377,7 +380,7 @@ void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p,const BatchRows *bat
       "agreement transpose apply", Kokkos::RangePolicy<>(0, count * lanes),
       KOKKOS_LAMBDA(int q) {
         const int index = q / lanes, f = q % lanes;
-        if (f >= Fields::independent_count) return;
+        if (f >= nind) return;
         const int t = compact ? selected(index) : index;
         const auto target = targets(t);
         const auto c = target.point;
@@ -396,12 +399,13 @@ void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p,const BatchRows *bat
 std::array<Real,8> OverlapAgreementPlan::History() const {
   // Local sums; AthenaK history performs the standard rank reduction.
   std::array<Real,8> out{};const auto rows=rows_;const auto d=discrepancy_;const auto fields=fields_;
+  const int nind=independent_.Count();
   for(int group=0;group<6;++group) {
     Real sum=0;
     Kokkos::parallel_reduce("agreement group norm",Kokkos::RangePolicy<>(0,rows.extent_int(0)),
       KOKKOS_LAMBDA(int r,Real &value) {
         if(!rows(r).owned)return;
-        for(int f=0;f<Fields::independent_count;++f) {
+        for(int f=0;f<nind;++f) {
           const int field=fields(f);
           const int g=field==0?0:field<7?1:field<15?2:field<18?3:field<25?4:5;
           if(g==group)value+=rows(r).weight*d(r,f)*d(r,f);

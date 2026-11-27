@@ -83,10 +83,11 @@ struct Combination {
   const Real *base = nullptr, *slope[4]{};
   Real weight[4]{};
   int count = 0;
-  KOKKOS_INLINE_FUNCTION Real Value(size_t index, int field) const {
+  KOKKOS_INLINE_FUNCTION Real Value(size_t index, int field,
+                                    const IndependentFields& ind) const {
     Real value = base[index * Fields::count + field];
-    if (Fields::Independent(field))
-      for (int a = 0; a < count; ++a) value += weight[a] * slope[a][index * Fields::independent_count + Fields::IndependentSlot(field)];
+    if (ind.Has(field))
+      for (int a = 0; a < count; ++a) value += weight[a] * slope[a][index * ind.Count() + ind.Slot(field)];
     return value;
   }
 };
@@ -728,7 +729,7 @@ void MultirateEvolution::Impl::BuildCostGraph() {
     }
     const auto [states,slopes]=frequency->second;
     if (states) graph.edges.push_back({recipient,donor,e.second,states});
-    if (slopes) graph.edges.push_back({recipient,donor,e.second/Fields::count*Fields::independent_count,slopes});
+    if (slopes) graph.edges.push_back({recipient,donor,e.second/Fields::count*p.independent.Count(),slopes});
   }
   for (const auto& entry : input_task) {
     const auto [g, stage] = entry.first;
@@ -743,7 +744,7 @@ void MultirateEvolution::Impl::BuildCostGraph() {
         task.dependencies.push_back({accepted_task.at({donor, id}), bytes});
       }
       for (int i = 0; i < row.count; ++i)
-        task.dependencies.push_back({slope_task.at({donor, row.terms[i].source}), bytes/Fields::count*Fields::independent_count});
+        task.dependencies.push_back({slope_task.at({donor, row.terms[i].source}), bytes/Fields::count*p.independent.Count()});
     }
   }
   SetPhaseCosts(model);
@@ -880,7 +881,7 @@ void MultirateEvolution::Impl::BuildLocal() {
       }
     ++consumers[{gid, static_cast<std::uint32_t>(steps[gid]), -1}];
   }
-  exchange->SetSlopeFields(Fields::independent_count);
+  exchange->SetSlopeFields(p.independent.Count());
   exchange->SetReceiveCacheBytes(static_cast<std::size_t>(pin->GetInteger("multirate","receive_cache_mib"))*1024*1024);
   exchange->SetSendCacheBytes(static_cast<std::size_t>(pin->GetInteger("multirate","send_cache_mib"))*1024*1024);
   std::vector<int> groups;
@@ -971,19 +972,43 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
   const bool indexed = complete_local_batches && slots.size() != static_cast<std::size_t>(p.nblocks);
   const int count = indexed ? indices.extent_int(0) : points.extent_int(0);
   int invalid = 0;
+  const auto ind = p.independent;
   p.InvalidateDiagnostics();
+  if constexpr (accepted) {
+    // Diagnostic only: the constraint violations that the accepted projection removes.
+    if (ind.all) {
+      Real det = 0, trace = 0;
+      Kokkos::parallel_reduce(
+          "multirate accepted algebraic violation", Kokkos::RangePolicy<>(0, count),
+          KOKKOS_LAMBDA(int i, Real& max_det, Real& max_trace) {
+            const auto point = points(indexed ? indices(i) : i);
+            if (!indexed && !active(point.m)) return;
+            const auto c = combinations_d(point.m);
+            if (!c.base) return;
+            std::array<Real, Fields::count> values{};
+            for (int f = 1; f < 13; ++f) values[f] = c.Value(point.index, f, ind);
+            Real inverse[3][3], violation[2];
+            if (!ProjectAlgebraicConstraints(values, inverse, violation)) return;
+            max_det = fmax(max_det, fabs(violation[0]));
+            max_trace = fmax(max_trace, fabs(violation[1]));
+          },
+          Kokkos::Max<Real>(det), Kokkos::Max<Real>(trace));
+      p.projection_violation[0] = fmax(p.projection_violation[0], det);
+      p.projection_violation[1] = fmax(p.projection_violation[1], trace);
+    }
+  }
   Kokkos::parallel_reduce(
       "multirate reconstruct and project owned stage", Kokkos::RangePolicy<>(0, count),
       KOKKOS_LAMBDA(int i, int& bad) {
         // nvcc cannot first-capture a variable inside a constexpr-if branch.
-        Capture(weight, residual, reference);
+        Capture(weight, residual, reference, ind);
         const auto point = points(indexed ? indices(i) : i);
         if (!indexed && !active(point.m)) return;
         const auto c = combinations_d(point.m);
         if (!c.base) {++bad; return;}
         std::array<Real, Fields::count> values{};
         for (int f = 0; f < Fields::count; ++f) {
-          Real value = c.Value(point.index, f);
+          Real value = c.Value(point.index, f, ind);
           if (f == Fields::chi) {
             if (point.kind)
               value = FloorChiCandidate(value, floor, time, accepted, srecords(point.ledger));
@@ -994,7 +1019,9 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
           values[f] = value;
         }
         Real inverse[3][3];
-        const bool valid = (accepted && !point.kind)
+        // With every component evolved the stage state is projected, values only.
+        const bool valid = ind.all ? ProjectAlgebraicConstraints(values, inverse)
+                           : (accepted && !point.kind)
                                ? ProjectConstantChart(values, inverse)
                                : TryExpandCartesianChart(values);
         if (!valid) {
@@ -1017,7 +1044,7 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
         } else {
           const Real r2 = weight.Value(x);
           for (int f = 0; f < Fields::count; ++f)
-            residual(point.m,f,point.k,point.j,point.i) = Fields::Independent(f)
+            residual(point.m,f,point.k,point.j,point.i) = ind.Has(f)
                 ? (values[f] - reference(q)[f].f) / (f == Fields::chi ? r2 : 1)
                 : 0;
         }
@@ -1032,7 +1059,8 @@ std::vector<DvceArray1D<Real>> MultirateEvolution::Impl::Pack(
   const bool rhs = stage >= 0;
   std::vector<DvceArray1D<Real>> values(p.nblocks);
   std::vector<RecordDestination> ptrs(p.nblocks);
-  const int width=rhs ? Fields::independent_count : Fields::count;
+  const auto ind=p.independent;
+  const int width=rhs ? ind.Count() : Fields::count;
   for (int m : slots) {
     values[m] = exchange->PublicationBuffer({pack->GlobalId(m), step, stage});
     ptrs[m].data = values[m].data();
@@ -1051,8 +1079,8 @@ std::vector<DvceArray1D<Real>> MultirateEvolution::Impl::Pack(
         Real* out = pointers(a.m).data;
         if (!out) return;
         for (int f=0; f<Fields::count; ++f) {
-          if (rhs && !Fields::Independent(f)) continue;
-          const int column=rhs ? Fields::IndependentSlot(f) : f;
+          if (rhs && !ind.Has(f)) continue;
+          const int column=rhs ? ind.Slot(f) : f;
           out[a.index*width+column]=a.kind ? edge(a.face,f,a.k,a.j) : state(a.m,f,a.k,a.j,a.i);
         }
       });
@@ -1128,7 +1156,8 @@ namespace {
 // generic lambda, hence a function template.
 template <bool with_surface, class Output, class Metadata, class Combinations>
 void ReconstructDonors(const Output& output, int begin, int end, const Metadata& metadata,
-                       const Combinations& combinations_d, Real floor) {
+                       const Combinations& combinations_d, Real floor,
+                       const IndependentFields& ind) {
   if (begin==end) return;
   int invalid = 0;
   Kokkos::parallel_reduce(
@@ -1141,14 +1170,16 @@ void ReconstructDonors(const Output& output, int begin, int end, const Metadata&
       if (!c.base) {
         int slot = 0;
         for (int f = 0; f < Fields::count; ++f)
-          output.Store(target,meta.kind,f,Fields::Independent(f) ? slot++ : -1,0,0);
+          output.Store(target,meta.kind,f,ind.Has(f) ? slot++ : -1,0,0);
         return;
       }
-      for (int f = 0; f < Fields::count; ++f) values[f] = c.Value(meta.index, f);
+      for (int f = 0; f < Fields::count; ++f) values[f] = c.Value(meta.index, f, ind);
       if (Kokkos::isfinite(values[0]) && floor > 0 && values[0] < floor)
         values[0] = floor;
       Real inverse[3][3];
-      const bool valid = (with_surface && meta.kind)
+      // A donor's stage value is closed exactly as its owner closes that stage.
+      const bool valid = ind.all ? ProjectAlgebraicConstraints(values, inverse)
+                         : (with_surface && meta.kind)
                              ? ProjectConstantChart(values, inverse)
                              : TryExpandCartesianChart(values);
       if (!valid) {
@@ -1178,7 +1209,8 @@ void ReconstructDonors(const Output& output, int begin, int end, const Metadata&
             for (int k = 0; k < 5; ++k) {
               const auto support = metadata(meta.support[k]);
               C += meta.radial_weight[k] *
-                   (c.Value(support.index, 25 + a) - c.Value(support.index, 15 + a));
+                   (c.Value(support.index, 25 + a, ind) -
+                    c.Value(support.index, 15 + a, ind));
             }
             values[25 + a] = values[15 + a] + C;
           }
@@ -1187,11 +1219,11 @@ void ReconstructDonors(const Output& output, int begin, int end, const Metadata&
       int slot = 0;
       for (int f = 0; f < Fields::count; ++f) {
         const Real value = values[f];
-        const Real delta = Fields::Independent(f)
+        const Real delta = ind.Has(f)
                                ? (value - meta.ref[f]) / (f == 0 ? meta.chi_weight : 1)
                                : 0;
         if (!Kokkos::isfinite(value) || !Kokkos::isfinite(delta)) ++bad;
-        output.Store(target,meta.kind,f,Fields::Independent(f) ? slot++ : -1,value,delta);
+        output.Store(target,meta.kind,f,ind.Has(f) ? slot++ : -1,value,delta);
       }
     },invalid);
   if (invalid) throw std::runtime_error("Invalid recipient-specific multirate donor stage");
@@ -1232,9 +1264,10 @@ void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>&
   physical = donor_physical;
   residual = donor_residual;
   const Real floor = p.chi_floor;
+  const auto ind = p.independent;
   auto reconstruct = [&](const auto& output, int begin, int end, auto use_jets) {
     ReconstructDonors<decltype(use_jets)::value>(output,begin,end,metadata,combinations_d,
-                                                 floor);
+                                                 floor,ind);
   };
   if (complete_local_batches) {
     const auto& view = active_layouts.at(slots).donor_views;
@@ -1257,7 +1290,7 @@ MultirateEvolution::Impl::GatherPlan& MultirateEvolution::Impl::ExchangeView(
     // Direct stage writes use the same field slots as the native exchanges.
     const bool physical = &plan == &p.mapped_halo_->PhysicalExchange();
     size_t slot = 0;
-    for (int f = 0; f < Fields::count; ++f) if (physical || Fields::Independent(f)) {
+    for (int f = 0; f < Fields::count; ++f) if (physical || p.independent.Has(f)) {
       if (slot >= fields.size() || fields[slot++] != f)
         throw std::logic_error("Unexpected projected exchange field order");
     }

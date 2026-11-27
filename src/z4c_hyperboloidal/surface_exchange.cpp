@@ -127,11 +127,11 @@ KOKKOS_INLINE_FUNCTION void PrepareSurfacePoint(
     const CartesianChartJets &reference,
     const HyperbolicShiftParameters<Real> &parameters, CartesianChartJets &restored,
     SpatialGeometry<Real> &metric_out, SpatialGeometry<Real> &penrose,
-    SurfacePoleCache &stage_pole) {
+    SurfacePoleCache &stage_pole, bool evolve_all) {
   metric_out = SpatialGeometry<Real>{};
   penrose = SpatialGeometry<Real>{};
   auto jets = samples;
-  if (!SphericalPolicy::Restore(map.x, jets, reference)) return;
+  if (!SphericalPolicy::Restore(map.x, jets, reference, {}, nullptr, evolve_all)) return;
   const auto u = SphericalPolicy::Physical(map.x, jets);
   if (!(u.chi.value > 0 && u.alpha.value > 0 && Kokkos::isfinite(u.chi.value) &&
         Kokkos::isfinite(u.alpha.value))) return;
@@ -170,7 +170,7 @@ void SurfaceExchange::Rebuild() {
     NativeDonorSelector selector(*pack_->pmesh,p.origin,p.activity);
   for (int f=0;f<Fields::count;++f) {
     fields_.index[f]=-1;
-    if (Fields::Independent(f)) {fields_.index[f]=fields.size();fields.push_back(f);}
+    if (p.independent.Has(f)) {fields_.index[f]=fields.size();fields.push_back(f);}
   }
   for (int face=0;face<p.nfaces;++face) {
     const int gid=pack_->GlobalId(p.face_blocks.h_view(face));
@@ -308,6 +308,7 @@ TaskStatus SurfaceExchange::Project() {
   const auto owners=p.face_blocks.d_view;const auto maps=p.surface_geometry;
   const auto state=p.u0;const auto edge=p.s0;const auto gap=face_gap_;
   const int n=p.n[0],origin=p.origin;
+  const bool evolve_all=p.independent.all;
   int invalid=0;
   Kokkos::parallel_reduce("hyperboloidal local scri trace",
     Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int point,int &bad) {
@@ -318,7 +319,7 @@ TaskStatus SurfaceExchange::Project() {
       const auto map = maps(point);
       const auto *x = map.x;
       Real inverse[3][3];
-      if (!ProjectConstantChart(values, inverse) || !(values[0] > 0)) {
+      if (!CloseAlgebraicConstraints(values, inverse, evolve_all) || !(values[0] > 0)) {
         ++bad;
         return;
       }
@@ -359,11 +360,12 @@ TaskStatus SurfaceExchange::PackAndSend() {
   auto &p=*module_;const auto points=p.surface_points.d_view;
   const auto owners=p.face_blocks.d_view;const auto edge=p.s0;
   const auto reference=p.surface_reference;const auto staging=surface_staging_;
+  const auto ind=p.independent;
   Kokkos::parallel_for("hyperboloidal local scri residual",
     Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int point) {
       const auto c=points(point);const int m=owners(c.face);
       for (int f=0;f<Fields::count;++f)
-        staging(m,f,c.k,c.j,0)=Fields::Independent(f)
+        staging(m,f,c.k,c.j,0)=ind.Has(f)
             ? edge(c.face,f,c.k,c.j)-reference(point)[f].f : 0;
     });
   bulk_exchange_.PackAndSend(p.residual);surface_exchange_.PackAndSend(staging);
@@ -394,7 +396,7 @@ TaskStatus SurfaceExchange::Sample(bvals::MappedExchange::ConstValues bulk,
       const int point=task/Fields::count,f=task%Fields::count;
       if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
       J value;
-      if (Fields::Independent(f)) {
+      if (slots.index[f]>=0) {
         const auto row=rows(point);const auto first=terms(row.begin);
         const int slot=slots.index[f];
         const Real anchor=first.boundary ? edge(first.ordinal,slot) : bulk(first.ordinal,slot);
@@ -428,7 +430,8 @@ void SurfaceExchange::PrepareHostGeometry() {
   for (int i = 0; i < p.nsurface_points; ++i) {
     PrepareSurfacePoint(host_samples_(i), p.host_surface_geometry(i),
                         p.host_surface_reference(i), p.parameters, host_restored_(i),
-                        host_metric_(i), host_penrose_(i), host_pole_(i));
+                        host_metric_(i), host_penrose_(i), host_pole_(i),
+                        p.independent.all);
   }
   Kokkos::deep_copy(restored_, host_restored_);
   Kokkos::deep_copy(metric_geometry_, host_metric_);
@@ -444,6 +447,7 @@ TaskStatus SurfaceExchange::Solve() {
   CheckReady();
   correction_jets_ready_=false;
   auto &p=*module_;const auto samples=sampled_;const auto maps=p.surface_geometry;
+  const bool evolve_all=p.independent.all;
   const auto restored = restored_;
   const auto stage_pole = stage_pole_;
   const auto reference=p.surface_reference;const auto rows=rows_;
@@ -467,7 +471,7 @@ TaskStatus SurfaceExchange::Solve() {
             return;
           PrepareSurfacePoint(samples(point), maps(point), reference(point), parameters,
                               restored(point), metric_geometry(point),
-                              penrose_geometry(point), stage_pole(point));
+                              penrose_geometry(point), stage_pole(point), evolve_all);
         });
   }
   const Real penalty=p.penalty;int invalid=0;
@@ -614,6 +618,7 @@ TaskStatus SurfaceExchange::Evaluate() {
   const auto maps = p.surface_geometry;
   const auto rows = rows_;
   const bool use_restored = correction_jets_ready_;
+  const bool evolve_all = p.independent.all;
   const auto samples = sampled_;
   const auto reference = p.surface_reference;
   const auto points = p.surface_points.d_view;
@@ -648,7 +653,9 @@ TaskStatus SurfaceExchange::Evaluate() {
           const auto map = maps(point);
           const auto c = points(point);
           auto jets = use_restored ? restored(point) : samples(point);
-          if (!use_restored && !SphericalPolicy::Restore(map.x, jets, reference(point))) {
+          if (!use_restored &&
+              !SphericalPolicy::Restore(map.x, jets, reference(point), {}, nullptr,
+                                        evolve_all)) {
             ++bad;
             continue;
           }

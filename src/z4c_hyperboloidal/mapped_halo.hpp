@@ -13,6 +13,7 @@
 #include "bvals/mapped_exchange.hpp"
 #include "mesh/chart_atlas.hpp"
 #include "z4c_hyperboloidal/activity_policy.hpp"
+#include "z4c_hyperboloidal/fields.hpp"
 
 class Mesh;
 class MeshBlockPack;
@@ -63,7 +64,8 @@ class MappedHalo {
   };
   struct ExteriorTarget {HaloPoint target; Real x[3];};
   MappedHalo() = default;
-  void Rebuild(MeshBlockPack *pack, int origin, ActivityPolicy activity={});
+  void Rebuild(MeshBlockPack *pack, int origin, ActivityPolicy activity={},
+               IndependentFields independent={});
   TaskStatus StartReceives();
   TaskStatus PackAndSend(const DvceArray5D<Real> &residual,
                          const DvceArray5D<Real> &physical);
@@ -92,6 +94,7 @@ class MappedHalo {
 
  private:
   ActivityPolicy activity_;
+  IndependentFields independent_;
  public:  // nvcc requires public access for device-lambda types and functions
   struct DeviceRow {HaloPoint target; int begin, end;};
   struct DeviceEntry {int ordinal; Real weight;};

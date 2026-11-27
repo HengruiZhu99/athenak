@@ -29,19 +29,21 @@ KOKKOS_INLINE_FUNCTION PointState
 EndpointState(int p, const BlockPointReader &reader, const mapped::Point &map,
               const Real inv_h[3], const CartesianChartJets &reference,
               const HyperbolicShiftParameters<Real> &parameters,
-              const SurfaceKernel &surface, const mapped::Jet *cached_weight = nullptr) {
+              const SurfaceKernel &surface, const mapped::Jet *cached_weight = nullptr,
+              IndependentFields independent = {}) {
   PointState out;
   Real beta[3]{};
   for (int a = 0; a < 3; ++a) beta[a] = reader(22 + a) + reference[22 + a].f - map.x[a];
   const auto shift = LogicalShift::Project(map, beta, false);
   for (int f = 0; f < Fields::count; ++f) {
-    if (!Fields::Independent(f)) continue;
+    if (!independent.Has(f)) continue;
     out.jets[f] =
         SampleEndpointJet(p, f, reader, inv_h, shift, surface, out.transport[f]);
   }
   mapped::Jet lift[3];
   for (int a = 0; a < 3; ++a) lift[a] = surface.NormalCorrection(p, map, a);
-  RestorePointState(out, reader, map, inv_h, reference, parameters, lift, cached_weight);
+  RestorePointState(out, reader, map, inv_h, reference, parameters, lift, cached_weight,
+                    independent);
   return out;
 }
 }  // namespace z4c_hyperboloidal

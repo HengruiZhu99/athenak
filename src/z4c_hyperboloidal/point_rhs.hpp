@@ -151,7 +151,7 @@ template <class Load>
 KOKKOS_INLINE_FUNCTION BulkPointResult EvaluateBulkFieldJets(
     const mapped::Point &map, const HyperbolicShiftParameters<Real> &params,
     const StationaryGaugeSource<Real> &source, PointForcing &forcing, Load load,
-    const OmegaJet<Real> &spatial_omega) {
+    const OmegaJet<Real> &spatial_omega, bool evolve_all = false) {
   using J = mapped::Jet;
   Z4cJet<Real> u{};
   VectorJet<Real> B{}, D{};
@@ -159,7 +159,16 @@ KOKKOS_INLINE_FUNCTION BulkPointResult EvaluateBulkFieldJets(
       load(1, true) + J(1), load(2, true), load(3, true),
       load(4, true) + J(1), load(5, true), {}, {},
   };
-  if (!chart.Complete()) {
+  // With every component evolved the zz jets are differenced like the other five.
+  bool valid_chart;
+  if (evolve_all) {
+    chart.minor = chart.a * chart.d - chart.b * chart.b;
+    valid_chart = chart.a.f > 0 && chart.minor.f > 0;
+    chart.f = load(6, true) + J(1);
+  } else {
+    valid_chart = chart.Complete();
+  }
+  if (!valid_chart) {
     BulkPointResult bad;
     bad.status = PointStatus::invalid_geometry;
     return bad;
@@ -180,7 +189,7 @@ KOKKOS_INLINE_FUNCTION BulkPointResult EvaluateBulkFieldJets(
   metric(2, 2, chart.f);
   const J xx = load(7, false), xy = load(8, false), xz = load(9, false);
   const J yy = load(10, false), yz = load(11, false);
-  const J zz = chart.TraceFreeZZ(xx, xy, xz, yy, yz);
+  const J zz = evolve_all ? load(12, false) : chart.TraceFreeZZ(xx, xy, xz, yy, yz);
   const auto curvature = [&](int i, int j, const J &v) {
     u.a.k[i][j] = u.a.k[j][i] = v.f;
     for (int k = 0; k < 3; ++k) u.a.dk[k][i][j] = u.a.dk[k][j][i] = v.d[k];

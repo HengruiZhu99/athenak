@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <cstring>
 #include <iomanip>
+#include <iostream>
 #include <limits>
 #include <locale>
 #include <sstream>
@@ -136,6 +137,7 @@ IOWrapperSizeT RecordBytes(const Z4cHyperboloidal &p) {
   return Multiply(RecordScalars(p),sizeof(Real));
 }
 
+constexpr const char *AllComponentsTag=";components=all-evolved-v1";
 std::string Identity(const Z4cHyperboloidal &p) {
   std::ostringstream s;
   s.imbue(std::locale::classic());
@@ -152,6 +154,8 @@ std::string Identity(const Z4cHyperboloidal &p) {
     HYP_ID(p.ko_angular.fade); HYP_ID(p.ko_angular.end);
   }
   if (p.ko_shell_residual) HYP_ID(p.ko_shell_residual);
+  // Format tag of the evolved-zz layout: slots 6 and 12 of a record are evolved state.
+  if (p.independent.all) s << AllComponentsTag;
   HYP_ID(p.chi_floor); HYP_ID(p.penalty); HYP_ID(p.requested_dt);
 
   s << ";agreement=full-unmasked-union-evolved-cube-taper-rowmass-v1;H=coordinate-volume";
@@ -225,7 +229,15 @@ void ReadMetadata(IOWrapper &file, const Mesh &mesh, bool per_rank) {
       "per-rank restart ownership changed; use a shared restart file to repartition");
   std::string identity(header[2],'\0');
   ReadHeaderBytes(file,identity.data(),identity.size(),per_rank);
-  const auto expected=Identity(p);
+  auto expected=Identity(p);
+  // A restart written with gzz and Azz solved algebraically holds valid values of both, so
+  // it may start a run that evolves them. The reverse would discard evolved state.
+  if (p.independent.all && identity.find(AllComponentsTag)==std::string::npos) {
+    expected.erase(expected.find(AllComponentsTag),std::string(AllComponentsTag).size());
+    if (global_variable::my_rank==0)
+      std::cout<<"Hyperboloidal restart: file predates evolve_all_components; gzz and Azz "
+               <<"start from their algebraic values"<<std::endl;
+  }
   RequireAll(identity==expected || (p.restart_with_new_dissipation &&
       WithoutDissipation(identity)==WithoutDissipation(expected)),
       "mathematical parameters or formulation mismatch");

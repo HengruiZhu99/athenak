@@ -81,6 +81,7 @@ class OverlapAgreementPlan {
   DvceArray1D<int> fields_;
   DvceArray2D<Real> discrepancy_;
   Real kappa_=0,rate_bound_=0;
+  IndependentFields independent_;
 };
 }  // namespace z4c_hyperboloidal
 #endif  // Z4C_HYPERBOLOIDAL_OVERLAP_AGREEMENT_HPP_

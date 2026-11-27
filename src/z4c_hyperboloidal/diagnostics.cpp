@@ -209,14 +209,15 @@ void Diagnostics::EvaluateConstraints() {
   const auto cells=p.points.d_view;const auto geometry=p.geometry;const auto refs=p.reference;
   const auto residual=p.residual;const auto output=points_;const auto params=p.parameters;
   const auto surface=boundary_->BindKernel();const int n=p.n[0];
+  const auto ind=p.independent;
   Kokkos::parallel_for("hyperboloidal accepted constraints",
     Kokkos::RangePolicy<>(0,p.npoints),KOKKOS_LAMBDA(int q) {
       const auto c=cells(q);const auto map=geometry(q);
       const BlockPointReader reader{residual,c.m,c.k,c.j,c.i};
       const Real inv_h[3]={Real(n),Real(n),Real(n)};
       const auto state=surface.HasRadialRow(q)
-          ? EndpointState(q,reader,map,inv_h,refs(q),params,surface)
-          : BuildPointState(reader,map,inv_h,refs(q),params);
+          ? EndpointState(q,reader,map,inv_h,refs(q),params,surface,nullptr,ind)
+          : BuildPointState(reader,map,inv_h,refs(q),params,nullptr,nullptr,false,ind);
       ConstraintPoint point;point.status=state.status;
       if (state.status==PointStatus::success) {
         const auto u=SphericalPolicy::Physical(map.x,state.jets);

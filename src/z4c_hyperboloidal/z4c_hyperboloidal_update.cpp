@@ -54,11 +54,12 @@ TaskStatus Z4cHyperboloidal::ExpRKUpdate(Driver *driver,int stage) {
   const auto cells=points.d_view;
   const auto current=u0,base=u1,rhs=u_rhs,sum=u_accum;
   const auto records=chi_records;
+  const auto ind=independent;
   Kokkos::parallel_for("hyperboloidal RK4 bulk update",
       Kokkos::RangePolicy<>(0,npoints),KOKKOS_LAMBDA(int p) {
     const auto c=cells(p);
     for (int f=0;f<nvar;++f) {
-      const Real raw=Fields::Independent(f)
+      const Real raw=ind.Has(f)
           ? time_integration::ClassicalRK4::Advance(stage,dt,
               base(c.m,f,c.k,c.j,c.i),rhs(c.m,f,c.k,c.j,c.i),sum(c.m,f,c.k,c.j,c.i))
           : base(c.m,f,c.k,c.j,c.i);
@@ -73,7 +74,7 @@ TaskStatus Z4cHyperboloidal::ExpRKUpdate(Driver *driver,int stage) {
       Kokkos::RangePolicy<>(0,nsurface_points),KOKKOS_LAMBDA(int p) {
     const auto c=faces(p);
     for (int f=0;f<nvar;++f) {
-      const Real raw=Fields::Independent(f)
+      const Real raw=ind.Has(f)
           ? time_integration::ClassicalRK4::Advance(stage,dt,
               edge_base(c.face,f,c.k,c.j),edge_rhs(c.face,f,c.k,c.j),
               edge_sum(c.face,f,c.k,c.j))

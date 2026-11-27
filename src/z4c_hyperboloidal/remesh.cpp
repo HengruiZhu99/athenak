@@ -422,15 +422,28 @@ void RemeshState::Install(Z4cHyperboloidal &p) const {
   DvceArray1D<int> corrections("inner AMR chi corrections",p.npoints);
   Kokkos::deep_copy(corrections,0);
   const int shift=p.origin-p.nghost;int bad=0;
+  const auto ind=p.independent;
   Kokkos::parallel_reduce("hyperboloidal install remeshed bulk",Kokkos::RangePolicy<>(0,p.npoints),
     KOKKOS_LAMBDA(int point,int &invalid) {
       const auto c=points(point);CartesianChartJets jets{};
       for(int f=0;f<Fields::count;++f) {
         const Real value=nominal_core(point)?nominal(c.m,f,c.k-shift,c.j-shift,c.i-shift)
             :values(point,f);
-        jets[f].f=changed(c.m)&&!Fields::Independent(f)?0:value;
+        jets[f].f=changed(c.m)&&!ind.Has(f)?0:value;
       }
-      if(changed(c.m)&&!TryExpandCartesianChart(jets)) {corrections(point)=-1;++invalid;return;}
+      bool closed=true;
+      if(changed(c.m)) {
+        if(ind.all) {
+          // Transferred zz components are data; restore the constraints by projection.
+          std::array<Real,Fields::count> v{};Real inverse[3][3];
+          for(int f=0;f<Fields::count;++f)v[f]=jets[f].f;
+          closed=ProjectAlgebraicConstraints(v,inverse);
+          for(int f=1;f<13;++f)jets[f].f=v[f];
+        } else {
+          closed=TryExpandCartesianChart(jets);
+        }
+      }
+      if(!closed) {corrections(point)=-1;++invalid;return;}
       const auto &x=geometry(point).x;
       const Real r=Kokkos::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
       if(floor_inner && changed(c.m) && nominal_core(point) && r<=inner &&

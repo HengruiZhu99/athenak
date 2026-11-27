@@ -20,8 +20,9 @@ struct BlockResidualReader {
   DvceArray4D<mapped::Point> geometry;
   int block, k, j, i;
   ResidualWeight weight;
+  IndependentFields independent{};
   KOKKOS_INLINE_FUNCTION Real operator()(int f,int di=0,int dj=0,int dk=0) const {
-    if (!Fields::Independent(f)) return 0;
+    if (!independent.Has(f)) return 0;
     const Real residual=state(block,f,k+dk,j+dj,i+di)
                         -reference(block,f,k+dk,j+dj,i+di);
     if (f!=Fields::chi) return residual;
@@ -197,7 +198,7 @@ KOKKOS_INLINE_FUNCTION void RestorePointState(
     PointState &out, const Reader &q, const mapped::Point &map, const Real inv_h[3],
     const CartesianChartJets &reference,
     const HyperbolicShiftParameters<Real> &parameters, const mapped::Jet *lift = nullptr,
-    const mapped::Jet *cached_weight = nullptr) {
+    const mapped::Jet *cached_weight = nullptr, IndependentFields independent = {}) {
   const Real r = SphericalPolicy::Radius(map.x);
   if (!(r >= 0) || (!parameters.residual_weight.Regular() && r == 0) ||
       !Kokkos::isfinite(r)) {
@@ -206,7 +207,7 @@ KOKKOS_INLINE_FUNCTION void RestorePointState(
   }
   ApplyCompatibleLapse(out.jets[18], q, map, inv_h, r, parameters);
   if (!SphericalPolicy::Restore(map.x, out.jets, reference, parameters.residual_weight,
-                                cached_weight)) {
+                                cached_weight, independent.all)) {
     out.status=PointStatus::invalid_geometry;return;
   }
   if (lift)for (int a=0;a<3;++a)out.jets[22+a]=out.jets[22+a]+lift[a];
@@ -226,17 +227,19 @@ KOKKOS_INLINE_FUNCTION PointState BuildPointState(
     const Reader &q, const mapped::Point &map, const Real inv_h[3],
     const CartesianChartJets &reference,
     const HyperbolicShiftParameters<Real> &parameters, const mapped::Jet *lift = nullptr,
-    const mapped::Jet *cached_weight = nullptr, bool affine = false) {
+    const mapped::Jet *cached_weight = nullptr, bool affine = false,
+    IndependentFields independent = {}) {
   PointState out;
   Real beta[3]{};
   for (int a = 0; a < 3; ++a) beta[a] = q(22 + a) + reference[22 + a].f - map.x[a];
   const auto shift = LogicalShift::Project(map, beta, affine);
   for (int f = 0; f < Fields::count; ++f) {
-    if (!Fields::Independent(f)) continue;
+    if (!independent.Has(f)) continue;
     out.jets[f] = SampleResidualJet(q, f, map, inv_h, shift, Fields::NeedsBulkHessian(f),
                                     out.transport[f], affine);
   }
-  RestorePointState(out, q, map, inv_h, reference, parameters, lift, cached_weight);
+  RestorePointState(out, q, map, inv_h, reference, parameters, lift, cached_weight,
+                    independent);
   return out;
 }
 }  // namespace z4c_hyperboloidal

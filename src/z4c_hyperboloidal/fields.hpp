@@ -24,10 +24,36 @@ struct Fields {
     return f < curvature || f == lapse || (f >= shift && f < D);
   }
 
-  // Dense slope storage omits the two constrained tensor components and three sources.
+  // Capacity of dense slope and jet storage for either choice of evolved components.
+  static constexpr int max_independent=28;
+
+  // Default layout (zz components solved algebraically). The evolution code uses
+  // IndependentFields below, which also covers evolve_all_components; these remain for
+  // tests and tools of the default layout.
   KOKKOS_INLINE_FUNCTION static int IndependentSlot(int f) { return f-(f>6)-(f>12); }
   KOKKOS_INLINE_FUNCTION static bool Independent(int f) {
     return f>=0 && f<28 && f!=6 && f!=12;
+  }
+};
+
+// Which stored fields are evolved and exchanged as slopes. By default the zz components
+// of the conformal metric (slot 6) and of the trace-free curvature (slot 12) are solved
+// from det(gamma)=1 and gamma^ij A_ij=0. With all=true (evolve_all_components) they are
+// evolved like the other ten and the two constraints are enforced by projection.
+// Dense storage omits the fields that are not evolved; the three sources never are.
+struct IndependentFields {
+  bool all=false;
+  KOKKOS_INLINE_FUNCTION int Count() const { return all ? 28 : 26; }
+  KOKKOS_INLINE_FUNCTION bool Has(int f) const {
+    return f>=0 && f<28 && (all || (f!=6 && f!=12));
+  }
+  KOKKOS_INLINE_FUNCTION int Slot(int f) const { return all ? f : f-(f>6)-(f>12); }
+  KOKKOS_INLINE_FUNCTION int Field(int slot) const {
+    if (all) return slot;
+    int f=slot;
+    if (f>=6) ++f;
+    if (f>=12) ++f;
+    return f;
   }
 };
 

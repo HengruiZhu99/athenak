@@ -53,7 +53,7 @@ class SurfaceExchange {
     KOKKOS_INLINE_FUNCTION mapped::Jet ResidualJet(int point,int field,
         const DvceArray5D<Real> &residual,bool second=true) const {
       mapped::Jet out;
-      if (!Fields::Independent(field)) return out;
+      if (fields.index[field]<0) return out;
       const auto c=points(point);
       out.f=residual(c.m,field,c.k,c.j,c.i);
       const auto row=radial_rows(radial_index(point));
@@ -111,7 +111,7 @@ class SurfaceExchange {
     DvceArray2D<mapped::Jet> radial_jets;
     KOKKOS_INLINE_FUNCTION mapped::Jet EndpointResidualJet(int point,int field,
         const DvceArray5D<Real> &) const {
-      if (!Fields::Independent(field))return mapped::Jet{};
+      if (fields.index[field]<0)return mapped::Jet{};
       return radial_jets(radial_index(point),fields.index[field]);
     }
   };

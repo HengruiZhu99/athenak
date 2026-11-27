@@ -39,7 +39,7 @@ void EvaluateBlocks(const Policy &bulk_policy, const DvceArray1D<int> &selected,
                     const DvceArray5D<Real> &delta, const DvceArray5D<Real> &output,
                     const DvceArray2D<Real> &scratch, const DvceArray1D<int> &statuses,
                     const DvceArray1D<Real> &gaps, const DvceArray1D<Real> &cfls, Real dt,
-                    int count) {
+                    int count, IndependentFields ind) {
   Kokkos::parallel_for(
       "hyperboloidal block RHS", bulk_policy, KOKKOS_LAMBDA(int index) {
         // nvcc cannot first-capture a variable inside a constexpr-if branch.
@@ -63,7 +63,7 @@ void EvaluateBlocks(const Policy &bulk_policy, const DvceArray1D<int> &selected,
             forcing.dissipation[f] = output(c.m, f, c.k, c.j, c.i);
           const bool endpoint = with_radial_rows && surface.HasRadialRow(p);
           const auto load = [&](int f, bool second) {
-            const int first = components_per_jet * Fields::IndependentSlot(f);
+            const int first = components_per_jet * ind.Slot(f);
             mapped::Jet q(scratch(first, index));
             for (int k = 0; k < 3; ++k) {
               q.d[k] = scratch(first + 1 + k, index);
@@ -90,18 +90,19 @@ void EvaluateBlocks(const Policy &bulk_policy, const DvceArray1D<int> &selected,
             return restored;
           };
           result =
-              EvaluateBulkFieldJets(map, params, sources(p), forcing, load, omega(p));
+              EvaluateBulkFieldJets(map, params, sources(p), forcing, load, omega(p),
+                                    ind.all);
         } else {
           PointState state;
           if constexpr (with_radial_rows) {
             state = surface.HasRadialRow(p)
                         ? EndpointState(p, reader, map, inv_h, refs(p), params, surface,
-                                        &weights(p))
+                                        &weights(p), ind)
                         : BuildPointState(reader, map, inv_h, refs(p), params, nullptr,
-                                          &weights(p), blocks(c.m).face < 0);
+                                          &weights(p), blocks(c.m).face < 0, ind);
           } else {
             state = BuildPointState(reader, map, inv_h, refs(p), params, nullptr,
-                                    &weights(p), blocks(c.m).face < 0);
+                                    &weights(p), blocks(c.m).face < 0, ind);
           }
           statuses(p) = static_cast<int>(state.status);
           if (state.status != PointStatus::success) return;
@@ -166,7 +167,8 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
   const int selected_count = selected.extent_int(0);
   // Keep each subset's halo dependencies. RHS storage holds KO only until the
   // point kernel loads all fields, including Lambda's contribution to D.
-  constexpr int shift_start = components_per_jet * Fields::independent_count;
+  constexpr int shift_start = components_per_jet * Fields::max_independent;
+  const auto ind = independent;
   const bool precompute_jets = split_bulk_jets_;
   if (precompute_jets && selected_count > residual_jet_scratch_.extent_int(1)) {
     residual_jet_scratch_ = DvceArray2D<Real>(
@@ -185,7 +187,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
         const auto c = cells(p);
         // Shell lines stay in evolved storage, where the residual is u-reference
         // with chi divided by its weight. Constrained components keep the field.
-        if (shell_residual && blocks(c.m).face >= 0 && Fields::Independent(f)) {
+        if (shell_residual && blocks(c.m).face >= 0 && ind.Has(f)) {
           const Real scale = f != Fields::chi ? 1
                              : params.residual_weight.Regular()
                                    ? weights(p).f
@@ -219,13 +221,11 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
     Kokkos::parallel_for(
         "hyperboloidal residual field jets",
         Kokkos::RangePolicy<Kokkos::IndexType<KOIndex>>(
-            0, KOIndex(selected_count) * Fields::independent_count),
+            0, KOIndex(selected_count) * ind.Count()),
         KOKKOS_LAMBDA(KOIndex task) {
           const int index = static_cast<int>(task % selected_count);
           const int slot = static_cast<int>(task / selected_count);
-          int field = slot;
-          if (field >= 6) ++field;
-          if (field >= 12) ++field;
+          const int field = ind.Field(slot);
           const int p = selected(index);
           const auto c = cells(p);
           const auto map = maps(p);
@@ -253,7 +253,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
   const auto evaluate = [&](auto radial_rows, auto precomputed) {
     EvaluateBlocks<decltype(radial_rows)::value, decltype(precomputed)::value>(
         bulk_policy, selected, cells, blocks, surface, maps, refs, sources, weights,
-        omega, params, delta, output, scratch, statuses, gaps, cfls, dt, count);
+        omega, params, delta, output, scratch, statuses, gaps, cfls, dt, count, ind);
   };
   if (radial && precompute_jets) {
     evaluate(std::true_type{}, std::true_type{});

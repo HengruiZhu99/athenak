@@ -160,8 +160,8 @@ struct ScriOutput::Impl {
       }
     };
     support("bulk",*bulk,false,bulk_ref);support("edge",*edge,true,edge_ref);
-    Kokkos::realloc(bulk_res,bulk_ref.extent(0),hyp::Fields::independent_count);
-    Kokkos::realloc(edge_res,edge_ref.extent(0),hyp::Fields::independent_count);
+    Kokkos::realloc(bulk_res,bulk_ref.extent(0),p.independent.Count());
+    Kokkos::realloc(edge_res,edge_ref.extent(0),p.independent.Count());
     const auto rows=Kokkos::create_mirror_view_and_copy(HostMemSpace(),boundary->Rows());
     const auto terms=Kokkos::create_mirror_view_and_copy(HostMemSpace(),boundary->Terms());
     const auto sg=Kokkos::create_mirror_view_and_copy(HostMemSpace(),p.surface_geometry);
@@ -256,9 +256,9 @@ void ScriOutput::LoadOutputData(Mesh *pm) {
   while(s.edge->Receive()!=TaskStatus::complete) {}
   const auto residual=[&](const bvals::MappedExchange &ex,DvceArray2D<Real> ref,
                           DvceArray2D<Real> dst,bool surface) {
-    const auto values=ex.Values();const auto weight=s.bulk_weight;
+    const auto values=ex.Values();const auto weight=s.bulk_weight;const auto ind=p.independent;
     Kokkos::parallel_for("scri output residual support",Kokkos::RangePolicy<>(0,values.extent_int(0)),
-      KOKKOS_LAMBDA(int i) {int slot=0;for(int f=0;f<31;++f)if(hyp::Fields::Independent(f))
+      KOKKOS_LAMBDA(int i) {int slot=0;for(int f=0;f<31;++f)if(ind.Has(f))
         dst(i,slot++)=(values(i,f)-ref(i,f))/(!surface && f==0?weight(i):1);});
   };
   residual(*s.bulk,s.bulk_ref,s.bulk_res,false);residual(*s.edge,s.edge_ref,s.edge_res,true);
@@ -303,7 +303,7 @@ void ScriOutput::LoadOutputData(Mesh *pm) {
     if(s.rate_diagnostics) {
       for(int i=0;i<p.nsurface_points;++i) {
         auto restored=sampled(i);const auto c=p.surface_points.h_view(i);
-        if(!hyp::SphericalPolicy::Restore(sg(i).x,restored,refs(i)))
+        if(!hyp::SphericalPolicy::Restore(sg(i).x,restored,refs(i),{},nullptr,p.independent.all))
           throw std::runtime_error("invalid diagnostic restoration");
         for(int a=0;a<nc;++a)restored[a<3?22+a:18]=restored[a<3?22+a:18]+
           hyp::NormalLift(sg(i),cj(c.face,a,c.k,c.j),dr(c.face),gap(c.face));

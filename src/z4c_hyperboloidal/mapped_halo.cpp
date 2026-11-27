@@ -448,8 +448,10 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
     throw std::overflow_error("mapped halo plan exceeds device integer indexing");
 }
 
-void MappedHalo::Rebuild(MeshBlockPack *pack,int origin,ActivityPolicy activity) {
+void MappedHalo::Rebuild(MeshBlockPack *pack,int origin,ActivityPolicy activity,
+                         IndependentFields independent) {
   activity_=activity;
+  independent_=independent;
   ready_=false;
   std::vector<bvals::DonorPoint> requests;
   std::string error;
@@ -469,7 +471,7 @@ void MappedHalo::Rebuild(MeshBlockPack *pack,int origin,ActivityPolicy activity)
   if (failed) throw std::runtime_error(error.empty()
       ? "mapped halo geometry failed on another rank" : error);
   std::vector<int> fields;
-  for (int f=0;f<Fields::count;++f) if (Fields::Independent(f)) fields.push_back(f);
+  for (int f=0;f<Fields::count;++f) if (independent_.Has(f)) fields.push_back(f);
   residual_exchange_.Rebuild(pack,requests,fields);
   std::vector<int> physical_fields(Fields::count);std::iota(physical_fields.begin(),physical_fields.end(),0);
   physical_exchange_.Rebuild(pack,requests,physical_fields);
@@ -529,14 +531,15 @@ void MappedHalo::Fill(const DvceArray1D<DeviceRow> &rows,
   if(!residual_values.data())residual_values=residual_exchange_.Values();
   if(!physical_values.data())physical_values=physical_exchange_.Values();
   const int count=rows.extent_int(0);
+  const auto ind=independent_;
   Kokkos::parallel_for("mapped halo interpolation",Kokkos::RangePolicy<>(0,count*Fields::count),
     KOKKOS_LAMBDA(int index) {
       const auto row=rows(index/Fields::count);const int f=index%Fields::count;
       const auto c=row.target; if(active.extent(0) && !active(c.m))return;
       const int first=entries(row.begin).ordinal;
       const Real anchor=physical_values(first,f);
-      const bool independent=Fields::Independent(f);
-      const int slot=Fields::IndependentSlot(f);
+      const bool independent=ind.Has(f);
+      const int slot=ind.Slot(f);
       const Real base=independent ? residual_values(first,slot) : 0;
       Real value=anchor,interpolated=base;
       for (int e=row.begin;e<row.end;++e) {
@@ -608,6 +611,7 @@ void MappedHalo::FillTensors(const BatchPlan &plan, const DvceArray5D<Real> &res
   if (!pv.data()) pv = physical_exchange_.Values();
   const auto sums = line_values_;
   constexpr int fields = Fields::count;
+  const auto ind = independent_;
   using Policy = Kokkos::RangePolicy<Kokkos::IndexType<std::int64_t>>;
   Kokkos::parallel_for(
       "mapped halo first-axis interpolation", Policy(0, lines.extent(0) * fields),
@@ -615,8 +619,8 @@ void MappedHalo::FillTensors(const BatchPlan &plan, const DvceArray5D<Real> &res
         const int l = index / fields, f = index % fields;
         const auto &line = lines(l);
         if (active.extent(0) && !active(line.block)) return;
-        const int first = line.ordinal[0], slot = Fields::IndependentSlot(f);
-        const bool independent = Fields::Independent(f);
+        const int first = line.ordinal[0], slot = ind.Slot(f);
+        const bool independent = ind.Has(f);
         const Real anchor = pv(first, f), base = independent ? rv(first, slot) : 0;
         Real value = 0, delta = 0;
         for (int i = 0; i < 6; ++i) {
@@ -632,8 +636,8 @@ void MappedHalo::FillTensors(const BatchPlan &plan, const DvceArray5D<Real> &res
       KOKKOS_LAMBDA(std::int64_t index) {
         const auto &row = rows(index / fields);
         if (active.extent(0) && !active(row.target.m)) return;
-        const int f = index % fields, slot = Fields::IndependentSlot(f);
-        const bool independent = Fields::Independent(f);
+        const int f = index % fields, slot = ind.Slot(f);
+        const bool independent = ind.Has(f);
         const int first = lines(row.line[0]).ordinal[0];
         const Real anchor = pv(first, f), base = independent ? rv(first, slot) : 0;
         Real value = anchor, delta = base;
@@ -681,7 +685,7 @@ const MappedHalo::BatchPlan &MappedHalo::PlanForBatch(const std::vector<int> &sl
     if (line_values_.data()) Kokkos::fence("mapped halo scratch resize");
     line_values_ = DvceArray2D<Real>(
         Kokkos::view_alloc(Kokkos::WithoutInitializing, "mapped halo stage line values"),
-        lines.size(), Fields::count + Fields::independent_count);
+        lines.size(), Fields::count + Fields::max_independent);
   }
   CopyDevice(selected, plan.rows, "mapped halo active recipient rows");
   return batches_.emplace(slots,std::move(plan)).first->second;

@@ -159,6 +159,18 @@ def expand(jets):
     return v
 
 
+def close_dependent(jets, sampled):
+    """Restore gzz and Azz of endpoint jets.
+
+    By default the solver leaves the sampled residual jets of slots 6 and 12 at zero and
+    both components follow from det(gamma)=1 and gamma^ij A_ij=0. A record written with
+    evolve_all_components carries their differenced jets, which are then used as stored.
+    """
+    if np.any(sampled[..., [6, 12], :] != 0):
+        return jets
+    return expand(jets)
+
+
 def normal_lifts(state, epoch):
     """Rebuild the six-by-six angular interpolant and seventh-degree normal lift."""
     ids = epoch['surface_ids'].astype(int)
@@ -214,7 +226,7 @@ def restored_endpoint_jets(state, epoch):
     jets = sampled + ref
     # This exactly follows SurfaceExchange::Solve's default Restore convention.
     jets[:, 0] = multiply(sampled[:, 0]+multiply(ref[:, 0], power(r2, -1)), r2)
-    jets = expand(jets)
+    jets = close_dependent(jets, sampled)
     lifts = normal_lifts(state, epoch)
     jets[:, 22:25] += lifts[:, :3]
     if lifts.shape[1] == 4:

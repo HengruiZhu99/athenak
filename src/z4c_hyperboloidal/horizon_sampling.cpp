@@ -63,7 +63,7 @@ struct HorizonSampler::Impl {
   bool continuous_derivatives=false;
 
   Impl(MeshBlockPack *p,Z4cHyperboloidal *m):pack(p),module(m) {
-    for (int f=0;f<15;++f)if (Fields::Independent(f))fields.push_back(f);
+    for (int f=0;f<15;++f)if (module->independent.Has(f))fields.push_back(f);
   }
   void Refresh() {
     const int next=pack->pmesh->GetAMRLoadBalanceUpdateSeq();
@@ -188,7 +188,8 @@ struct HorizonSampler::Impl {
         for (int a=0;a<3;++a)jets[f].d[a]+=derivative[a]*value[f];
       }
     }
-    if (!SphericalPolicy::Restore(q.x,jets,reference->At(q.x),module->parameters.residual_weight))return {};
+    if (!SphericalPolicy::Restore(q.x,jets,reference->At(q.x),module->parameters.residual_weight,
+                                  nullptr,module->independent.all))return {};
     return PhysicalHorizonGeometry(SphericalPolicy::Physical(q.x,jets),
                                    module->parameters.profile.At(q.x));
   }

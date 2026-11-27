@@ -230,6 +230,7 @@ void SurfaceRemesh::Prepare(const Z4cHyperboloidal &p,const RemeshLayout &l) {
   Kokkos::realloc(records_,rows.size());
   const auto state=state_;const auto records=records_;
   int invalid=0;
+  const auto ind=p.independent;
   Kokkos::parallel_reduce("transfer owned scri",Kokkos::RangePolicy<>(0,rows.size()),
     KOKKOS_LAMBDA(int q,int &bad) {
       const auto row=dr(q);
@@ -237,12 +238,21 @@ void SurfaceRemesh::Prepare(const Z4cHyperboloidal &p,const RemeshLayout &l) {
       for (int f=0;f<Fields::count;++f) {
         Real value=0;
         if (row.copy)value=values(dt(row.begin).ordinal,f);
-        else if (Fields::Independent(f))for (int t=row.begin;t<row.end;++t)
+        else if (ind.Has(f))for (int t=row.begin;t<row.end;++t)
           value+=dt(t).weight*values(dt(t).ordinal,f);
         jets[f].f=value;
         if (!Kokkos::isfinite(value))++bad;
       }
-      if (!row.copy && !TryExpandCartesianChart(jets))++bad;
+      if (!row.copy) {
+        if (ind.all) {
+          std::array<Real,Fields::count> v{};Real inverse[3][3];
+          for (int f=0;f<Fields::count;++f)v[f]=jets[f].f;
+          if (!ProjectAlgebraicConstraints(v,inverse))++bad;
+          for (int f=1;f<13;++f)jets[f].f=v[f];
+        } else if (!TryExpandCartesianChart(jets)) {
+          ++bad;
+        }
+      }
       for (int f=0;f<Fields::count;++f) {
         state(row.face,f,row.k,row.j)=jets[f].f;
         if (!Kokkos::isfinite(jets[f].f))++bad;

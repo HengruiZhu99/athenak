@@ -46,11 +46,17 @@ struct SphericalPolicy {
   KOKKOS_INLINE_FUNCTION static bool Restore(const Real *x, CartesianChartJets &j,
                                              const CartesianChartJets &ref,
                                              const ResidualWeight &weight = {},
-                                             const J *cached_weight = nullptr) {
+                                             const J *cached_weight = nullptr,
+                                             bool evolve_all = false) {
     if (weight.Regular())
       j[0] = ref[0] + (cached_weight ? *cached_weight : weight.At(x)) * j[0];
     else {const J r2=Radius2(x);j[0]=(j[0]+ref[0]/r2)*r2;}
     for(int f=1;f<31;++f)j[f]=j[f]+ref[f];
+    // With every component evolved, slots 6 and 12 already hold differenced jets.
+    if (evolve_all) {
+      const Real a=j[1].f+1, b=j[2].f, d=j[4].f+1;
+      return a>0 && a*d-b*b>0;
+    }
     return TryExpandCartesianChart(j);
   }
   struct BoundaryResult {std::array<double,31> rate{};std::array<double,3> defect{};
