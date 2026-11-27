@@ -1,2 +1,5 @@
 job_id	partition	nodes_requested	nodes_allocated	wall_limit_s	elapsed_s	state	su_charged	purpose
-109457	gpu-dev	1	0	1800	0	CANCELLED_PENDING	0.00	Build c80c114e4 and run eight N12 smoke cycles
+109457	gpu-dev	1	0	1800	0	CANCELLED_PENDING	0.000000	Build c80c114e4 and run eight N12 smoke cycles
+109722	gpu-dev	1	0	2400	0	PENDING		Build b943db139 and run the N12 cycle-130 seed with published output cadences
+109723	gpu-dev	1	0	2700	0	PENDING		Three N12 baseline repeats plus Kokkos phase, UCX and CUDA allocation profiles
+109730	gpu-dev	1	0	1500	0	PENDING		N12 false-mode history and restart identity against 85e3256fc, and a true-mode reference
