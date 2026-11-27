@@ -321,10 +321,25 @@ TaskStatus MHD::RecvU_OA(Driver *pdrive, int stage) {
 }
 
 //----------------------------------------------------------------------------------------
+static bool FrozenDynGRZoom(MeshBlockPack *pack) {
+  auto zoom = pack->pmesh->pzoom;
+  return pack->pdyngr && zoom && zoom->zstate.zone > 0 &&
+         !zoom->zamr.zooming_in && !zoom->zamr.zooming_out;
+}
+
+// CornerE in Valencia MHD uses the stage-input primitives, cell B and face fluxes.
+static bool DeferFrozenU(MeshBlockPack *pack, int stage) {
+  auto mhd = pack->pmhd;
+  return stage > 0 && FrozenDynGRZoom(pack) && !pack->pmesh->pgen->user_efield &&
+         !pack->prad && !pack->pdynrad && !pack->pz4c && !mhd->presist &&
+         !mhd->porb_u && !mhd->psbox_u;
+}
+
 //! \fn TaskStatus MHD::RestrictU
 //! \brief Wrapper task list function to restrict conserved vars
 
 TaskStatus MHD::RestrictU(Driver *pdrive, int stage) {
+  if (DeferFrozenU(pmy_pack, stage)) return TaskStatus::complete;
   // Only execute Mesh function with SMR/AMR
   if (pmy_pack->pmesh->multilevel) {
     pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0);
@@ -337,6 +352,7 @@ TaskStatus MHD::RestrictU(Driver *pdrive, int stage) {
 //! \brief Wrapper task list function to pack/send cell-centered conserved variables
 
 TaskStatus MHD::SendU(Driver *pdrive, int stage) {
+  if (DeferFrozenU(pmy_pack, stage)) return TaskStatus::complete;
   TaskStatus tstat = pbval_u->PackAndSendCC(u0, coarse_u0);
   return tstat;
 }
@@ -346,6 +362,7 @@ TaskStatus MHD::SendU(Driver *pdrive, int stage) {
 //! \brief Wrapper task list function to receive/unpack cell-centered conserved variables
 
 TaskStatus MHD::RecvU(Driver *pdrive, int stage) {
+  if (DeferFrozenU(pmy_pack, stage)) return TaskStatus::complete;
   TaskStatus tstat = pbval_u->RecvAndUnpackCC(u0, coarse_u0);
   return tstat;
 }
@@ -521,25 +538,44 @@ TaskStatus MHD::RecvB_Shr(Driver *pdrive, int stage) {
 //! \brief Wrapper task list function to call funtions that set physical and user BCs
 
 TaskStatus MHD::ApplyPhysicalBCs(Driver *pdrive, int stage) {
-  // do not apply BCs if domain is strictly periodic
-  if (pmy_pack->pmesh->strictly_periodic) {
-    if (pmy_pack->pmesh->pzoom != nullptr) pmy_pack->pmesh->pzoom->ApplyMask();
-    return TaskStatus::complete;
+  auto pm = pmy_pack->pmesh;
+  const bool frozen = FrozenDynGRZoom(pmy_pack);
+  if (!pm->strictly_periodic) {
+    if (!frozen) pbval_u->HydroBCs(pmy_pack, pbval_u->u_in, u0);
+    pbval_b->BFieldBCs(pmy_pack, pbval_b->b_in, b0);
   }
 
-  // physical BCs
-  pbval_u->HydroBCs((pmy_pack), (pbval_u->u_in), u0);
-  pbval_b->BFieldBCs((pmy_pack), (pbval_b->b_in), b0);
-
-  // TODO(@mhguo): this is temporary, need to move to a general mask function later
-  if (pmy_pack->pmesh->pzoom != nullptr) {
-    pmy_pack->pmesh->pzoom->ApplyMask();
+  auto zoom = pm->pzoom;
+  if (zoom != nullptr) {
+    if (frozen) {
+      // Coarse-fine prolongation can set an active normal face. Use those CT
+      // faces when converting frozen donor primitives back to conserved values.
+      pbval_b->FillCoarseInBndryFC(b0, coarse_b0);
+      pbval_b->ProlongateFC(b0, coarse_b0);
+    }
+    zoom->ApplyMask();
+    if (frozen) {
+      // Plain frozen RK stages reuse the receives posted at stage start. Startup
+      // and hooks that may consume earlier U halos finish that exchange first.
+      if (!DeferFrozenU(pmy_pack, stage)) {
+        if (pbval_u->ClearSend() != TaskStatus::complete ||
+            pbval_u->ClearRecv() != TaskStatus::complete ||
+            pbval_u->InitRecv(nmhd + nscalars) != TaskStatus::complete) {
+          return TaskStatus::fail;
+        }
+      }
+      pm->pmr->RestrictCC(u0, coarse_u0);
+      if (pbval_u->PackAndSendCC(u0, coarse_u0) != TaskStatus::complete ||
+          pbval_u->ClearSend() != TaskStatus::complete ||
+          pbval_u->ClearRecv() != TaskStatus::complete ||
+          pbval_u->RecvAndUnpackCC(u0, coarse_u0) != TaskStatus::complete) {
+        return TaskStatus::fail;
+      }
+      if (!pm->strictly_periodic) pbval_u->HydroBCs(pmy_pack, pbval_u->u_in, u0);
+    }
   }
-
-  // user BCs
-  if (pmy_pack->pmesh->pgen->user_bcs) {
-    (pmy_pack->pmesh->pgen->user_bcs_func)(pmy_pack->pmesh);
-  }
+  if (pm->strictly_periodic) return TaskStatus::complete;
+  if (pm->pgen->user_bcs) pm->pgen->user_bcs_func(pm);
 
   if (!CheckFiniteFaceB("ApplyPhysicalBCs", pdrive, stage)) return TaskStatus::fail;
   return TaskStatus::complete;
@@ -553,15 +589,17 @@ TaskStatus MHD::ApplyPhysicalBCs(Driver *pdrive, int stage) {
 TaskStatus MHD::Prolongate(Driver *pdrive, int stage) {
   if (pmy_pack->pmesh->multilevel) {  // only prolongate with SMR/AMR
     pbval_u->FillCoarseInBndryCC(u0, coarse_u0);
-    pbval_b->FillCoarseInBndryFC(b0, coarse_b0);
+    // A user boundary callback can edit faces after the frozen donor exchange.
+    const bool fill_faces = !FrozenDynGRZoom(pmy_pack) || pmy_pack->pmesh->pgen->user_bcs;
+    if (fill_faces) pbval_b->FillCoarseInBndryFC(b0, coarse_b0);
     if (pmy_pack->pmesh->pmr->prolong_prims) {
       pbval_u->ConsToPrimCoarseBndry(coarse_u0, coarse_b0, coarse_w0);
       pbval_u->ProlongateCC(w0, coarse_w0);
-      pbval_b->ProlongateFC(b0, coarse_b0);
+      if (fill_faces) pbval_b->ProlongateFC(b0, coarse_b0);
       pbval_u->PrimToConsFineBndry(w0, b0, u0);
     } else {
       pbval_u->ProlongateCC(u0, coarse_u0);
-      pbval_b->ProlongateFC(b0, coarse_b0);
+      if (fill_faces) pbval_b->ProlongateFC(b0, coarse_b0);
     }
   }
   if (!CheckFiniteFaceB("Prolongate", pdrive, stage)) return TaskStatus::fail;

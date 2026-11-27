@@ -453,6 +453,49 @@ class Lifecycle(unittest.TestCase):
                 np.testing.assert_allclose(mpi['M0_qualified_cumulative_BH1_Kerr'][-1],
                     h['M0_qualified_cumulative_BH1_Kerr'][-1],rtol=2e-11,atol=1e-12)
 
+    def test_frozen_halos_match_active_donors(self):
+        import bin_convert
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            inp = root/"frozen_halos.athinput"
+            text = INPUT.with_name("zoom_smoke.athinput").read_text()
+            text += "\n<output3>\nfile_type=bin\nvariable=mhd_u\nghost_zones=true\ndcycle=1\n"
+            for hook in (False, True):
+                case = root/("with_hook" if hook else "plain")
+                inp.write_text(text.replace("<coord>", "<coord>\nsmooth_excision=true"
+                                            "\nsmooth_excision_b_damping=true"
+                                            "\nsmooth_excision_b_damping_eta=0.01") if hook else text)
+                ranks = 2 if os.environ.get("ATHENA_DIAGNOSTICS_MPI") else 1
+                self.run_case(case, "time/nlim=3", "problem/b_inf=0.002",
+                              ranks=ranks, input_file=inp)
+                # Cycle 3 is output after a frozen-zone RK step, before the next remap.
+                data = bin_convert.read_binary(str(case/"bin/matched_bondi.mhd_u.00003.bin"))
+                locs = data["mb_logical"]
+                by_location = {tuple(location): block for block, location in enumerate(locs)}
+                n = np.array([8, 8, 8])
+                checked = 0
+                for block, (lx, ly, lz, level) in enumerate(locs):
+                    bounds = data["mb_geometry"][block].astype(float)
+                    lower = bounds[::2]
+                    dx = (bounds[1::2] - lower)/n
+                    k, j, i = np.indices(data["mb_data"]["dens"][block].shape)
+                    cells = np.column_stack((i.ravel(), j.ravel(), k.ravel())) - 4
+                    position = lower + (cells + 0.5)*dx
+                    r = np.linalg.norm(position, axis=1)
+                    # Cover the frozen ball while excluding the physical puncture mask.
+                    compare = (r > 0.8) & (r < 2) & np.any((cells < 0) | (cells >= n), axis=1)
+                    for cell in cells[compare]:
+                        donor_loc = tuple(np.array([lx, ly, lz]) + cell//n) + (level,)
+                        donor = by_location[donor_loc]
+                        ghost_index = tuple((cell+4)[::-1])
+                        donor_index = tuple((cell%n+4)[::-1])
+                        for field, blocks in data["mb_data"].items():
+                            self.assertEqual(blocks[block][ghost_index], blocks[donor][donor_index],
+                                             f"{field} donor {donor_loc} ghost {ghost_index}")
+                        checked += 1
+                self.assertEqual(checked, 224)
+
     def test_zoom_pending_and_completed_checkpoint(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);inp=INPUT.with_name('zoom_smoke.athinput')
