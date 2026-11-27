@@ -52,7 +52,8 @@ static J ScalarJet(const R3 &q,const J &r) {
 }
 
 // Cartesian jets at x of spherically symmetric fields with radial jets q[f].
-static Jets CartesianFromRadial(const double *x,const std::array<R3,NF> &q,bool mask) {
+static Jets CartesianFromRadial(const double *x,const std::array<R3,NF> &q,bool mask,
+                                bool evolve_all=false) {
   J xx[3],r2;
   for (int a=0;a<3;++a) {xx[a]=J::Variable(x[a],a);r2=r2+xx[a]*xx[a];}
   const J r=h::mapped::Power(r2,.5);
@@ -65,6 +66,13 @@ static Jets CartesianFromRadial(const double *x,const std::array<R3,NF> &q,bool 
     const int a=ti[t],b=tj[t];const J nn=xx[a]*xx[b]/r2;
     v[1+t]=(g1-g2)*nn+(a==b ? g2 : J(0));
     v[7+t]=(a1-a2)*nn+(a==b ? a2 : J(0));
+  }
+  if (evolve_all) {
+    // Slots 6 and 12 carry their own tangential radial functions (equal to those of
+    // yy by symmetry, up to roundoff) and are differenced like the other components.
+    const J nn=xx[2]*xx[2]/r2,g6=ScalarJet(q[6],r),a12=ScalarJet(q[12],r);
+    v[6]=(g1-g6)*nn+g6;
+    v[12]=(a1-a12)*nn+a12;
   }
   for (int f:{15,19,22,25}) {
     const J s=ScalarJet(q[f],r);
@@ -168,6 +176,7 @@ struct Options {
   std::string out="out";
   std::vector<double> profile_times;
   bool test_jets=false;
+  bool evolve_all=false;  // --evolve-all: gzz and Azz evolved, constraints projected
 };
 
 struct Diagnostic {
@@ -229,11 +238,17 @@ class Sim {
     }
   }
 
-  static void Enforce(Row &v) {
+  void Enforce(Row &v) const {
+    if (o.evolve_all) {
+      double inverse[3][3];
+      if (!h::ProjectAlgebraicConstraints(v,inverse)) throw std::runtime_error("invalid metric");
+      return;
+    }
     Jets j{};for (int f=0;f<NF;++f) j[f].f=v[f];
     if (!h::TryExpandCartesianChart(j)) throw std::runtime_error("invalid metric chart");
     v[6]=j[6].f;v[12]=j[12].f;
   }
+  bool Evolved(int f) const {return h::IndependentFields{o.evolve_all}.Has(f);}
 
   void Project(std::vector<Row> &s) const {
     Row &e=s[N];Enforce(e);
@@ -258,7 +273,7 @@ class Sim {
   }
 
   double Residual(const std::vector<Row> &s,int i,int f) const {
-    if (!h::Fields::Independent(f)) return 0;
+    if (!Evolved(f)) return 0;
     const double value=s[i][f]-ref[i][f];
     return (f==0 && i<N) ? value/(r[i]*r[i]) : value;
   }
@@ -296,9 +311,9 @@ class Sim {
     const double xs[3]={1,0,0};
     h::mapped::Point smap{};smap.x[0]=1;for (int a=0;a<3;++a) smap.J[a][a]=1;
     std::array<R3,NF> rq{};
-    for (int f=0;f<NF;++f) if (h::Fields::Independent(f)) rq[f]=RadialJet(s,N,f);
-    Jets sampled=CartesianFromRadial(xs,rq,false);
-    if (!h::SphericalPolicy::Restore(xs,sampled,refj[N])) throw std::runtime_error("scri restore");
+    for (int f=0;f<NF;++f) if (Evolved(f)) rq[f]=RadialJet(s,N,f);
+    Jets sampled=CartesianFromRadial(xs,rq,false,o.evolve_all);
+    if (!h::SphericalPolicy::Restore(xs,sampled,refj[N],{},nullptr,o.evolve_all)) throw std::runtime_error("scri restore");
     const auto us=h::SphericalPolicy::Physical(xs,sampled);
     const auto mg=h::Geometry(us.metric);
     const auto pg=h::Geometry(h::PenroseMetric(us.metric,us.chi));
@@ -332,7 +347,7 @@ class Sim {
     for (int a=0;a<3;++a) lifted[22+a]=lifted[22+a]+LiftJet(xs,a==0 ? correction : matrix[a][3],a);
     const auto rate=h::EvaluateScriPoint(smap,o.hh,lifted,p,src[N],o.penalty,&mg,&pg);
     if (!rate.valid) throw std::runtime_error("invalid scri rate");
-    for (int f=0;f<NF;++f) ds[N][f]=h::Fields::Independent(f) ? rate.rate[f] : 0;
+    for (int f=0;f<NF;++f) ds[N][f]=Evolved(f) ? rate.rate[f] : 0;
     if (diagnostic) {
       auto &d=*diagnostic;
       const auto bare=h::EvaluateScriPoint(smap,o.hh,lifted,p,src[N],0.,&mg,&pg);
@@ -364,12 +379,12 @@ class Sim {
   Jets BulkJets(const std::vector<Row> &s,int i,double correction,double *transport) const {
     const double x[3]={r[i],0,0};
     std::array<R3,NF> rq{};
-    for (int f=0;f<NF;++f) if (h::Fields::Independent(f)) rq[f]=RadialJet(s,i,f);
+    for (int f=0;f<NF;++f) if (Evolved(f)) rq[f]=RadialJet(s,i,f);
     if (transport) {
       for (int f=0;f<NF;++f) transport[f]=0;
       if (i<N-3) {
         const double b=s[i][22]-r[i];const int sign=b>=0 ? 1 : -1;
-        for (int f=0;f<NF;++f) if (h::Fields::Independent(f)) {
+        for (int f=0;f<NF;++f) if (Evolved(f)) {
           const double c=rq[f].v;
           const double vm=Residual(s,i-sign,f)-c,v1=Residual(s,i+sign,f)-c;
           const double v2=Residual(s,i+2*sign,f)-c,v3=Residual(s,i+3*sign,f)-c;
@@ -378,7 +393,7 @@ class Sim {
         }
       }
     }
-    Jets jets=CartesianFromRadial(x,rq,true);
+    Jets jets=CartesianFromRadial(x,rq,true,o.evolve_all);
     const double w=h::SphericalPolicy::CompatibleWeight(r[i],p);
     if (w>0) {
       if (i>=N-4 || i<4) throw std::runtime_error("compatible lapse window outside stencil");
@@ -393,7 +408,7 @@ class Sim {
       const double delta=w*(composed-rq[18].d2);
       jets[18].h[0][0]+=delta;
     }
-    if (!h::SphericalPolicy::Restore(x,jets,refj[i],p.residual_weight))
+    if (!h::SphericalPolicy::Restore(x,jets,refj[i],p.residual_weight,nullptr,o.evolve_all))
       throw std::runtime_error("bulk restore");
     if (i>=N-o.lift_layers) for (int a=0;a<3;++a) jets[22+a]=jets[22+a]+LiftJet(x,a==0 ? correction : 0.,a);
     if (transport) transport[0]*=p.residual_weight.Value(x);
@@ -425,7 +440,7 @@ class Sim {
       std::fprintf(stderr,"bulk status %d at r=%.6f\n",int(result.status),r[i]);
       throw std::runtime_error("invalid bulk point");
     }
-    for (int f=0;f<NF;++f) ds[i][f]=h::Fields::Independent(f) ? mask[i]*result.rate[f] : 0;
+    for (int f=0;f<NF;++f) ds[i][f]=Evolved(f) ? mask[i]*result.rate[f] : 0;
   }
 
   void Step(double dt) {
@@ -536,6 +551,7 @@ int main(int argc,char **argv) {
     else if (key=="--lift-layers") o.lift_layers=std::stoi(next());  // diagnostic only
     else if (key=="--out") o.out=next();
     else if (key=="--test-jets") o.test_jets=true;
+    else if (key=="--evolve-all") o.evolve_all=true;
     else if (key=="--profiles") {
       std::stringstream list(next());std::string item;
       while (std::getline(list,item,',')) o.profile_times.push_back(std::stod(item));

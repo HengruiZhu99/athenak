@@ -99,6 +99,10 @@ KOKKOS_INLINE_FUNCTION bool CartesianIndependent(int f){return f!=6 && f!=12 && 
 // Covariant enforcement of det(gamma)=1 and gamma^ij A_ij=0 on six stored components each:
 // gamma_ij -> det(gamma)^(-1/3) gamma_ij, then A_ij -> A_ij - gamma_ij gamma^kl A_kl / 3.
 // Values only. violation returns det(gamma)-1 and gamma^kl A_kl before the projection.
+// A violation within projection_tolerance (relative, about 45 ulp) is left alone, which
+// makes the projection idempotent: a state that was projected, stored and read back is
+// not changed by projecting it again, so restarts reproduce the uninterrupted run.
+constexpr Real projection_tolerance = 1e-14;
 KOKKOS_INLINE_FUNCTION bool ProjectAlgebraicConstraints(
     std::array<Real, Fields::count>& fields, Real inverse[3][3],
     Real violation[2] = nullptr) {
@@ -108,19 +112,23 @@ KOKKOS_INLINE_FUNCTION bool ProjectAlgebraicConstraints(
     g[ti[t]][tj[t]] = g[tj[t]][ti[t]] = fields[1 + t] + (ti[t] == tj[t]);
   if (!(g[0][0] > 0 && g[0][0] * g[1][1] - g[0][1] * g[0][1] > 0)) return false;
   if (!InvertMetric(g, inverse, determinant) || !(determinant > 0)) return false;
-  const Real scale = Kokkos::cbrt(1 / determinant);
-  Real trace = 0;
-  for (int t = 0; t < 6; ++t)
-    trace += (ti[t] == tj[t] ? 1 : 2) * inverse[ti[t]][tj[t]] * fields[7 + t];
+  const bool rescale = fabs(determinant - 1) > projection_tolerance;
+  const Real scale = rescale ? Kokkos::cbrt(1 / determinant) : 1;
+  Real trace = 0, magnitude = 0;
+  for (int t = 0; t < 6; ++t) {
+    const Real term = (ti[t] == tj[t] ? 1 : 2) * inverse[ti[t]][tj[t]] * fields[7 + t];
+    trace += term;
+    magnitude += fabs(term);
+  }
   if (violation) {
     violation[0] = determinant - 1;
     violation[1] = trace;
   }
   // gamma^kl A_kl of the unscaled metric times gamma_ij is invariant under the rescaling.
-  for (int t = 0; t < 6; ++t) {
-    fields[7 + t] -= g[ti[t]][tj[t]] * trace / 3;
-    fields[1 + t] = scale * g[ti[t]][tj[t]] - (ti[t] == tj[t]);
-  }
+  if (fabs(trace) > projection_tolerance * magnitude)
+    for (int t = 0; t < 6; ++t) fields[7 + t] -= g[ti[t]][tj[t]] * trace / 3;
+  if (rescale)
+    for (int t = 0; t < 6; ++t) fields[1 + t] = scale * g[ti[t]][tj[t]] - (ti[t] == tj[t]);
   for (int i = 0; i < 3; ++i)
     for (int j = 0; j < 3; ++j) {
       inverse[i][j] /= scale;
