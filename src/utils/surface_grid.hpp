@@ -47,6 +47,8 @@ class SphericalSurfaceGrid {
   DualArray2D<Real>& Motion() { return motion_; }
   DualArray1D<int>& Owners() { return owners_; }
   DualArray1D<int>& StencilReasons() { return stencil_reasons_; }
+  bool HasLocalSamples() const { return has_local_samples_; }
+  Real MaxStencilSpacing() const { return max_spacing_; }
   DualArray1D<Real>& LocalSpacing() { return local_spacing_; }
   DualArray1D<Real>& GeometricWeights() { return geometric_weights_; }
 
@@ -111,6 +113,8 @@ class SphericalSurfaceGrid {
   mutable DualArray2D<Real> area_covectors_;
   DualArray1D<int> owners_, stencil_reasons_;
   DualArray1D<Real> geometric_weights_, local_spacing_;
+  Real max_spacing_ = 0.0;
+  bool has_local_samples_ = false;
   int interp_order_; // Decoupled interpolation order
 
   // Core geometry

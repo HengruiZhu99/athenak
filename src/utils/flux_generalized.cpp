@@ -26,27 +26,15 @@
 #include "coordinates/coordinates.hpp"
 #include "dyn_grmhd/valencia_surface_flux.hpp"
 
-//----------------------------------------------------------------------------------------
-// Main Function Definition (no EOS templates; gamma-law assumed)
-//----------------------------------------------------------------------------------------
-SurfaceFluxResult IntegrateSurface(MeshBlockPack* pmbp,
-                                   SphericalSurfaceGrid* current_surf) {
-  if (!pmbp->padm || !pmbp->pmhd || !pmbp->pdyngr ||
-      pmbp->pdyngr->eos_policy != DynGRMHD_EOS::eos_ideal ||
-      !pmbp->pmhd->peos->eos_data.is_ideal) {
-    Kokkos::abort("Surface diagnostics require ideal gamma-law Valencia MHD and ADM");
-  }
-  if (!pmbp->pmesh->three_d) {
-    Kokkos::abort("Closed surface integrals require three spatial dimensions");
-  }
-  SurfaceFluxResult result;
+// The caller refreshes mesh support collectively before dispatching the local kernels.
+static FluxAccumulator IntegrateLocalSurface(MeshBlockPack* pmbp,
+                                             SphericalSurfaceGrid* current_surf) {
   // Gamma-law EOS parameter; must match valencia_stress_energy.hpp usage
   const Real gamma_gas = pmbp->pmhd->peos->eos_data.gamma;
 
   DualArray2D<Real> dSigma;
 
   // Mesh and embedding revisions govern ownership. Evolved stencil flags are sampled every time.
-  current_surf->RefreshInterpolationSupport();
   current_surf->QualifyStencils();
   const int np = current_surf->Npts();
 
@@ -182,37 +170,51 @@ SurfaceFluxResult IntegrateSurface(MeshBlockPack* pmbp,
       },
       Kokkos::Sum<FluxAccumulator>(fluxes));
 
-  Real legacy[17] = {fluxes.mdot,         fluxes.edot_fluid,   fluxes.edot_em,
+  return fluxes;
+}
+
+//----------------------------------------------------------------------------------------
+// Main Function Definition (no EOS templates; gamma-law assumed)
+//----------------------------------------------------------------------------------------
+SurfaceFluxResult IntegrateSurface(MeshBlockPack* pmbp,
+                                   SphericalSurfaceGrid* current_surf) {
+  if (!pmbp->padm || !pmbp->pmhd || !pmbp->pdyngr ||
+      pmbp->pdyngr->eos_policy != DynGRMHD_EOS::eos_ideal ||
+      !pmbp->pmhd->peos->eos_data.is_ideal) {
+    Kokkos::abort("Surface diagnostics require ideal gamma-law Valencia MHD and ADM");
+  }
+  if (!pmbp->pmesh->three_d) {
+    Kokkos::abort("Closed surface integrals require three spatial dimensions");
+  }
+  SurfaceFluxResult result;
+  current_surf->RefreshInterpolationSupport();
+  FluxAccumulator fluxes{};
+  if (current_surf->HasLocalSamples()) {
+    fluxes = IntegrateLocalSurface(pmbp, current_surf);
+  }
+  const int np = current_surf->Npts();
+  Real sums[45] = {fluxes.mdot,         fluxes.edot_fluid,   fluxes.edot_em,
                      fluxes.pdot_x_fluid, fluxes.pdot_y_fluid, fluxes.pdot_z_fluid,
                      fluxes.pdot_x_em,    fluxes.pdot_y_em,    fluxes.pdot_z_em,
                      fluxes.ldot_x_fluid, fluxes.ldot_y_fluid, fluxes.ldot_z_fluid,
                      fluxes.ldot_x_em,    fluxes.ldot_y_em,    fluxes.ldot_z_em,
                      fluxes.phiB,         fluxes.area};
-  for (int c = 0; c < 17; ++c) {
-    result.values[c] = legacy[c];
-  }
   for (int c = 0; c < 19; ++c) {
-    result.values[17 + c] = fluxes.moving[c];
+    sums[17 + c] = fluxes.moving[c];
   }
-  Real stats[9] = {fluxes.owned, fluxes.admissible, fluxes.covered_area};
+  Real* stats = sums + 36;
+  stats[0] = fluxes.owned;
+  stats[1] = fluxes.admissible;
+  stats[2] = fluxes.covered_area;
   for (int c = 0; c < 6; ++c) {
     stats[3 + c] = fluxes.bad[c];
   }
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, result.values.data(), 36, MPI_ATHENA_REAL, MPI_SUM,
-                MPI_COMM_WORLD);
-  MPI_Allreduce(MPI_IN_PLACE, stats, 9, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, sums, 45, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
 #endif
-  Real dx = 0.0;
-  for (int p = 0; p < np; ++p) {
-    if (current_surf->Owners().h_view(p) != 1) {
-      result.reason |= 1;
-    }
-    dx = std::max(dx, current_surf->LocalSpacing().h_view(p));
-  }
-#if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, &dx, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
-#endif
+  std::copy_n(sums, 36, result.values.begin());
+  // Only uniquely owned points entered the reduction.
+  if (stats[0] != np) result.reason |= 1;
   for (int c = 0; c < 6; ++c) {
     if (stats[3 + c] > 0.0) {
       result.reason |= 1 << c;
@@ -229,7 +231,7 @@ SurfaceFluxResult IntegrateSurface(MeshBlockPack* pmbp,
   result.values[38] = stats[0] / np;
   result.values[39] = stats[1] / np;
   result.values[40] = stats[2];
-  result.values[41] = dx;
+  result.values[41] = current_surf->MaxStencilSpacing();
   result.values[42] = current_surf->min_cells_per_radius;
   result.values[43] = result.values[17];
   if (!result.valid) {

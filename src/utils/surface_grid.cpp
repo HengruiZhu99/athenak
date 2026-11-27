@@ -177,8 +177,9 @@ DualArray2D<Real> SphericalSurfaceGrid::InterpolateCached(
   if (result.extent_int(0) != npts || result.extent_int(1) != nvars)
     Kokkos::realloc(result, npts, nvars);
 
-  auto &iindcs = interp_indcs;
-  auto &iwghts = interp_wghts;
+  auto iindcs = interp_indcs.d_view;
+  auto iwghts = interp_wghts.d_view;
+  auto output = result.d_view;
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   const int is = indcs.is, js = indcs.js, ks = indcs.ks;
 
@@ -187,18 +188,18 @@ DualArray2D<Real> SphericalSurfaceGrid::InterpolateCached(
 
   par_for("int2surf_block", DevExeSpace(), 0, npts-1, 0, nvars-1,
     KOKKOS_LAMBDA(const int p, const int v) {
-      const int mb_id = iindcs.d_view(p,0);
+      const int mb_id = iindcs(p,0);
       if (mb_id == -1) {
-        result.d_view(p,v) = 0.0;
+        output(p,v) = 0.0;
         return;
       }
-      const int i0 = iindcs.d_view(p,1), j0 = iindcs.d_view(p,2), k0 = iindcs.d_view(p,3);
+      const int i0 = iindcs(p,1), j0 = iindcs(p,2), k0 = iindcs(p,3);
       Real accum = 0.0;
 
       for (int k_sten = 0; k_sten < nsten; ++k_sten) {
         for (int j_sten = 0; j_sten < nsten; ++j_sten) {
           for (int i_sten = 0; i_sten < nsten; ++i_sten) {
-            const Real w = iwghts.d_view(p, i_sten, 0) * iwghts.d_view(p, j_sten, 1) * iwghts.d_view(p, k_sten, 2);
+            const Real w = iwghts(p, i_sten, 0) * iwghts(p, j_sten, 1) * iwghts(p, k_sten, 2);
 
             // --- FIXED: This index logic is now consistent with SetInterpolationWeights ---
             const int I = is + i0 - nleft + 1 + i_sten;
@@ -208,10 +209,8 @@ DualArray2D<Real> SphericalSurfaceGrid::InterpolateCached(
           }
         }
       }
-      result.d_view(p,v) = accum;
+      output(p,v) = accum;
     });
-
-  Kokkos::fence();
 
   result.template modify<DevExeSpace>();
   return result;
@@ -410,6 +409,9 @@ void SphericalSurfaceGrid::SetInterpolationIndices() {
     if (lo[0] < b.x1max && hi[0] >= b.x1min && lo[1] < b.x2max && hi[1] >= b.x2min &&
         lo[2] < b.x3max && hi[2] >= b.x3min) candidates.push_back(m);
   }
+  const int left = (interp_order_ + 1) / 2;
+  const auto& ind = pmy_pack->pmesh->mb_indcs;
+  max_spacing_ = 0;
   for (int p = 0; p < npts; ++p) {
     owners_.h_view(p) = 0;
     h_iind(p,0) = -1; h_iind(p,1) = -1; h_iind(p,2) = -1; h_iind(p,3) = -1;
@@ -425,11 +427,35 @@ void SphericalSurfaceGrid::SetInterpolationIndices() {
         owners_.h_view(p) += 1;
       }
     }
+    // Resolution depends only on the embedding and mesh layout. Preserve the
+    // conservative two-cell bound for interpolation crossing an AMR block face.
+    Real dx = 0.0;
+    if (h_iind(p,0) >= 0) {
+      const auto& mb = size.h_view(h_iind(p,0));
+      dx = std::max({mb.dx1, mb.dx2, mb.dx3});
+      if (pmy_pack->pmesh->multilevel &&
+          (h_iind(p,1) < left || h_iind(p,1) + left >= ind.nx1 ||
+           h_iind(p,2) < left || h_iind(p,2) + left >= ind.nx2 ||
+           h_iind(p,3) < left || h_iind(p,3) + left >= ind.nx3))
+        dx *= 2;
+    }
+    local_spacing_.h_view(p) = dx;
+    max_spacing_ = std::max(max_spacing_, dx);
   }
+  local_spacing_.modify<HostMemSpace>();
+  local_spacing_.sync<DevExeSpace>();
 #if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &max_spacing_, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, owners_.h_view.data(), npts, MPI_INT, MPI_SUM,
                 MPI_COMM_WORLD);
 #endif
+  has_local_samples_ = false;
+  for (int p = 0; p < npts; ++p) {
+    if (h_iind(p,0) >= 0 && owners_.h_view(p) == 1) {
+      has_local_samples_ = true;
+      break;
+    }
+  }
   owners_.modify<HostMemSpace>();
   owners_.sync<DevExeSpace>();
   interp_indcs.template modify<HostMemSpace>();
@@ -453,17 +479,14 @@ void SphericalSurfaceGrid::QualifyStencils() {
   bool frozen = zoom && zoom->zstate.zone > 0;
   ZoomRegion region{};
   if (frozen) region = zoom->zregion;
-  bool multilevel = pmy_pack->pmesh->multilevel;
   int nsten = interp_order_ + 1, left = nsten / 2;
   Real required = min_cells_per_radius;
   Kokkos::parallel_for(
       "qualify_surface_stencil", Kokkos::RangePolicy<DevExeSpace>(0, npts),
       KOKKOS_LAMBDA(int p) {
         int why = owner(p) == 1 ? 0 : 1, m = index(p, 0);
-        Real dx = 0.0;
         if (m >= 0) {
           auto mb = size(m);
-          dx = fmax(mb.dx1, fmax(mb.dx2, mb.dx3));
           for (int c = 0; c < nsten; ++c)
             for (int b = 0; b < nsten; ++b)
               for (int a = 0; a < nsten; ++a) {
@@ -484,17 +507,10 @@ void SphericalSurfaceGrid::QualifyStencils() {
                 Real z = CellCenterX(K - ind.ks, ind.nx3, mb.x3min, mb.x3max);
                 if (frozen && region.IsInRegion(x, y, z)) why |= 32;
               }
-          if (multilevel && (index(p, 1) < left || index(p, 1) + left >= ind.nx1 ||
-                             index(p, 2) < left || index(p, 2) + left >= ind.nx2 ||
-                             index(p, 3) < left || index(p, 3) + left >= ind.nx3))
-            dx *= 2;
-          if (required > 0 && r(p) / dx < required) why |= 8;
+          if (required > 0 && r(p) / spacing(p) < required) why |= 8;
         }
-        spacing(p) = dx;
         reason(p) = why;
       });
-  local_spacing_.modify<DevExeSpace>();
-  local_spacing_.sync<HostMemSpace>();
   stencil_reasons_.modify<DevExeSpace>();
 }
 
