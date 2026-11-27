@@ -86,13 +86,13 @@ bool Nonzero(const J &w) {
 }
 
 std::vector<HostTerm> BuildRow(const NativeDonorSelector &selector,int gid,
-    int i,int j,int k,bool boundary_row) {
+    int i,int j,int k,bool boundary_row,int angular) {
   const int n=selector.Cells(),origin=selector.Origin();
   const auto &map=selector.Map(gid);
   const Real q[3]={boundary_row ? 1 : (i+map.node_offset[0])/n,
                   (j+.5)/n,(k+.5)/n};
   const auto geometry=map.Geometry(q);
-  const int first[3]={n-6,j-2,k-2},width[3]={7,5,5};
+  const int first[3]={n-6,j-angular/2,k-angular/2},width[3]={7,angular,angular};
   Real nodes[3][7]{};
   for (int a=0;a<3;++a)for (int b=0;b<width[a];++b)
     nodes[a][b]=(a==0 && b==6) ? 1 : (first[a]+b+map.node_offset[a])/n;
@@ -103,7 +103,7 @@ std::vector<HostTerm> BuildRow(const NativeDonorSelector &selector,int gid,
     terms.push_back({true,anchor,{}});
     positions.emplace(Key{true,gid,k,j,0},0);
   }
-  for (int c=0;c<5;++c)for (int b=0;b<5;++b)for (int a=0;a<7;++a) {
+  for (int c=0;c<angular;++c)for (int b=0;b<angular;++b)for (int a=0;a<7;++a) {
     const auto w=EndpointWeight(geometry,q,nodes,width,a,b,c);
     if (!Nonzero(w))continue;
     const int aj=first[1]+b,ak=first[2]+c;const bool edge=a==6;
@@ -189,7 +189,7 @@ void SurfaceExchange::Rebuild() {
     Real inverse=0;
     for (int a=0;a<3;++a)inverse+=geometry.J[0][a]*geometry.x[a]/r;
     Row row{static_cast<int>(terms.size()),0,1/(inverse*n)};
-    for (const auto &term:BuildRow(selector,gid,n,c.j,c.k,true)) {
+    for (const auto &term:BuildRow(selector,gid,n,c.j,c.k,true,p.angular_stencil_points)) {
       auto &requests=term.boundary ? edge_requests : bulk_requests;
       terms.push_back({static_cast<int>(requests.size()),term.boundary,term.weight});
       requests.push_back(term.point);
@@ -202,7 +202,7 @@ void SurfaceExchange::Rebuild() {
     const int gid=pack_->GlobalId(c.m);
     Row row{static_cast<int>(radial_terms.size()),0,spacing[face]};
     for (const auto &term:BuildRow(selector,gid,c.i-p.origin,c.j-p.origin,
-                                  c.k-p.origin,false)) {
+                                  c.k-p.origin,false,p.angular_stencil_points)) {
       int ordinal=-1;
       if (term.boundary) {
         ordinal=edge_requests.size();edge_requests.push_back(term.point);

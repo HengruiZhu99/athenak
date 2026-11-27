@@ -156,6 +156,7 @@ std::string Identity(const Z4cHyperboloidal &p) {
   if (p.ko_shell_residual) HYP_ID(p.ko_shell_residual);
   // Format tag of the evolved-zz layout: slots 6 and 12 of a record are evolved state.
   if (p.independent.all) s << AllComponentsTag;
+  if (p.angular_stencil_points!=5) s << ";angular-stencil=" << p.angular_stencil_points;
   HYP_ID(p.chi_floor); HYP_ID(p.penalty); HYP_ID(p.requested_dt);
 
   s << ";agreement=full-unmasked-union-evolved-cube-taper-rowmass-v1;H=coordinate-volume";

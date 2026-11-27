@@ -12,19 +12,29 @@ enum class PointActivity {inactive, fringe, evolved};
 
 // The union of the actual bulk numerical dependencies, including mixed
 // derivatives. A bounding cube would unnecessarily populate tensor corners.
+// Mixed derivatives reach two nodes along each of two axes, or three with the
+// seven-node angular stencils (angular_stencil_points = 7). Host-side setting, fixed
+// by the module before any plan is built.
+inline int &BulkStencilCornerRadius() {
+  static int radius=2;
+  return radius;
+}
 inline const std::vector<std::array<int,3>> &BulkStencilOffsets() {
-  static const auto offsets=[] {
+  static std::vector<std::array<int,3>> offsets[2];
+  const int corner=BulkStencilCornerRadius();
+  auto &cached=offsets[corner==3];
+  if (cached.empty()) {
     std::set<std::array<int,3>> out;
     for (int a=0;a<3;++a) for (int d=-4;d<=4;++d) {
       std::array<int,3> q{};q[a]=d;out.insert(q);
     }
     for (int a=0;a<3;++a) for (int b=a+1;b<3;++b)
-      for (int da=-2;da<=2;++da) for (int db=-2;db<=2;++db) {
+      for (int da=-corner;da<=corner;++da) for (int db=-corner;db<=corner;++db) {
         std::array<int,3> q{};q[a]=da;q[b]=db;out.insert(q);
       }
-    return std::vector<std::array<int,3>>(out.begin(),out.end());
-  }();
-  return offsets;
+    cached.assign(out.begin(),out.end());
+  }
+  return cached;
 }
 
 // Module-owned immutable geometry policy. Indices here are relative to origin.

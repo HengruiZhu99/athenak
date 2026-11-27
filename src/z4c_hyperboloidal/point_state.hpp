@@ -103,6 +103,40 @@ KOKKOS_INLINE_FUNCTION Real SecondDerivative(const Reader &q,int f,int a,int b,
   return value*inv_h[a]*inv_h[b];
 }
 
+// Sixth-order centered differences on seven nodes, used for the two angular logical
+// directions of shell blocks when angular_stencil_points = 7.
+template <class Reader>
+KOKKOS_INLINE_FUNCTION Real FirstDerivative6(const Reader &q, int f, int a, Real inv_h) {
+  return inv_h * (45 * (OffsetValue(q, f, a, 1) - OffsetValue(q, f, a, -1)) -
+                  9 * (OffsetValue(q, f, a, 2) - OffsetValue(q, f, a, -2)) +
+                  (OffsetValue(q, f, a, 3) - OffsetValue(q, f, a, -3))) / 60;
+}
+template <class Reader>
+KOKKOS_INLINE_FUNCTION Real SecondDerivative6(const Reader &q, int f, int a, Real inv_h) {
+  return inv_h * inv_h *
+         (270 * (OffsetValue(q, f, a, 1) + OffsetValue(q, f, a, -1)) -
+          27 * (OffsetValue(q, f, a, 2) + OffsetValue(q, f, a, -2)) +
+          2 * (OffsetValue(q, f, a, 3) + OffsetValue(q, f, a, -3)) - 490 * q(f)) / 180;
+}
+KOKKOS_INLINE_FUNCTION Real CenteredFirstWeight(int offset, int order) {
+  const int k = offset < 0 ? -offset : offset;
+  const Real sign = offset < 0 ? -1 : 1;
+  if (order == 6) return sign * (k == 1 ? Real(3) / 4 : k == 2 ? Real(-3) / 20 : Real(1) / 60);
+  return sign * (k == 1 ? Real(2) / 3 : Real(-1) / 12);
+}
+// Mixed second derivative as the product of the centered first-derivative stencils of
+// the two axes, each at its own order.
+template <class Reader>
+KOKKOS_INLINE_FUNCTION Real MixedDerivative(const Reader &q, int f, int a, int b,
+                                            const Real inv_h[3], int order_a, int order_b) {
+  const int ra = order_a == 6 ? 3 : 2, rb = order_b == 6 ? 3 : 2;
+  Real value = 0;
+  for (int i = -ra; i <= ra; ++i) if (i) for (int j = -rb; j <= rb; ++j) if (j)
+    value += CenteredFirstWeight(i, order_a) * CenteredFirstWeight(j, order_b) *
+             OffsetValue(q, f, a, i, b, j);
+  return value * inv_h[a] * inv_h[b];
+}
+
 struct LogicalShift {
   Real value[3]{};
 
@@ -126,16 +160,23 @@ struct LogicalShift {
 template <class Reader>
 KOKKOS_INLINE_FUNCTION mapped::Jet SampleResidualJet(
     const Reader &q, int f, const mapped::Point &map, const Real inv_h[3],
-    const LogicalShift &shift, bool need_second, Real &transport, bool affine = false) {
+    const LogicalShift &shift, bool need_second, Real &transport, bool affine = false,
+    int angular_order = 4) {
   mapped::Jet logical(q(f));
   transport = 0;
+  // Axes 1 and 2 of a shell block are the angular directions of its cubed-sphere patch.
+  const bool sixth = angular_order == 6 && !affine;
   for (int a = 0; a < 3; ++a) {
     const AxialSamples samples(q, f, a);
-    logical.d[a] = samples.First(inv_h[a]);
+    const bool high = sixth && a > 0;
+    logical.d[a] = high ? FirstDerivative6(q, f, a, inv_h[a]) : samples.First(inv_h[a]);
     if (need_second) {
-      logical.h[a][a] = samples.Second(logical.f, inv_h[a]);
+      logical.h[a][a] = high ? SecondDerivative6(q, f, a, inv_h[a])
+                             : samples.Second(logical.f, inv_h[a]);
       for (int b = 0; b < a; ++b)
-        logical.h[b][a] = logical.h[a][b] = SecondDerivative(q, f, a, b, inv_h);
+        logical.h[b][a] = logical.h[a][b] =
+            sixth ? MixedDerivative(q, f, a, b, inv_h, 6, b > 0 ? 6 : 4)
+                  : SecondDerivative(q, f, a, b, inv_h);
     }
     const Real b = shift.value[a];
     const int sign = b >= 0 ? 1 : -1;

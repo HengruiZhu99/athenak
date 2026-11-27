@@ -169,6 +169,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
   // point kernel loads all fields, including Lambda's contribution to D.
   constexpr int shift_start = components_per_jet * Fields::max_independent;
   const auto ind = independent;
+  const int angular_order = angular_stencil_points == 7 ? 6 : 4;
   const bool precompute_jets = split_bulk_jets_;
   if (precompute_jets && selected_count > residual_jet_scratch_.extent_int(1)) {
     residual_jet_scratch_ = DvceArray2D<Real>(
@@ -239,7 +240,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
                   ? SampleEndpointJet(p, field, reader, inv_h, shift, surface, transport)
                   : SampleResidualJet(reader, field, map, inv_h, shift,
                                       Fields::NeedsBulkHessian(field), transport,
-                                      blocks(c.m).face < 0);
+                                      blocks(c.m).face < 0, angular_order);
           const int first = components_per_jet * slot;
           scratch(first, index) = jet.f;
           for (int a = 0; a < 3; ++a) {

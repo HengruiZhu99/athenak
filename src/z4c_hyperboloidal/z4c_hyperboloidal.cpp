@@ -79,6 +79,10 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
   // The reference then leaves no KO rate of its own in the shells or beside scri.
   ko_shell_residual=pin->GetOrAddBoolean("z4c_hyperboloidal","ko_shell_residual",false);
   independent.all=pin->GetOrAddBoolean("z4c_hyperboloidal","evolve_all_components",false);
+  angular_stencil_points=pin->GetOrAddInteger("z4c_hyperboloidal","angular_stencil_points",5);
+  if (angular_stencil_points!=5 && angular_stencil_points!=7)
+    throw std::invalid_argument("angular_stencil_points must be 5 or 7");
+  BulkStencilCornerRadius()=angular_stencil_points==7 ? 3 : 2;
   // A checkpoint stores no dissipation state. This admits a restart whose
   // only identity difference is the KO strength, floor or differenced field.
   restart_with_new_dissipation=pin->GetOrAddBoolean("z4c_hyperboloidal",

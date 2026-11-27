@@ -79,6 +79,9 @@ class Z4cHyperboloidal {
   bool ko_shell_residual=false, restart_with_new_dissipation=false;
   // evolve_all_components: gzz and Azz are evolved and the algebraic constraints projected.
   IndependentFields independent;
+  // 5: fourth-order angular differences (default). 7: sixth-order angular differences in
+  // the shells and seven-node angular stencils in the scri and endpoint rows.
+  int angular_stencil_points=5;
   // Largest |det(gamma)-1| and |gamma^ij A_ij| removed by the last projection of this rank.
   Real projection_violation[2]={0,0};
   ActivityPolicy activity;
