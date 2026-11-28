@@ -1,6 +1,6 @@
 # Hyperboloidal Z4c performance on Horizon
 
-The CUDA compatibility baseline `b943db139` built on Horizon and evolved the exact N12 binary to cycle 130. Job 109722 ran for 1,028 s on one four-GB200 node, for **0.5711 SU**. Two N12 jobs cover timing, profiling and formulation checks. The two-node N24 seed depends on their success. Their outstanding wall-time limits amount to 6.3333 SU. [Job ledger](ledger.tsv)
+The CUDA compatibility baseline `b943db139` built on Horizon and evolved the exact N12 binary to cycle 130. Job 109722 ran for 1,028 s on one four-GB200 node, for **0.5711 SU**. Jobs 109723 (N12 profiling), 109730 (N12 formulation checks) and 109852 (N24 seed) were held before allocation when a separate local control produced non-finite diagnostic output. Their combined wall-time limits reserve 6.3333 SU if released. [Job ledger](ledger.tsv)
 
 ## CUDA build and correctness
 
@@ -9,6 +9,12 @@ Unmodified `c80c114e4` failed to compile because the extended device lambda in `
 On macOS arm64 with Kokkos Serial, the compatibility build and `c80c114e4` produced byte-identical radial 1D outputs in both evolution modes through 22 steps. In a separate single-rank, 25-block 3D fixture, both complete restart files, history, and horizon diagnostics matched through two cycles in each mode. Every one of the 5,826,600 stored doubles per checkpoint was finite. The false-mode radial output also matched `85e3256fc`. The optional radial profile explicitly writes NaN for the undefined endpoint Hamiltonian and momentum.
 
 The same 27 of 28 CPU CTest cases passed in both builds. In `hyperboloidal_reference_accuracy`, the baseline geometry residual was `6.67702e-08` against a `1e-09` limit, and the constraint residual was `7.86191e-11` against a `1e-11` limit. The gauge residual passed. The test also failed with Release flags and with contraction explicitly disabled.
+
+## Stop during a local AMR control
+
+A two-rank Kokkos Serial run of the unchanged compatibility baseline used the repository's synthetic adaptive fixture with `evolve_all_components=true` on host `PU-KL2XFPVQ0D`. The run started with a finite cycle-0 history. At cycle 1, time `1.52587890625e-05`, the mesh refined from 25 to 32 blocks and rank 0 reported a missing accepted horizon surface. The history contained NaN in `eVolume`, `eH-rms`, `eM-rms`, `eTheta-rms` and `eZ-rms`. The horizon summary also recorded NaN in all ten surface measurements. Both diagnostics repeated at cycle 2. The diagnostic implementation explicitly fills the five exterior history quantities with NaN when a required surface is invalid. [Diagnostic source](https://github.com/HengruiZhu99/athenak/blob/b943db139a3ba094aaf31f4470ef4d6712705ebb/src/z4c_hyperboloidal/diagnostics.cpp#L348-L374)
+
+The synthetic run completed its two requested cycles. The scri history was finite. The initial and final checkpoint payloads contained 5,826,600 and 7,458,048 finite doubles respectively. The final checkpoint SHA-256 was `d9a9f1819c2d16a28e7b09cf873d5b89060ec15ad312610bd79a239a823e4ace`. The AMR optimization candidate remains uncommitted and unmeasured. The exact N12 Horizon seed described below completed independently.
 
 ## Benchmark inputs and measurements
 
