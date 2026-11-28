@@ -1,6 +1,6 @@
 # Hyperboloidal Z4c performance on Horizon
 
-The CUDA compatibility baseline is `b943db139`. Horizon's nvcc 13.3.73 compiled the corrected bulk RHS object. The full executable and N12 seed are queued on one four-GPU node. The three pending jobs reserve at most 3.67 SU altogether. The account has incurred 0 SU for this campaign as of this update. [Job ledger](ledger.tsv)
+The CUDA compatibility baseline `b943db139` built on Horizon and evolved the exact N12 binary to cycle 130. Job 109722 ran for 1,028 s on one four-GB200 node, for **0.5711 SU**. Two N12 jobs cover timing, profiling and formulation checks. The two-node N24 seed depends on their success. Their outstanding wall-time limits amount to 6.3333 SU. [Job ledger](ledger.tsv)
 
 ## CUDA build and correctness
 
@@ -19,4 +19,21 @@ These are the spin-0.5 near-head-on decks from the Aurora evolve-all run directo
 | N12 | `cad95d8dac125bffd6ced079dc6ea2c79bff4afc1ec18534aa41ffdab21a0309` | `7d32c45f889a8c6f224eae2441653dc3cd859e39a904922145968cdbb8c650c2` |
 | N24 | `b286b2f90b2176e20f1aea1f067ba1ca84102559d9a3e3137941a144196a9234` | `223431d81d0a89cdca6f88c412831d34482d3cf28fd42080437431677639e0d8` |
 
-The N12 seed uses four MPI ranks, one per GB200, through cycle 130 with the original output cadence. Three unprofiled restarts from its final checkpoint will measure through cycle 245. The timing runs suppress the two per-cycle tracker file writes while preserving tracker evolution. The analysis discards warmup, final output and periodic output cycles, and computes zone-cycles from the active mesh before each step. Correctness runs use the original output cadence. The supplied 1.31 s/cycle is the Aurora N12 reference. Horizon timings, speedups and layout comparisons are pending.
+## N12 seed measurements
+
+Four MPI ranks ran on node `c128-002`, one per GB200. Local ranks 0–3 selected GPUs 0–3. Global ranks 0–3 used GPUs 0, 2, 1 and 3 respectively. The binary SHA-256 was `82f34391ed2e5a312af143800fd90682bc8ad61a3319763386e5431e22762e3e`. Only the initial-data directory, per-rank block capacity and cycle limit were overridden.
+
+| Measurement | Observed time |
+|---|---:|
+| Startup through the cycle-0 clock | 258.59 s |
+| Cycles 1–130 including outputs and finalization | 397.82 s |
+| Sum of the 130 multirate intervals | 47.04 s |
+| Cycle 16, the only regrid (754 to 586 blocks) | 158.25 s wall, 157.86 s outside the integrator |
+| Cycles 37 and 74, history and horizon output | 1.68 s and 1.50 s outside the integrator |
+| Cycle 111, history and shared checkpoint | 87.38 s outside the integrator |
+| Cycle 130, final outputs and finalization | 100.40 s outside the integrator |
+| Scheduled scri dumps (21), mean preparation plus writing | 0.092 s per dump |
+
+The existing agreement-plan timer recorded three builds on rank 0 during the first regrid, taking 25.51, 23.69 and 13.57 s. After regrid, the solver recorded 12,400 stage evaluations, 1,408 packets, 2,996 pack kernels and 5.27 GB sent per coarse cycle across the four ranks. The cycle-130 checkpoint was preserved off scratch. All 136,575,504 payload doubles were finite. [Checkpoint verification](seed-checkpoint.json)
+
+The 76 cycles from 33 through 127 without scheduled driver output averaged 0.33988 s wall per cycle with a cycle-to-cycle sample SD of 0.01650 s. This is a single-run measurement with both tracker files written on every cycle. The fixed-layout throughput measurement uses three separate restarts from cycle 130 through 245, suppresses tracker writes while preserving their evolution, and discards warmup, finalization and periodic output cycles. Zone-cycles use the active mesh before each step. Speedups and the rank-layout recommendation await those measurements. The supplied 1.31 s/cycle is the Aurora reference.
